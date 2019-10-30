@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axiosBase from '../services/axiosBase'
+////////////////////////////////////////////////////////////
 
 import { setHomeLayout, resetHomeLayout } from '../utils/utils'
 
 ////////////////////////////////////////////////////////////
 // modularize and namespace later when it's too messy
-////////////////////////////////////////////////////////////
 
 Vue.use(Vuex)
 
@@ -16,7 +16,7 @@ export default new Vuex.Store({
     storyComponentMounted: false,
     jwtToken: null,
     user: null,
-    categories: ['documentary', 'stillLife', 'wildLife', 'wedding', 'travel', 'dailyLife', 'fineArt', 'portrait', 'sport', 'archiecture']
+    categories: ['documentary', 'stillLife', 'wildLife', 'wedding', 'travel', 'dailyLife', 'fineArt', 'portrait', 'sport', 'architecture', 'streetPhotography']
   },
   getters: {
     isStoryComponentMounted: state => {
@@ -28,14 +28,26 @@ export default new Vuex.Store({
     authenticatedUser: state => {
       return state.user;
     },
-    token: state => {
+    getToken: state => {
       return state.jwtToken;
     },
-    getCategories: state => {
-      if (state.isAuthenticated) {
+    getCategories: (state, getters) => {
+      // console.log("GET CATEGORIES STATE IS AUTH " + getters.isAuthenticated)
+      // console.log("GET CATEGORIES GET AUTH USER " + getters.authenticatedUser)
+      if (getters.isAuthenticated) { 
+        console.log(`CATEGORIES ${state.user.categories}`)
         return state.user.categories;
       } else {
         return state.categories;
+      }
+    },
+    getProfile: (state, getters) => {
+      // console.log("GET PROFILE STATE IS AUTH " + getters.isAuthenticated)
+      // console.log("GET PROFILE GET AUTH USER " + getters.authenticatedUser)
+      if (getters.isAuthenticated) {
+        return state.user.profile;
+      } else {
+        return {profile: {}}
       }
     }
   },
@@ -63,10 +75,15 @@ export default new Vuex.Store({
       localStorage.removeItem('user');
     },
     setCategories: (state, categories) => {
-      if (state.isAuthenticated) {
+      if (state.user) {
         state.user.categories = categories;
       }
       state.categories = categories;
+    },
+    setProfile: (state, profile) => {
+      if (state.user) {
+        state.user.profile = profile;
+      }
     }
   },
   actions: {
@@ -100,6 +117,7 @@ export default new Vuex.Store({
       const data = response.data;
       localStorage.setItem('jwtToken', data.token);
       localStorage.setItem('user', data.user);
+      console.log("USER LOGIN")
       commit('userToState', { token: data.token, user: data.user });
     },
     logout: async ({ commit }) => {
@@ -110,14 +128,28 @@ export default new Vuex.Store({
     },
     // eslint-disable-next-line
     // categories: async ({ commit, getters }, categories) => {
-    categories: async ({ commit, getters }, categories) => {
+    save_categories: async ({ commit, getters }, categories) => {
       await commit('setCategories', categories);
       // if user is authenticated update categories in db
       if (getters.isAuthenticated) {
+        console.log('User is authenticated, saving categories')
+        // eslint-disable-next-line
         const update = await axiosBase.put(`users/${getters.authenticatedUser._key}`, {
           categories
         })
-        console.log(update)
+        // console.log(update)
+      }
+    },
+    profile: async ({ commit, getters }, profile) => {
+      await commit('setProfile', profile);
+      // if user is authenticated update categories in db
+      if (getters.isAuthenticated) {
+        console.log('User is authenticated, saving profile')
+        // eslint-disable-next-line
+        const update = await axiosBase.put(`users/${getters.authenticatedUser._key}`, {
+          profile
+        })
+        // console.log(update)
       }
     },
     // set credz at startup

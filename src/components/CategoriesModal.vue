@@ -16,52 +16,52 @@
           <ul class="categories-grid">
             <li class="field">
               <input id="documentary" type="checkbox" value="documentary" v-model="categories" />
-              <label for="cat-documentary">Documentary</label>
+              <label for="documentary">Documentary</label>
             </li>
             <li class="field">
-              <input id="still-life" type="checkbox" value="stillLife" v-model="categories" />
-              <label for="cat-still-life">Still life</label>
+              <input id="stillLife" type="checkbox" value="stillLife" v-model="categories" />
+              <label for="stillLife">Still life</label>
             </li>
             <li class="field">
               <input
-                id="street-photography"
+                id="streetPhotography"
                 type="checkbox"
                 value="streetPhotography"
                 v-model="categories"
               />
-              <label for="cat-street-photography">Street photography</label>
+              <label for="streetPhotography">Street photography</label>
             </li>
             <li class="field">
-              <input id="wild-life" type="checkbox" value="wildLife" v-model="categories" />
-              <label for="cat-wild-life">Nature and Wildlife</label>
+              <input id="wildLife" type="checkbox" value="wildLife" v-model="categories" />
+              <label for="wildLife">Nature and Wildlife</label>
             </li>
             <li class="field">
               <input id="wedding" type="checkbox" value="wedding" v-model="categories" />
-              <label for="cat-wedding">Wedding</label>
+              <label for="wedding">Wedding</label>
             </li>
             <li class="field">
               <input id="travel" type="checkbox" value="travel" v-model="categories" />
-              <label for="cat-travel">Travel</label>
+              <label for="travel">Travel</label>
             </li>
             <li class="field">
-              <input id="daily-life" type="checkbox" value="dailyLife" v-model="categories" />
-              <label for="cat-daily-life">Daily life</label>
+              <input id="dailyLife" type="checkbox" value="dailyLife" v-model="categories" />
+              <label for="dailyLife">Daily life</label>
             </li>
             <li class="field">
-              <input id="fine-art" type="checkbox" value="fineArt" v-model="categories" />
-              <label for="cat-fine-art">Fine art</label>
+              <input id="fineQrt" type="checkbox" value="fineArt" v-model="categories" />
+              <label for="fineArt">Fine art</label>
             </li>
             <li class="field">
               <input id="portrait" type="checkbox" value="portrait" v-model="categories" />
-              <label for="cat-portrait">Portrait</label>
+              <label for="portrait">Portrait</label>
             </li>
             <li class="field">
               <input id="sport" type="checkbox" value="sport" v-model="categories" />
-              <label for="cat-sport">Sport</label>
+              <label for="sport">Sport</label>
             </li>
             <li class="field">
               <input id="architecture" type="checkbox" value="architecture" v-model="categories" />
-              <label for="cat-architecture">Architecture</label>
+              <label for="architecture">Architecture</label>
             </li>
           </ul>
           <div class="is-divider"></div>
@@ -73,7 +73,11 @@
               <button class="button is-dark" @click.prevent="closeCategoriesModal">Cancel</button>
             </div>
           </div>
-          <div></div>
+          <!-- <div>
+            <ul>
+                <li v-for="(category, index) in categories" :key="index">{{ category }}</li>
+            </ul>
+          </div> -->
         </div>
       </form>
     </div>
@@ -87,7 +91,7 @@ import { mapGetters } from "vuex";
 export default {
   data() {
     return {
-      categories: ["documentary", "stillLife"],
+      // categories: [],
       loading: false
     };
   },
@@ -99,13 +103,16 @@ export default {
     async onSubmit() {
       console.log("onSubmit");
       console.log(this.categories);
-      await this.$store.dispatch("categories", this.categories);
+      await this.$store.dispatch("save_categories", this.categories);
       this.closeCategoriesModal();
     }
   },
   computed: {
-    ...mapGetters(["getCategories"])
-  }
+    // ...mapGetters(["getCategories"]),
+    categories: function() {
+      return this.$store.getters.getCategories
+    }
+  },
 };
 </script>
 

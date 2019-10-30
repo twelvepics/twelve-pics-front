@@ -10,7 +10,7 @@ instance.interceptors.request.use((config) => {
     // const token = store.getters.token;
     // console.log('In interceptor')
     // console.log(store)
-    const token = store.getters.token
+    const token = store.getters.getToken
     // console.log('------------------------------')
     // console.log(token);
     // console.log('-------------------------------')
