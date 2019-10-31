@@ -165,18 +165,5 @@ export default new Vuex.Store({
         // console.log(update)
       }
     },
-    // set credz at startup
-    // authInit: async ({ commit }) => {
-    //   const token = localStorage.getItem('jwtToken')
-    //   if (!token) {
-    //     return
-    //   }
-    //   const user = localStorage.getItem('user')
-    //   await commit('userToState', {
-    //     token,
-    //     user,
-    //   })
-    //   return user;
-    // },
   },
 })
