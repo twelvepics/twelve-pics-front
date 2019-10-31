@@ -161,7 +161,11 @@
         <!-- END DROP DOWN-->
       </div>
     </div>
-    <login-modal :isActive="currentModal === 'login'" @loginModalClosed="closeModal"></login-modal>
+    <login-modal
+      :isActive="currentModal === 'login'"
+      @loginModalClosed="closeModal"
+      @openRecoverPasswordModal="closeLoginModalAndOpenRecoverModal"
+    ></login-modal>
     <signup-modal :isActive="currentModal === 'signup'" @signupModalClosed="closeModal"></signup-modal>
     <categories-modal :isActive="currentModal === 'categories'" @categoriesModalClosed="closeModal"></categories-modal>
     <recover-modal :isActive="currentModal === 'recover'" @recoverModalClosed="closeModal"></recover-modal>
@@ -234,6 +238,10 @@ export default {
     },
     closeModal() {
       this.currentModal = null;
+    },
+    closeLoginModalAndOpenRecoverModal() {
+      this.currentModal = null;
+      this.currentModal = "recover";
     },
     // logout - call store logout
     async logout() {

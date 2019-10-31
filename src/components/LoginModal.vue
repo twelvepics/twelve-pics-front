@@ -67,7 +67,7 @@
               </label>
             </div>
             <div>
-              <a>Recover my password</a>
+              <a @click.prevent="openRecoverPasswordModal">Recover my password</a>
             </div>
           </div>
 
@@ -108,6 +108,11 @@ export default {
       console.log(e);
       this.resetForm();
       this.$emit("loginModalClosed", this.isActive);
+    },
+    openRecoverPasswordModal(e) {
+      console.log(e);
+      this.resetForm();
+      this.$emit("openRecoverPasswordModal", this.isActive);
     },
     resetForm() {
       this.apiError = null;

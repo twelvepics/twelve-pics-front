@@ -32,7 +32,7 @@
                 </label>
               </div>
               <!-- UPLOAD BUTTON -->
- 
+
               <!-- DISPLAY NAME -->
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Display name (Optional)</label>
@@ -40,7 +40,12 @@
                   class="content is-small is-marginless pb-05"
                 >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</p>
                 <div class="control" style="max-width: 500px;">
-                  <input class="input" type="text" v-model="profile.display_name" placeholder="Display name (Optional)" />
+                  <input
+                    class="input"
+                    type="text"
+                    v-model="profile.display_name"
+                    placeholder="Display name (Optional)"
+                  />
                 </div>
               </div>
               <!-- DISPLAY NAME -->
@@ -52,11 +57,15 @@
                   class="content is-small is-marginless pb-05"
                 >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</p>
                 <div class="control">
-                  <input class="input" type="text" v-model="profile.intro" placeholder="A short intro" />
+                  <input
+                    class="input"
+                    type="text"
+                    v-model="profile.intro"
+                    placeholder="A short intro"
+                  />
                 </div>
               </div>
               <!-- INTRO -->
-
 
               <!-- ABOUT ME -->
               <div class="field m-30-0-15-0">
@@ -65,7 +74,11 @@
                   class="content is-small is-marginless pb-05"
                 >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</p>
                 <div class="control">
-                  <textarea class="textarea" v-model="profile.about_me" placeholder="A few worlds about you..."></textarea>
+                  <textarea
+                    class="textarea"
+                    v-model="profile.about_me"
+                    placeholder="A few worlds about you..."
+                  ></textarea>
                 </div>
               </div>
               <!-- ABOUT ME -->
@@ -78,23 +91,31 @@
                   accusamus!
                 </p>
                 <div class="control">
-                  <textarea class="textarea" v-model="profile.inspiration" placeholder="A few worlds about you..."></textarea>
+                  <textarea
+                    class="textarea"
+                    v-model="profile.inspiration"
+                    placeholder="A few worlds about you..."
+                  ></textarea>
                 </div>
               </div>
               <!-- TECH STUFF -->
 
               <!-- LOCATION -->
               <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Your location </label>
+                <label class="label is-marginless">Your location</label>
                 <p
                   class="content is-small is-marginless pb-05"
                 >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</p>
                 <div class="control" style="max-width: 500px;">
-                  <input class="input" type="text" v-model="profile.location" placeholder="My location (Optional)" />
+                  <input
+                    class="input"
+                    type="text"
+                    v-model="profile.location"
+                    placeholder="My location (Optional)"
+                  />
                 </div>
               </div>
               <!-- LOCATION -->
-
 
               <!-- SUBMIT -->
               <div class="is-divider" style="margin-top:35px;"></div>
@@ -117,7 +138,7 @@
                 {{ key }}: {{ item }}
               </li>
             </ul>
-          </div> -->
+          </div>-->
         </div>
       </div>
     </div>
@@ -125,7 +146,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 
 export default {
   // data() {
@@ -149,15 +170,15 @@ export default {
   computed: {
     // ...mapGetters(["getProfile"]),
     profile: function() {
-      return this.$store.getters.getProfile
+      return this.$store.getters.getProfile;
     }
-  },
-  // created() { 
+  }
+  // created() {
   //   console.log("created")
   //   this.profile = this.getProfile
   //   console.log(`PROFILE: ${this.getProfile}`)
   // },
-}
+};
 </script>
 
 <style>

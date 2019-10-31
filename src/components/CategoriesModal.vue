@@ -77,7 +77,7 @@
             <ul>
                 <li v-for="(category, index) in categories" :key="index">{{ category }}</li>
             </ul>
-          </div> -->
+          </div>-->
         </div>
       </form>
     </div>
@@ -86,7 +86,7 @@
 </template>
  
  <script>
-import { mapGetters } from "vuex";
+// import { mapGetters } from "vuex";
 
 export default {
   data() {
@@ -110,9 +110,9 @@ export default {
   computed: {
     // ...mapGetters(["getCategories"]),
     categories: function() {
-      return this.$store.getters.getCategories
+      return this.$store.getters.getCategories;
     }
-  },
+  }
 };
 </script>
 
