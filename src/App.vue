@@ -11,11 +11,6 @@ import Header from "./components/Header.vue";
 export default {
   components: {
     appHeader: Header
-  },
-  // set credentials if any
-  created() {
-    console.log("In App - created");
-    this.$store.dispatch("authInit");
   }
 };
 </script>

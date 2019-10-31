@@ -14,8 +14,8 @@ export default new Vuex.Store({
   // TODO filter user data in api
   state: {
     storyComponentMounted: false,
-    jwtToken: null,
-    user: null,
+    jwtToken: null, // localStorage.getItem('token'),
+    user: null, // JSON.parse(localStorage.getItem('user')),
     categories: ['documentary', 'stillLife', 'wildLife', 'wedding', 'travel', 'dailyLife', 'fineArt', 'portrait', 'sport', 'architecture', 'streetPhotography']
   },
   getters: {
@@ -34,7 +34,7 @@ export default new Vuex.Store({
     getCategories: (state, getters) => {
       // console.log("GET CATEGORIES STATE IS AUTH " + getters.isAuthenticated)
       // console.log("GET CATEGORIES GET AUTH USER " + getters.authenticatedUser)
-      if (getters.isAuthenticated) { 
+      if (getters.isAuthenticated) {
         console.log(`CATEGORIES ${state.user.categories}`)
         return state.user.categories;
       } else {
@@ -47,7 +47,7 @@ export default new Vuex.Store({
       if (getters.isAuthenticated) {
         return state.user.profile;
       } else {
-        return {profile: {}}
+        return { profile: {} }
       }
     }
   },
@@ -77,12 +77,25 @@ export default new Vuex.Store({
     setCategories: (state, categories) => {
       if (state.user) {
         state.user.categories = categories;
+        localStorage.setItem('user', JSON.stringify(state.user));
       }
       state.categories = categories;
     },
     setProfile: (state, profile) => {
       if (state.user) {
         state.user.profile = profile;
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
+    initialiseStore: state => {
+      // console.log("INITIALIZING STORE")
+      // console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
+      // console.log("USER => " + JSON.parse(localStorage.getItem('user')));
+      if (localStorage.getItem('jwtToken')) {
+        state.jwtToken = localStorage.getItem('jwtToken');
+      }
+      if (localStorage.getItem('user')) {
+        state.user = JSON.parse(localStorage.getItem('user'));
       }
     }
   },
@@ -116,7 +129,7 @@ export default new Vuex.Store({
       })
       const data = response.data;
       localStorage.setItem('jwtToken', data.token);
-      localStorage.setItem('user', data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
       console.log("USER LOGIN")
       commit('userToState', { token: data.token, user: data.user });
     },
@@ -153,16 +166,17 @@ export default new Vuex.Store({
       }
     },
     // set credz at startup
-    authInit({ commit }) {
-      const token = localStorage.getItem('jwtToken')
-      if (!token) {
-        return
-      }
-      const user = localStorage.getItem('user')
-      commit('userToState', {
-        token,
-        user,
-      })
-    },
+    // authInit: async ({ commit }) => {
+    //   const token = localStorage.getItem('jwtToken')
+    //   if (!token) {
+    //     return
+    //   }
+    //   const user = localStorage.getItem('user')
+    //   await commit('userToState', {
+    //     token,
+    //     user,
+    //   })
+    //   return user;
+    // },
   },
 })

@@ -95,5 +95,10 @@ export default new Router(
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },
+      // TODO
+      // recover / new password page
+      // email has been validated thank you page
+      // error page -> unauthorized, server error etc...
+
     ]
   })
