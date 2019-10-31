@@ -95,6 +95,18 @@ export default new Router(
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },
+      // about us
+      {
+        path: '/auth/recoverPassword/:renewId',
+        name: 'recoverPassword',
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        components: {
+          default: () => import(/* webpackChunkName: "about" */ './views/RecoverPassword.vue'),
+          footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
+        }
+      },
       // TODO
       // recover / new password page
       // email has been validated thank you page
