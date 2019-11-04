@@ -208,7 +208,7 @@ export default {
   z-index: 100;
   /* Sit on top */
   left: 0;
-  top: 50px;
+  top: 56px;
   width: 100%;
   /* Full width */
   height: 100%;
@@ -231,33 +231,14 @@ export default {
   width: 100%;
 }
 
-body.modal-open {
-  height: 100vh;
-  overflow-y: hidden;
-}
-
-/* Modal / scroll chrome applekit */
+/* Modal / hide scrollbar chrome applekit */
 body.no-scrollbar-webkit::-webkit-scrollbar {
   display: none;
 }
 
-/* Modal / scroll firefox */
-body.no-scroll {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-section.no-scroll {
-  width: 100%;
-  height: 100%;
-  overflow-y: scroll;
-  padding-right: 17px;
-}
-
-html.no-scroll {
-  overflow-x: "visible";
-  overflow-y: "visible";
+/* Modal / hide scrollbar firefox */
+html.frf-hide-sb {
+  scrollbar-width: none;
 }
 
 /*** sticky header ***/

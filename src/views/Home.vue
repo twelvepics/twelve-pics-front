@@ -31,7 +31,7 @@
           <div class="box story-item-pic-portrait">
             <div class="title-pitch">
               <p class="title is-5" style="margin-bottom:.3em;">
-                <a href="#" @click="mountStoryModalComp" data-story-id="xaxa-xuxu">
+                <a href="#" @click.prevent="mountStoryModalComp" data-story-id="xaxa-xuxu">
                   Lorem ipsum dolor sit amet consectetur
                   adipisicing elit. Laborum, modi?
                 </a>
@@ -56,7 +56,7 @@
           <!-- PIC LANDSCAPE BOX-->
           <div class="box story-item-pic-landscape">
             <p class="title is-5" style="margin-bottom:.6em;">
-              <a href="#" @click="mountStoryModalComp" data-story-id="xexe-xyxy">
+              <a href="#" @click.prevent="mountStoryModalComp" data-story-id="xexe-xyxy">
                 Lorem ipsum dolor sit amet consectetur
                 adipisicing elit. Laborum, modi?
               </a>
@@ -80,7 +80,103 @@
           <div class="box story-item-pic-portrait">
             <div class="title-pitch">
               <p class="title is-5" style="margin-bottom:.3em;">
-                <a href="#" @click="mountStoryModalComp" data-story-id="xaxa-xoxo">
+                <a href="#" @click.prevent="mountStoryModalComp" data-story-id="xaxa-xoxo">
+                  Lorem ipsum dolor sit amet consectetur
+                  adipisicing elit. Laborum, modi?
+                </a>
+              </p>
+              <p class="pitch">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores tenetur nobis modi
+                numquam quibusdam! Delectus commodi vero nulla accusantium culpa veniam quis saepe
+                labore nesciunt deleniti provident consequatur distinctio rerum, quibusdam officia
+                molestias velit maxime temporibus neque eum porro placeat?
+              </p>
+            </div>
+            <p class="pic">
+              <img src="/img/thumb6.png" width="120" height="auto" />
+            </p>
+            <div class="is-divider story-divider"></div>
+            <p
+              class="bottom-line"
+            >Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores tenetur nobis</p>
+          </div>
+          <!-- END PIC PORTRAIT BOX-->
+          <!-- PIC LANDSCAPE BOX-->
+          <div class="box story-item-pic-landscape">
+            <p class="title is-5" style="margin-bottom:.6em;">
+              <a href="#" @click.prevent="mountStoryModalComp" data-story-id="xexe-xyxy">
+                Lorem ipsum dolor sit amet consectetur
+                adipisicing elit. Laborum, modi?
+              </a>
+            </p>
+            <p class="pic">
+              <img src="/img/thumb2.png" width="200" height="auto" />
+            </p>
+            <p class="pitch">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores tenetur nobis modi
+              numquam quibusdam! Delectus commodi vero nulla accusantium culpa veniam quis saepe
+              labore nesciunt deleniti provident consequatur distinctio rerum, quibusdam officia
+              molestias velit maxime temporibus neque eum porro placeat?
+            </p>
+            <div class="is-divider story-divider"></div>
+            <p
+              class="bottom-line"
+            >Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores tenetur nobis</p>
+          </div>
+          <!-- END PIC LANDSCAPE BOX-->
+          <!-- PIC PORTRAIT BOX-->
+          <div class="box story-item-pic-portrait">
+            <div class="title-pitch">
+              <p class="title is-5" style="margin-bottom:.3em;">
+                <a href="#" @click.prevent="mountStoryModalComp" data-story-id="xaxa-xoxo">
+                  Lorem ipsum dolor sit amet consectetur
+                  adipisicing elit. Laborum, modi?
+                </a>
+              </p>
+              <p class="pitch">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores tenetur nobis modi
+                numquam quibusdam! Delectus commodi vero nulla accusantium culpa veniam quis saepe
+                labore nesciunt deleniti provident consequatur distinctio rerum, quibusdam officia
+                molestias velit maxime temporibus neque eum porro placeat?
+              </p>
+            </div>
+            <p class="pic">
+              <img src="/img/thumb6.png" width="120" height="auto" />
+            </p>
+            <div class="is-divider story-divider"></div>
+            <p
+              class="bottom-line"
+            >Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores tenetur nobis</p>
+          </div>
+          <!-- END PIC PORTRAIT BOX-->
+          <!-- PIC LANDSCAPE BOX-->
+          <div class="box story-item-pic-landscape">
+            <p class="title is-5" style="margin-bottom:.6em;">
+              <a href="#" @click.prevent="mountStoryModalComp" data-story-id="xexe-xyxy">
+                Lorem ipsum dolor sit amet consectetur
+                adipisicing elit. Laborum, modi?
+              </a>
+            </p>
+            <p class="pic">
+              <img src="/img/thumb2.png" width="200" height="auto" />
+            </p>
+            <p class="pitch">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores tenetur nobis modi
+              numquam quibusdam! Delectus commodi vero nulla accusantium culpa veniam quis saepe
+              labore nesciunt deleniti provident consequatur distinctio rerum, quibusdam officia
+              molestias velit maxime temporibus neque eum porro placeat?
+            </p>
+            <div class="is-divider story-divider"></div>
+            <p
+              class="bottom-line"
+            >Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores tenetur nobis</p>
+          </div>
+          <!-- END PIC LANDSCAPE BOX-->
+          <!-- PIC PORTRAIT BOX-->
+          <div class="box story-item-pic-portrait">
+            <div class="title-pitch">
+              <p class="title is-5" style="margin-bottom:.3em;">
+                <a href="#" @click.prevent="mountStoryModalComp" data-story-id="xaxa-xoxo">
                   Lorem ipsum dolor sit amet consectetur
                   adipisicing elit. Laborum, modi?
                 </a>

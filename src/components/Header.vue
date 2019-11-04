@@ -203,6 +203,8 @@ import SignupModal from "./SignupModal.vue";
 import RecoverModal from "./RecoverModal.vue";
 import CategoriesModal from "./CategoriesModal.vue";
 
+import { lockBgScroll, unlockBgScroll } from "../utils/utils";
+
 export default {
   name: "Header",
   // mixins: [bulmaBands.mixin]
@@ -234,9 +236,11 @@ export default {
       this.showBurgerDropdown = !this.showBurgerDropdown;
     },
     openModal(modal) {
+      lockBgScroll();
       this.currentModal = modal;
     },
     closeModal() {
+      unlockBgScroll();
       this.currentModal = null;
     },
     closeLoginModalAndOpenRecoverModal() {
