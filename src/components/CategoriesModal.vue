@@ -109,8 +109,13 @@ export default {
   },
   computed: {
     // ...mapGetters(["getCategories"]),
-    categories: function() {
-      return this.$store.getters.getCategories;
+    categories: {
+      get() {
+        return this.$store.getters.getCategories;
+      },
+      set(value) {
+        this.$store.commit("setCategories", value);
+      }
     }
   }
 };

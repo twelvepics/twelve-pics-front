@@ -140,9 +140,8 @@ export default {
     };
   },
   async created() {
-    console.log("BEFORE CREATED");
-    setTimeout(() => this.checkRequestValid(), 1000);
-    // await this.checkRequestValid();
+    console.log("CREATED");
+    await this.checkRequestValid();
   },
   computed: {
     reset_id: function() {

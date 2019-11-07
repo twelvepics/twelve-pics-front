@@ -46,7 +46,7 @@ export default new Router(
 
       // view user profile
       {
-        path: '/user/:slug',
+        path: '/user/:username',
         name: 'user',
         components: {
           default: () => import(/* webpackChunkName: "user" */ './views/UserProfile.vue'),
@@ -55,7 +55,7 @@ export default new Router(
       },
       // edit user profile
       {
-        path: '/user/:id/edit',
+        path: '/user/:user_key/edit',
         name: 'edit-user',
         components: {
           default: () => import(/* webpackChunkName: "edit-user" */ './views/UserProfileEdit.vue'),

@@ -88,9 +88,9 @@ export default new Vuex.Store({
       }
     },
     initialiseStore: state => {
-      // console.log("INITIALIZING STORE")
-      // console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
-      // console.log("USER => " + JSON.parse(localStorage.getItem('user')));
+      console.log("INITIALIZING STORE")
+      console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
+      console.log("USER => " + JSON.parse(localStorage.getItem('user')));
       if (localStorage.getItem('jwtToken')) {
         state.jwtToken = localStorage.getItem('jwtToken');
       }
@@ -117,7 +117,7 @@ export default new Vuex.Store({
       })
       const data = response.data;
       localStorage.setItem('jwtToken', data.token);
-      localStorage.setItem('user', data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
       commit('userToState', { token: data.token, user: data.user })
     },
 
@@ -153,7 +153,7 @@ export default new Vuex.Store({
         // console.log(update)
       }
     },
-    profile: async ({ commit, getters }, profile) => {
+    save_profile: async ({ commit, getters }, profile) => {
       await commit('setProfile', profile);
       // if user is authenticated update categories in db
       if (getters.isAuthenticated) {

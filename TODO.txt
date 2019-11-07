@@ -1,5 +1,8 @@
-reset password all
+profile read
+profile edit checks pre flight in router
+generic errors page and redirects
+token renew
 validate email
-settings
+settings => ?
 pics upload
 

@@ -3,12 +3,21 @@
     <div class="columns is-centered">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
+        <!-- ERRORS AND AUTH -->
+        <div
+          class="card"
+          v-if="is_loading || is_error"
+          style="text-align:center;height:60px;padding-top:10px;"
+        >
+          <div v-if="is_error" class="isError" style="margin-top:7px;">{{ errorMessage }}</div>
+        </div>
+
         <!-- START FORM -->
-        <div class="card">
+        <div class="card" v-else>
           <!-- CARD CONTENT -->
           <div class="card-content">
             <form @submit.prevent="onSubmit">
-              <p class="title is-size-4">Alain's profile</p>
+              <p class="title is-size-4">{{ user.username }}'s profile</p>
               <p class="subtitle is-size-6">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis
                 praesentium esse veritatis nemo!
@@ -146,33 +155,58 @@
 </template>
 
 <script>
-// import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
-  // data() {
-  //   return {
-  //     profile: {
-  //       display_name: '',
-  //       intro: '',
-  //       about_me: '',
-  //       inspiration: '',
-  //       location: '',
-  //     },
-  //   };
-  // },
+  data() {
+    return {
+      is_loading: true,
+      is_error: false,
+      errorMessage: ""
+    };
+  },
+
   methods: {
     async onSubmit() {
       console.log("onSubmit");
       console.log(this.profile);
-      await this.$store.dispatch("profile", this.profile);
+      await this.$store.dispatch("save_profile", this.profile);
+      this.$router.push({
+        name: "user",
+        params: { username: this.authenticatedUser.username }
+      });
     }
   },
   computed: {
-    // ...mapGetters(["getProfile"]),
+    ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),
     profile: function() {
-      return this.$store.getters.getProfile;
+      // return this.$store.getters.getProfile;
+      return this.getProfile;
+    },
+    user: function() {
+      return this.authenticatedUser;
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      // access to component instance via `vm`
+      console.log(vm);
+      console.log(vm.isAuthenticated);
+      // console.log(vm.authenticatedUser._key);
+      // console.log(vm.$route.params.user_key);
+      if (!vm.isAuthenticated) {
+        vm.is_error = true;
+        vm.errorMessage = "PLEASE AUTHENTICATE";
+      } else if (vm.authenticatedUser._key != vm.$route.params.user_key) {
+        vm.is_error = true;
+        vm.errorMessage = "NOT AUTHORIZED";
+      } else {
+        vm.is_loading = false;
+      }
+      next();
+    });
   }
+
   // created() {
   //   console.log("created")
   //   this.profile = this.getProfile
@@ -215,4 +249,8 @@ footer {
 }
 
 /************** spacing ***********/
+/*************** errors  *************/
+.isError {
+  color: red;
+}
 </style>

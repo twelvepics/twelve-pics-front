@@ -112,7 +112,7 @@
               </span>
               <span>My profile</span>
             </router-link>
-            <router-link
+            <!-- <router-link
               v-if="isAuthenticated"
               class="navbar-item"
               :to="`/user/${authenticatedUser.username}/settings`"
@@ -124,7 +124,7 @@
                 <font-awesome-icon icon="cog"></font-awesome-icon>
               </span>
               <span>Settings</span>
-            </router-link>
+            </router-link>-->
             <a v-if="isAuthenticated" class="navbar-item" @click.prevent="logout()">
               <span class="fa-icon-pr7">
                 <font-awesome-icon icon="sign-out-alt"></font-awesome-icon>
