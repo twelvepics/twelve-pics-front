@@ -200,9 +200,8 @@ export default {
       } else if (vm.authenticatedUser._key != vm.$route.params.user_key) {
         vm.is_error = true;
         vm.errorMessage = "NOT AUTHORIZED";
-      } else {
-        vm.is_loading = false;
       }
+      vm.is_loading = false;
       next();
     });
   }
