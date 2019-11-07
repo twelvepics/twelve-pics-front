@@ -54,6 +54,7 @@
                     type="text"
                     v-model="profile.display_name"
                     placeholder="Display name (Optional)"
+                    @keydown.enter.prevent
                   />
                 </div>
               </div>
@@ -71,6 +72,7 @@
                     type="text"
                     v-model="profile.intro"
                     placeholder="A short intro"
+                    @keydown.enter.prevent
                   />
                 </div>
               </div>
@@ -133,7 +135,7 @@
                   <button type="submit" class="button is-primary">Save</button>
                 </div>
                 <div class="control">
-                  <button class="button is-dark">Cancel</button>
+                  <button class="button is-dark" @click.prevent="backToProfile">Cancel</button>
                 </div>
               </div>
               <!-- SUBMIT -->
@@ -162,7 +164,14 @@ export default {
     return {
       is_loading: true,
       is_error: false,
-      errorMessage: ""
+      errorMessage: "",
+      profile: {
+        display_name: "",
+        intro: "",
+        about_me: "",
+        inspiration: "",
+        location: {}
+      }
     };
   },
 
@@ -175,14 +184,17 @@ export default {
         name: "user",
         params: { username: this.authenticatedUser.username }
       });
+    },
+    backToProfile() {
+      this.profile._display_name = "";
+      this.$router.push({
+        name: "user",
+        params: { username: this.authenticatedUser.username }
+      });
     }
   },
   computed: {
     ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),
-    profile: function() {
-      // return this.$store.getters.getProfile;
-      return this.getProfile;
-    },
     user: function() {
       return this.authenticatedUser;
     }
@@ -204,13 +216,15 @@ export default {
       vm.is_loading = false;
       next();
     });
+  },
+  created() {
+    console.log("CREATED EDIT PROFILE");
+    this.profile.display_name = this.getProfile.display_name;
+    this.profile.intro = this.getProfile.intro;
+    this.profile.about_me = this.getProfile.about_me;
+    this.profile.inspiration = this.getProfile.inspiration;
+    this.profile.location = this.getProfile.location;
   }
-
-  // created() {
-  //   console.log("created")
-  //   this.profile = this.getProfile
-  //   console.log(`PROFILE: ${this.getProfile}`)
-  // },
 };
 </script>
 
