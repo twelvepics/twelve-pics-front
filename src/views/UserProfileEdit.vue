@@ -186,7 +186,6 @@ export default {
       });
     },
     backToProfile() {
-      this.profile._display_name = "";
       this.$router.push({
         name: "user",
         params: { username: this.authenticatedUser.username }
