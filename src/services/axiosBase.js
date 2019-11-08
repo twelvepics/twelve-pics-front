@@ -22,15 +22,15 @@ instance.interceptors.request.use((config) => {
     }
 );
 
-instance.interceptors.response.use((res) => {
-    // Do something with response data
-    // console.log('#----------------- RESPONSE INTERCEPTOR ---------------#')
-    // console.log(res)
-    // console.log('#------------------------------------------------------#')
-    return res;
-}, function (error) {
-    // Do something with response error
-    return Promise.reject(error);
-});
+// instance.interceptors.response.use((res) => {
+//     // Do something with response data
+//     // console.log('#----------------- RESPONSE INTERCEPTOR ---------------#')
+//     // console.log(res)
+//     // console.log('#------------------------------------------------------#')
+//     return res;
+// }, function (error) {
+//     // Do something with response error
+//     return Promise.reject(error);
+// });
 
 export default instance

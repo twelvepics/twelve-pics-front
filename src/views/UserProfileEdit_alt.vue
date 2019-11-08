@@ -22,28 +22,36 @@
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis
                 praesentium esse veritatis nemo!
               </p>
-              <!-- DROP BOX -->
-              <div v-if="isInitial || isSaving">
-                <div class="dropbox">
+
+              <!-- PIC -->
+              <figure class="image is-128x128" style="margin:30px 0 15px 0;">
+                <img :src="profile.avatar_path || '/img/128x128.png'" />
+              </figure>
+              <!-- PIC -->
+              <!-- FILE FIELD -->
+              <div class="file">
+                <label class="file-label">
                   <input
                     type="file"
-                    :name="uploadFieldName"
-                    :disabled="isSaving"
-                    @change="fileChange($event.target.name, $event.target.files[0]);"
-                    accept="image/*"
-                    class="input-file"
+                    class="file-input"
+                    name="file"
+                    ref="file"
+                    @change="onFileSelected"
                   />
-                  <p v-if="isInitial">
-                    Drag your file here
-                    <br />or click to browse
-                  </p>
-                  <p v-if="isSaving">Uploading file...</p>
-                </div>
+                  <span class="file-cta">
+                    <span class="file-icon">
+                      <font-awesome-icon class="fas" icon="upload"></font-awesome-icon>
+                    </span>
+                    <span class="file-label">Select avatar</span>
+                  </span>
+                </label>
+                <button
+                  class="button is-primary"
+                  @click="uploadAvatar"
+                  style="margin-left:10px;"
+                >Save</button>
               </div>
-              <div v-if="isSuccess">
-                <img :src="`/img/avatars/${uploadedFile.data.filename}`" width="200" height="200" />
-              </div>
-              <!-- END DROP BOX -->
+              <!-- FILE FIELD -->
 
               <!-- DISPLAY NAME -->
               <div class="field m-30-0-15-0">
@@ -161,11 +169,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import axiosUpload from "../services/axiosUpload";
-const STATUS_INITIAL = 0,
-  STATUS_SAVING = 1,
-  STATUS_SUCCESS = 2,
-  STATUS_FAILED = 3;
+import axiosBase from "../services/axiosBase";
 
 export default {
   data() {
@@ -173,12 +177,7 @@ export default {
       is_loading: true,
       is_error: false,
       errorMessage: "",
-      /* file up */
-      uploadedFile: null,
-      uploadError: null,
-      currentStatus: null,
-      uploadFieldName: "avatar",
-      /**/
+      avatarPic: null,
       profile: {
         display_name: "",
         avatar_path: "",
@@ -210,51 +209,41 @@ export default {
         params: { username: this.authenticatedUser.username }
       });
     },
-    saveAvatar(formData) {
-      this.currentStatus = STATUS_SAVING;
-      axiosUpload
-        .post(`/users/${this.authenticatedUser._key}/upload-avatar`, formData)
-        .then(uploaded => {
-          this.uploadedFile = uploaded;
-          this.profile.avatar_path = `/img/avatars/${uploaded.data.filename}`;
-          this.currentStatus = STATUS_SUCCESS;
-          console.log(uploaded);
-        })
-        .catch(err => {
-          console.log(JSON.stringify(err));
-          this.uploadError = err.response;
-          this.currentStatus = STATUS_FAILED;
-        });
+    async onFileSelected(event) {
+      console.log("# --- onFileSelected --- #");
+      console.log(event);
+      console.log("# ---------------------- #");
+      if (event.target.files.length > 0) {
+        this.avatarPic = event.target.files[0];
+      }
+      // return false;
     },
-    fileChange(fieldName, file) {
+    async uploadAvatar(event) {
+      console.log("uploadAvatar I was called");
+      if (event) event.preventDefault();
       const fd = new FormData();
-      if (!file) return;
-      fd.append(fieldName, file, file.name);
-      this.saveAvatar(fd);
-    },
-    resetAvatar() {
-      // reset form to initial state
-      this.currentStatus = STATUS_INITIAL;
-      this.uploadedFile = null;
-      this.uploadError = null;
+      fd.append("avatar", this.avatarPic, this.avatarPic.name);
+      const uploaded = await axiosBase.post(
+        `/users/${this.authenticatedUser._key}/upload-avatar`,
+        fd,
+        {
+          onUploadProgress: uploadEvent => {
+            console.log(
+              `Upload progress: ${Math.round(
+                (uploadEvent.loaded / uploadEvent.total) * 100
+              )}%`
+            );
+          }
+        }
+      );
+      this.profile.avatar_path = `/img/avatars/${uploaded.data.filename}`;
+      console.log(uploaded);
     }
   },
   computed: {
     ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),
     user: function() {
       return this.authenticatedUser;
-    },
-    isInitial() {
-      return this.currentStatus === STATUS_INITIAL;
-    },
-    isSaving() {
-      return this.currentStatus === STATUS_SAVING;
-    },
-    isSuccess() {
-      return this.currentStatus === STATUS_SUCCESS;
-    },
-    isFailed() {
-      return this.currentStatus === STATUS_FAILED;
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -284,11 +273,19 @@ export default {
     this.profile.about_me = this.getProfile.about_me;
     this.profile.inspiration = this.getProfile.inspiration;
     this.profile.location = this.getProfile.location;
-  },
-  mounted() {
-    this.resetAvatar();
   }
 };
+
+// ,
+//   {
+//     onUploadProgress: uploadEvent => {
+//       console.log(
+//         `Upload progress: ${Math.round(
+//           (uploadEvent.loaded / uploadEvent.total) * 100
+//         )}%`
+//       );
+//     }
+//   }
 </script>
 
 <style>
@@ -328,36 +325,5 @@ footer {
 /*************** errors  *************/
 .isError {
   color: red;
-}
-
-/************ File upload box *************/
-.dropbox {
-  outline: 2px dashed grey; /* the dash box */
-  /* outline-offset: -10px; */
-  background: #eee;
-  color: dimgray;
-  padding: 10px 10px;
-  min-height: 200px; /* minimum height */
-  width: 200px;
-  position: relative;
-  cursor: pointer;
-}
-
-.input-file {
-  opacity: 0; /* invisible but it's there! */
-  width: 100%;
-  height: 200px;
-  position: absolute;
-  cursor: pointer;
-}
-
-.dropbox:hover {
-  background: lightblue; /* when mouse over to the drop zone, change color */
-}
-
-.dropbox p {
-  font-size: 1em;
-  text-align: center;
-  padding: 50px 0;
 }
 </style>

@@ -34,9 +34,13 @@
             <p class="subtitle is-size-6">{{user.profile.intro}}</p>
 
             <!-- PIC -->
-            <figure class="image is-128x128" style="margin:30px 0 15px 0;">
-              <img src="/img/128x128.png" />
-            </figure>
+            <div style="margin:30px 0 15px 0;">
+              <img
+                :src="user.profile.avatar_path || '/img/128x128.png'"
+                width="200px"
+                height="200px"
+              />
+            </div>
             <!-- PIC -->
 
             <!-- ABOUT ME -->

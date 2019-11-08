@@ -1,8 +1,4 @@
-profile read
-profile edit checks pre flight in router
-generic errors page and redirects
-token renew
-validate email
-settings => ?
-pics upload
-
+generic errors page and redirects / or per page msg?
+validate email page
+avatar upload
+select location
