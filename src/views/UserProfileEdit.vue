@@ -22,28 +22,45 @@
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis
                 praesentium esse veritatis nemo!
               </p>
-              <!-- DROP BOX -->
-              <div v-if="isInitial || isSaving">
-                <div class="dropbox">
-                  <input
-                    type="file"
-                    :name="uploadFieldName"
-                    :disabled="isSaving"
-                    @change="fileChange($event.target.name, $event.target.files[0]);"
-                    accept="image/*"
-                    class="input-file"
-                  />
-                  <p v-if="isInitial">
-                    Drag your file here
-                    <br />or click to browse
-                  </p>
-                  <p v-if="isSaving">Uploading file...</p>
+              <!-- AVATAR -->
+              <div class="field m-30-0-15-0">
+                <label class="label is-marginless">Profile pic</label>
+                <p
+                  class="content is-small is-marginless pb-05"
+                >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</p>
+                <!-- DROP BOX -->
+                <div v-if="isInitial || isSaving">
+                  <div class="dropbox">
+                    <input
+                      type="file"
+                      :name="uploadFieldName"
+                      :disabled="isSaving"
+                      @change="fileChange($event.target.name, $event.target.files[0]);"
+                      accept="image/*"
+                      class="input-file"
+                    />
+                    <p v-if="isInitial">
+                      Drag your file here
+                      <br />or click to browse
+                    </p>
+                    <p v-if="isSaving">Uploading file...</p>
+                  </div>
                 </div>
+                <div v-if="isSuccess" width="200" height="200">
+                  <img :src="profile.avatar_path" width="200" height="200" />
+                  <p class="control">
+                    <button class="button is-small is-primary" @click.prevent="resetAvatar">Change</button>
+                    <button
+                      class="button is-small is-dark"
+                      style="margin-left:10px"
+                      @click.prevent="deleteAvatar"
+                    >Delete</button>
+                  </p>
+                </div>
+
+                <!-- END DROP BOX -->
               </div>
-              <div v-if="isSuccess">
-                <img :src="`/img/avatars/${uploadedFile.data.filename}`" width="200" height="200" />
-              </div>
-              <!-- END DROP BOX -->
+              <!-- END AVATAR -->
 
               <!-- DISPLAY NAME -->
               <div class="field m-30-0-15-0">
@@ -166,6 +183,7 @@ const STATUS_INITIAL = 0,
   STATUS_SAVING = 1,
   STATUS_SUCCESS = 2,
   STATUS_FAILED = 3;
+const AVATARS_BASE_URL = "http://localhost/images/avatars";
 
 export default {
   data() {
@@ -176,9 +194,12 @@ export default {
       /* file up */
       uploadedFile: null,
       uploadError: null,
+      uploadErrorMessage: "",
       currentStatus: null,
       uploadFieldName: "avatar",
       /**/
+      /* fetch avatars */
+      avatars_base_url: AVATARS_BASE_URL,
       profile: {
         display_name: "",
         avatar_path: "",
@@ -213,16 +234,41 @@ export default {
     saveAvatar(formData) {
       this.currentStatus = STATUS_SAVING;
       axiosUpload
-        .post(`/users/${this.authenticatedUser._key}/upload-avatar`, formData)
+        .post(`/users/${this.authenticatedUser._key}/upload-avatar`, formData, {
+          onUploadProgress: uploadEvent => {
+            console.log(
+              `UploadProgress: ${Math.round(
+                (uploadEvent.loaded / uploadEvent.total) * 100
+              )}%`
+            );
+          }
+        })
         .then(uploaded => {
           this.uploadedFile = uploaded;
-          this.profile.avatar_path = `/img/avatars/${uploaded.data.filename}`;
+          this.profile.avatar_path = `${AVATARS_BASE_URL}/${uploaded.data.filename}`;
           this.currentStatus = STATUS_SUCCESS;
           console.log(uploaded);
         })
         .catch(err => {
+          //////////////////////////////////////////////////////
+          // TODO client side verif size and type too
+          // Don't end up downloading 500 Megs files for nothing
+          //////////////////////////////////////////////////////
           console.log(JSON.stringify(err));
           this.uploadError = err.response;
+          // console.log(this.uploadError);
+          // console.log(this.uploadError.data);
+          console.log(this.uploadError.status === 400);
+          console.log(this.uploadError.data.error);
+          if (this.uploadError.status === 400) {
+            this.uploadErrorMessage = this.uploadError.data.error;
+          } else if ([401, 403].includes(this.uploadError.status)) {
+            // auth error
+            this.uploadErrorMessage = "AUTHENTICATION ERROR";
+          } else {
+            // Most probably 500
+            this.uploadErrorMessage = "SERVOR ERROR";
+          }
           this.currentStatus = STATUS_FAILED;
         });
     },
@@ -237,7 +283,8 @@ export default {
       this.currentStatus = STATUS_INITIAL;
       this.uploadedFile = null;
       this.uploadError = null;
-    }
+    },
+    deleteAvatar() {}
   },
   computed: {
     ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),

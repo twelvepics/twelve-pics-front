@@ -3,11 +3,14 @@ import store from '../store/store';
 
 const instance = axios.create({
     baseURL: 'http://localhost:3000',
-    // headers: { 'Content-Type': 'multipart/form-data' },
     headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'multipart/form-data',
         'Accept': 'application/json'
     },
+    // headers: {
+    //     'Content-Type': 'application/x-www-form-urlencoded',
+    //     'Accept': 'application/json'
+    // },
 })
 
 instance.interceptors.request.use(
