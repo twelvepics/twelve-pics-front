@@ -16,23 +16,22 @@
         <div class="card" v-if="!!user">
           <!-- CARD CONTENT -->
           <div class="card-content">
-            <div class="columns" style="margin-bottom:0;">
-              <div class="column is-10">
+            <div class="columns is-mobile" style="margin-bottom:0;">
+              <div class="column is-half">
                 <p class="title is-size-4">{{user.profile.display_name || user.username}}</p>
               </div>
-              <div v-if="showEditButton" class="column" style="margin:0;padding:0;">
-                <p class="has-text-right" style="padding:3px 5px 0 0;">
+              <div v-if="showEditButton" class="column is-half" style="margin:0;padding:0;">
+                <p class="has-text-right" style="padding:3px 5px 0 0">
                   <router-link
                     class="button is-primary"
                     id="profile-edit-btn"
-                    @click="openMessagingModal()"
                     :to="`/user/${authenticatedUser._key}/edit`"
                   >
                     <strong>Edit</strong>
                   </router-link>
                 </p>
               </div>
-              <div v-if="showMessageButton" class="column" style="margin:0; padding:0">
+              <div v-if="showMessageButton" class="column is-half" style="margin:0; padding:0;">
                 <p class="has-text-right" style="padding:3px 5px 0 0;">
                   <button class="button is-primary" @click.prevent="openMessageModal">Send message</button>
                 </p>
@@ -169,8 +168,8 @@
     <!-- Message composer modal -->
     <message-composer-modal
       :isActive="messageModalActive"
-      :username="user.profile.display_name || user.username"
-      :user_key="user._key"
+      :username="user && (user.profile.display_name || user.username)"
+      :user_key="user && user._key"
       @messageModalClosed="closeMessageModal"
     ></message-composer-modal>
 
