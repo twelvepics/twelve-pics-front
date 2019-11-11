@@ -51,7 +51,8 @@ export default new Router(
         components: {
           default: () => import(/* webpackChunkName: "user" */ './views/UserProfile.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
-        }
+        },
+        props: true
       },
       // edit user profile
       {
@@ -113,5 +114,9 @@ export default new Router(
       // email has been validated thank you page
       // error page -> unauthorized, server error etc...
 
-    ]
+    ],
+    // eslint-disable-next-line
+    scrollBehavior(to, from, savedPosition) {
+      return { x: 0, y: 0 }
+    }
   })

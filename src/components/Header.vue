@@ -102,9 +102,9 @@
             <router-link
               v-if="isAuthenticated"
               class="navbar-item"
-              :to="`/user/${authenticatedUser.username}`"
+              :to="{ name: 'user', params: { username: authenticatedUser.username }}"
               exact
-              active-class="is-active"
+              exact-active-class="is-active"
               @click.native="hideDropdown()"
             >
               <span class="fa-icon-pr7">
@@ -112,6 +112,7 @@
               </span>
               <span>My profile</span>
             </router-link>
+            <!-- SETTINGS LATER -->
             <!-- <router-link
               v-if="isAuthenticated"
               class="navbar-item"
@@ -125,6 +126,7 @@
               </span>
               <span>Settings</span>
             </router-link>-->
+            <!-- SETTINGS LATER -->
             <a v-if="isAuthenticated" class="navbar-item" @click.prevent="logout()">
               <span class="fa-icon-pr7">
                 <font-awesome-icon icon="sign-out-alt"></font-awesome-icon>
@@ -251,6 +253,15 @@ export default {
     async logout() {
       await this.$store.dispatch("logout");
       this.hideDropdown();
+      this.$router
+        .push({
+          name: "home"
+        })
+        .catch(err => {
+          if (err.name != "NavigationDuplicated") {
+            throw err;
+          }
+        });
     }
   },
   computed: {
