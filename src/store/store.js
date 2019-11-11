@@ -87,6 +87,12 @@ export default new Vuex.Store({
         localStorage.setItem('user', JSON.stringify(state.user));
       }
     },
+    setAvatar: (state, avatar_path) => {
+      if (state.user) {
+        state.user.profile.avatar_path = avatar_path;
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
     initialiseStore: state => {
       console.log("INITIALIZING STORE")
       console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
@@ -163,6 +169,18 @@ export default new Vuex.Store({
           profile
         })
         // console.log(update)
+      }
+    },
+    save_avatar: async ({ commit, getters }, avatar_path) => {
+      await commit('setAvatar', avatar_path);
+      // if user is authenticated update categories in db
+      if (getters.isAuthenticated) {
+        console.log('User is authenticated, saving avatar')
+        // eslint-disable-next-line
+        const update = await axiosBase.put(`users/${getters.authenticatedUser._key}/avatar`, {
+          avatar_path
+        })
+        console.log(update)
       }
     },
   },

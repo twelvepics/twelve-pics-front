@@ -26,27 +26,32 @@
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Profile pic</label>
                 <p
+                  v-if="isUploadFailed"
+                  class="content is-small is-marginless pb-05 isError"
+                >{{uploadErrorMessage}}</p>
+                <p
+                  v-else
                   class="content is-small is-marginless pb-05"
                 >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</p>
                 <!-- DROP BOX -->
-                <div v-if="isInitial || isSaving">
+                <div v-if="!hasPic && (isUploadInitial || isUploadSaving || isUploadFailed)">
                   <div class="dropbox">
                     <input
                       type="file"
                       :name="uploadFieldName"
-                      :disabled="isSaving"
+                      :disabled="isUploadSaving"
                       @change="fileChange($event.target.name, $event.target.files[0]);"
                       accept="image/*"
                       class="input-file"
                     />
-                    <p v-if="isInitial">
+                    <p v-if="!hasPic && (isUploadInitial || isUploadFailed)">
                       Drag your file here
                       <br />or click to browse
                     </p>
-                    <p v-if="isSaving">Uploading file...</p>
+                    <p v-if="isUploadSaving">Uploading file...</p>
                   </div>
                 </div>
-                <div v-if="isSuccess" width="200" height="200">
+                <div v-if="hasPic || isUploadSuccess" width="200" height="200">
                   <img :src="profile.avatar_path" width="200" height="200" />
                   <p class="control">
                     <button class="button is-small is-primary" @click.prevent="resetAvatar">Change</button>
@@ -179,10 +184,10 @@
 <script>
 import { mapGetters } from "vuex";
 import axiosUpload from "../services/axiosUpload";
-const STATUS_INITIAL = 0,
-  STATUS_SAVING = 1,
-  STATUS_SUCCESS = 2,
-  STATUS_FAILED = 3;
+const UPLOAD_STATUS_INITIAL = 0,
+  UPLOAD_STATUS_SAVING = 1,
+  UPLOAD_STATUS_SUCCESS = 2,
+  UPLOAD_STATUS_FAILED = 3;
 const AVATARS_BASE_URL = "http://localhost/images/avatars";
 
 export default {
@@ -195,7 +200,7 @@ export default {
       uploadedFile: null,
       uploadError: null,
       uploadErrorMessage: "",
-      currentStatus: null,
+      uploadCurrentStatus: null,
       uploadFieldName: "avatar",
       /**/
       /* fetch avatars */
@@ -231,77 +236,94 @@ export default {
         params: { username: this.authenticatedUser.username }
       });
     },
-    saveAvatar(formData) {
-      this.currentStatus = STATUS_SAVING;
-      axiosUpload
-        .post(`/users/${this.authenticatedUser._key}/upload-avatar`, formData, {
-          onUploadProgress: uploadEvent => {
-            console.log(
-              `UploadProgress: ${Math.round(
-                (uploadEvent.loaded / uploadEvent.total) * 100
-              )}%`
-            );
+    async saveAvatar(formData) {
+      this.uploadCurrentStatus = UPLOAD_STATUS_SAVING;
+      try {
+        const uploaded = await axiosUpload.post(
+          `/users/${this.authenticatedUser._key}/upload-avatar`,
+          formData,
+          {
+            onUploadProgress: uploadEvent => {
+              console.log(
+                `UploadProgress: ${Math.round(
+                  (uploadEvent.loaded / uploadEvent.total) * 100
+                )}%`
+              );
+            }
           }
-        })
-        .then(uploaded => {
-          this.uploadedFile = uploaded;
-          this.profile.avatar_path = `${AVATARS_BASE_URL}/${uploaded.data.filename}`;
-          this.currentStatus = STATUS_SUCCESS;
-          console.log(uploaded);
-        })
-        .catch(err => {
-          //////////////////////////////////////////////////////
-          // TODO client side verif size and type too
-          // Don't end up downloading 500 Megs files for nothing
-          //////////////////////////////////////////////////////
-          console.log(JSON.stringify(err));
-          this.uploadError = err.response;
-          // console.log(this.uploadError);
-          // console.log(this.uploadError.data);
-          console.log(this.uploadError.status === 400);
-          console.log(this.uploadError.data.error);
-          if (this.uploadError.status === 400) {
-            this.uploadErrorMessage = this.uploadError.data.error;
-          } else if ([401, 403].includes(this.uploadError.status)) {
-            // auth error
-            this.uploadErrorMessage = "AUTHENTICATION ERROR";
-          } else {
-            // Most probably 500
-            this.uploadErrorMessage = "SERVOR ERROR";
-          }
-          this.currentStatus = STATUS_FAILED;
-        });
+        );
+        this.uploadedFile = uploaded;
+        this.profile.avatar_path = `${AVATARS_BASE_URL}/${uploaded.data.filename}`;
+        this.uploadCurrentStatus = UPLOAD_STATUS_SUCCESS;
+        // TODO SAVE AVATAR TO DB
+        await this.$store.dispatch("save_avatar", this.profile.avatar_path);
+        console.log(uploaded);
+      } catch (err) {
+        //////////////////////////////////////////////////////
+        // TODO client side verif size and type too
+        // Don't end up downloading 500 Megs files for nothing
+        //////////////////////////////////////////////////////
+        console.log(JSON.stringify(err));
+        this.uploadError = err.response;
+        // console.log(this.uploadError);
+        // console.log(this.uploadError.data);
+        console.log(this.uploadError.status === 400);
+        console.log(this.uploadError.data.error);
+        if (this.uploadError.status === 400) {
+          this.uploadErrorMessage = this.uploadError.data.error;
+        } else if ([401, 403].includes(this.uploadError.status)) {
+          // auth error
+          this.uploadErrorMessage = "AUTHENTICATION ERROR";
+        } else {
+          // Most probably 500
+          this.uploadErrorMessage = "SERVOR ERROR";
+        }
+        this.uploadCurrentStatus = UPLOAD_STATUS_FAILED;
+      }
     },
     fileChange(fieldName, file) {
+      this.initAvatar();
       const fd = new FormData();
       if (!file) return;
       fd.append(fieldName, file, file.name);
       this.saveAvatar(fd);
     },
-    resetAvatar() {
+    initAvatar() {
       // reset form to initial state
-      this.currentStatus = STATUS_INITIAL;
+      this.uploadCurrentStatus = UPLOAD_STATUS_INITIAL;
       this.uploadedFile = null;
       this.uploadError = null;
     },
-    deleteAvatar() {}
+    resetAvatar() {
+      // reset form to initial state
+      this.initAvatar();
+      this.profile.avatar_path = "";
+    },
+    async deleteAvatar() {
+      this.resetAvatar();
+      await this.$store.dispatch("save_avatar", "");
+      // TODO SAVE TO DB AVATAR DELETED
+    }
   },
   computed: {
     ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),
     user: function() {
       return this.authenticatedUser;
     },
-    isInitial() {
-      return this.currentStatus === STATUS_INITIAL;
+    isUploadInitial() {
+      return this.uploadCurrentStatus === UPLOAD_STATUS_INITIAL;
     },
-    isSaving() {
-      return this.currentStatus === STATUS_SAVING;
+    isUploadSaving() {
+      return this.uploadCurrentStatus === UPLOAD_STATUS_SAVING;
     },
-    isSuccess() {
-      return this.currentStatus === STATUS_SUCCESS;
+    isUploadSuccess() {
+      return this.uploadCurrentStatus === UPLOAD_STATUS_SUCCESS;
     },
-    isFailed() {
-      return this.currentStatus === STATUS_FAILED;
+    isUploadFailed() {
+      return this.uploadCurrentStatus === UPLOAD_STATUS_FAILED;
+    },
+    hasPic() {
+      return !!this.profile.avatar_path;
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -333,7 +355,7 @@ export default {
     this.profile.location = this.getProfile.location;
   },
   mounted() {
-    this.resetAvatar();
+    this.initAvatar();
   }
 };
 </script>
