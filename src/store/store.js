@@ -93,7 +93,18 @@ export default new Vuex.Store({
         localStorage.setItem('user', JSON.stringify(state.user));
       }
     },
-    initialiseStore: state => {
+    // initialiseStore: (state) => {
+    //   console.log("INITIALIZING STORE")
+    //   console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
+    //   console.log("USER => " + JSON.parse(localStorage.getItem('user')));
+    //   if (localStorage.getItem('jwtToken')) {
+    //     state.jwtToken = localStorage.getItem('jwtToken');
+    //   }
+    //   if (localStorage.getItem('user')) {
+    //     state.user = JSON.parse(localStorage.getItem('user'));
+    //   }
+    // }
+    initialiseStore: (state) => {
       console.log("INITIALIZING STORE")
       console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
       console.log("USER => " + JSON.parse(localStorage.getItem('user')));

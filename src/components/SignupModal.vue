@@ -156,7 +156,7 @@ export default {
         repeatPassword: ""
       },
       apiErrors: null,
-      responseStatus: null,
+      // responseStatus: null,
       loading: false
     };
   },

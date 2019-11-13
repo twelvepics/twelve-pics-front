@@ -1,4 +1,10 @@
 generic errors page and redirects / or per page msg?
-validate email page
-avatar upload
+X finish user profile, including 
+    -> format textarea nl to br, 
+    -> including email confirm request, 
+    -> message user modal, 
+    -> email not confirmed flash
+X validate your email post creation message
+X validate email page
 select location
+delete user

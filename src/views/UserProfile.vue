@@ -169,7 +169,7 @@
     <message-composer-modal
       :isActive="messageModalActive"
       :username="user && (user.profile.display_name || user.username)"
-      :user_key="user && user._key"
+      :to_user_key="user && user._key"
       @messageModalClosed="closeMessageModal"
     ></message-composer-modal>
 
@@ -263,7 +263,7 @@ export default {
   async created() {
     try {
       const response = await axiosBase.get(`/users/${this.username}`);
-      // console.log(response);
+      // console.log(response.data.user);
       this.user = response.data.user;
       this.is_loading = false;
     } catch (e) {
