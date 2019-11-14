@@ -1,9 +1,38 @@
 <template>
+  <!-- me: authenticatedUser -->
+  <!-- other: user -->
+  <!-- TODO
+  format textareas
+  flash message email not confirmed
+  buttons disabled email not confirmed
+  Location-->
   <main>
     <!-- PROFILE COLUMN -->
     <div class="columns is-centered">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
+        <!-- EMAIL NOT CONFIRMED WARNINGS -->
+        <div
+          class="notification is-danger"
+          :class="{ hideWarning:  !showWarning}"
+          v-if="ICannotSendMessage"
+        >
+          <button class="delete" @click.prevent="dismissWarning"></button>
+          <span v-if="!confirmEmailSent">
+            In order to send messages to other users of the site, you need to confirm your email address.
+            <a
+              @click.prevent="sendConfirmEmail"
+            >Resend confirmation email</a>
+          </span>
+          <span
+            v-else
+          >An email has been sent to you. Please click on the link in it to confirm your email address.</span>
+          <br />
+        </div>
+        <div v-else-if="userCannotReceiveMessage" class="notification is-warning">
+          <b>{{authenticatedUser && user && (user.profile.display_name || user.username)}}</b> did not confirm his email address. You cannot message him. Sorry.
+        </div>
+        <!-- END EMAIL NOT CONFIRMED WARNINGS -->
         <!-- START PROFILE -->
         <div
           class="card"
@@ -33,15 +62,18 @@
               </div>
               <div v-if="showMessageButton" class="column is-half" style="margin:0; padding:0;">
                 <p class="has-text-right" style="padding:3px 5px 0 0;">
-                  <button class="button is-primary" @click.prevent="openMessageModal">Send message</button>
+                  <button
+                    class="button is-primary"
+                    @click.prevent="openMessageModal"
+                    :disabled="!messagingEnabled"
+                  >Send message</button>
                 </p>
               </div>
             </div>
             <div v-if="profileIsEmpty">
-              <p
-                class="subtitle is-size-6"
-                v-html="`<b>${user.username}</b> did not fill his profile yet`"
-              ></p>
+              <p class="subtitle is-size-6">
+                <b>{{user.username}}</b> did not fill his profile yet
+              </p>
             </div>
             <div v-else>
               <!-- START PROFILE ITEMS -->
@@ -54,16 +86,16 @@
               <!-- PIC -->
 
               <!-- ABOUT ME -->
-              <div class="field m-30-0-15-0">
+              <div class="field m-30-0-15-0 ta-html">
                 <h5 class="has-text-weight-semibold is-2">A few worlds about me</h5>
-                <p class="is-size-6">{{user.profile.about_me}}</p>
+                <p class="is-size-6" v-html="nl2p(user.profile.about_me)"></p>
               </div>
               <!-- ABOUT ME -->
 
               <!-- TECH STUFF -->
-              <div class="field m-30-0-15-0">
+              <div class="field m-30-0-15-0 ta-html">
                 <h5 class="has-text-weight-semibold is-2">Gear, technique, inspiration</h5>
-                <p class="is-size-6">{{user.profile.inspiration}}</p>
+                <p class="is-size-6" v-html="nl2p(user.profile.inspiration)"></p>
               </div>
               <!-- TECH STUFF -->
 
@@ -208,7 +240,10 @@ export default {
       errorMessage: "",
       is_debug: true,
       //-- messaging --
-      messageModalActive: false
+      messageModalActive: false,
+      //-- warnings --
+      showWarning: true,
+      confirmEmailSent: false
     };
   },
   components: {
@@ -222,11 +257,47 @@ export default {
     closeMessageModal() {
       unlockBgScroll();
       this.messageModalActive = false;
+    },
+    dismissWarning() {
+      this.showWarning = false;
+    },
+    async sendConfirmEmail() {
+      const response = await axiosBase.post(
+        `/users/${this.authenticatedUser._key}/send-confirm-email`
+      );
+      this.confirmEmailSent = true;
+      console.log(response);
+    },
+    nl2p: function(str) {
+      return str.replace(/(?:\r\n|\r|\n)/g, "<br>");
     }
   },
   computed: {
     ...mapGetters(["isAuthenticated", "authenticatedUser"]),
-
+    messagingEnabled: function() {
+      return (
+        this.isAuthenticated &&
+        this.authenticatedUser.email_confirmed &&
+        this.user &&
+        this.user.email_confirmed
+      );
+    },
+    ICannotSendMessage: function() {
+      return (
+        this.authenticatedUser &&
+        this.user &&
+        !this.authenticatedUser.email_confirmed &&
+        this.user._key != this.authenticatedUser._key
+      );
+    },
+    userCannotReceiveMessage: function() {
+      return (
+        this.authenticatedUser &&
+        this.user &&
+        !this.user.email_confirmed &&
+        this.user._key != this.authenticatedUser._key
+      );
+    },
     username: function() {
       return this.$route.params.username;
     },
@@ -334,59 +405,6 @@ export default {
     }
   }
 };
-
-///////////////////////////////////////////////////////////////////
-// test networked conds
-///////////////////////////////////////////////////////////////////
-// setTimeout(async () => {
-//   try {
-//     const response = await axiosBase.get(`/users/${this.username}`);
-//     console.log(response);
-//     this.user = response.data.user;
-//     this.is_loading = false;
-//   } catch (e) {
-//     console.log(e.response);
-//     console.log(e.response.status);
-//     console.log(e.response.data.error);
-//     this.is_loading = false;
-//     this.is_error = true;
-//     if (e.response.status === 404) {
-//       this.errorMessage = "USER NOT FOUND";
-//     } else {
-//       // Most probably a 500
-//       this.errorMessage = "SERVER ERROR";
-//     }
-//   }
-// }, 500);
-
-/////////////////////////////////////////////////////////////////////
-// watch route // works not use out func or then
-/////////////////////////////////////////////////////////////////////
-
-// watch: {
-//   $route(to, from) {
-//     // react to route changes...
-//     console.log("#--- BEFORE ROUTE UPDATE --#");
-//     console.log(to.params.username);
-//     try {
-//       const response = async axiosBase.get(`/users/${to.params.username}`);
-//       // console.log(response);
-//       this.user = response.data.user;
-//       this.is_loading = false;
-//       this.is_error = false;
-//     } catch (e) {
-//       this.is_loading = false;
-//       this.is_error = true;
-//       this.user = null;
-//       if (e.response.status === 404) {
-//         this.errorMessage = "USER NOT FOUND";
-//       } else {
-//         // Most probably a 500
-//         this.errorMessage = "SERVER ERROR";
-//       }
-//     }
-//   }
-// }
 </script>
 
 
@@ -449,5 +467,16 @@ footer {
   100% {
     transform: rotate(360deg);
   }
+}
+/***************** warnings **************/
+.hideWarning {
+  display: none;
+}
+
+/****************** v-html ***********/
+div.ta-html br {
+  display: block;
+  margin-top: 2px;
+  content: " ";
 }
 </style>

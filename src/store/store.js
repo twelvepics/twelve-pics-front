@@ -171,15 +171,21 @@ export default new Vuex.Store({
       }
     },
     save_profile: async ({ commit, getters }, profile) => {
-      await commit('setProfile', profile);
       // if user is authenticated update categories in db
       if (getters.isAuthenticated) {
         console.log('User is authenticated, saving profile')
         // eslint-disable-next-line
-        const update = await axiosBase.put(`users/${getters.authenticatedUser._key}`, {
+        const updated = await axiosBase.put(`users/${getters.authenticatedUser._key}`, {
           profile
         })
+        const newProfile = updated.data.user.profile
         // console.log(update)
+        // refetch user with sanitized profile
+        // update local user
+        // console.log('---');
+        console.log(newProfile);
+        // console.log('---');
+        await commit('setProfile', newProfile);
       }
     },
     save_avatar: async ({ commit, getters }, avatar_path) => {
