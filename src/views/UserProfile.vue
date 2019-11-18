@@ -95,7 +95,9 @@
               <div class="field m-30-0-15-0">
                 <h5 class="has-text-weight-semibold is-2">
                   My location:
-                  <span class="is-size-6 has-text-weight-normal">TODO</span>
+                  <span
+                    class="is-size-6 has-text-weight-normal"
+                  >{{user.profile.location.place_name}}</span>
                 </h5>
               </div>
               <!-- LOCATION -->
@@ -330,7 +332,7 @@ export default {
         !p.intro &&
         !p.about_me &&
         !p.inspiration &&
-        !p.location.place
+        !p.location.place_name
       ) {
         return true;
       }

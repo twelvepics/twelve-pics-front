@@ -147,7 +147,7 @@
                     autocomplete="off"
                     class="input"
                     type="text"
-                    v-model="profile.location.place"
+                    v-model="profile.location.place_name"
                     placeholder="Type on and select your location"
                     list="locations"
                     @input="searchLocation"
@@ -229,7 +229,9 @@ export default {
       },
       /* location */
       mapboxOptions: [],
-      selectedLocation: ""
+      deepMapboxOptions: [],
+      selectedLocationPlace: "",
+      selectedLocationObj: null
     };
   },
 
@@ -336,6 +338,7 @@ export default {
           );
           // console.log(foundLocations);
           this.mapboxOptions = foundLocations.data.found;
+          this.deepMapboxOptions = foundLocations.data.found;
         } catch (err) {
           console.log(err);
         }
@@ -343,10 +346,21 @@ export default {
         this.mapboxOptions = [];
       }
     },
-    setSelectedSelection(e) {
-      console.log("# -- loc selected --#");
-      console.log(e);
-      this.selectedLocation = e.target.value;
+    async setSelectedSelection(e) {
+      // console.log(e);
+      this.selectedLocationPlace = e.target.value;
+      this.selectedLocationObj = await this.deepMapboxOptions.filter(l => {
+        return l.place_name == this.selectedLocationPlace;
+      });
+      // console.log("# -- loc selected --#");
+      // console.log(this.deepMapboxOptions);
+      // console.log(this.selectedLocationPlace);
+      // console.log(this.selectedLocationObj);
+      // console.log("# -- end loc selected --#");
+      if (this.selectedLocationObj.length > 0) {
+        this.profile.location = this.selectedLocationObj[0];
+      }
+      // console.log(this.profile.location);
       this.mapboxOptions = [];
     }
   },
