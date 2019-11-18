@@ -329,39 +329,58 @@ export default {
       // console.log(e.target.value);
       // console.log(e.target.value.length);
       // this.mapboxOptions = [];
-      if (e.target.value.length > 1 && e.inputType === "insertText") {
-        try {
+      try {
+        if (e.target.value.length > 1 && e.inputType === "insertText") {
+          console.log("@@@");
           const foundLocations = await axiosBase.get(
             `/users/${
               this.authenticatedUser._key
             }/locate?location=${encodeURIComponent(e.target.value)}`
           );
+          console.log("@@@");
           // console.log(foundLocations);
           this.mapboxOptions = foundLocations.data.found;
           this.deepMapboxOptions = foundLocations.data.found;
-        } catch (err) {
-          console.log(err);
+        } else {
+          this.mapboxOptions = [];
         }
-      } else {
-        this.mapboxOptions = [];
+      } catch (err) {
+        // DO WHAT?
+        console.log("++++");
+        console.log(err.response);
+        console.log(err.response.status);
+        console.log(err.response.statusText);
+        console.log(err.response.data.errorType);
+        console.log(err.response.data.error);
+        // console.log("++++");
       }
     },
     async setSelectedSelection(e) {
-      // console.log(e);
-      this.selectedLocationPlace = e.target.value;
-      this.selectedLocationObj = await this.deepMapboxOptions.filter(l => {
-        return l.place_name == this.selectedLocationPlace;
-      });
-      // console.log("# -- loc selected --#");
-      // console.log(this.deepMapboxOptions);
-      // console.log(this.selectedLocationPlace);
-      // console.log(this.selectedLocationObj);
-      // console.log("# -- end loc selected --#");
-      if (this.selectedLocationObj.length > 0) {
-        this.profile.location = this.selectedLocationObj[0];
+      try {
+        // console.log(e);
+        this.selectedLocationPlace = e.target.value;
+        this.selectedLocationObj = await this.deepMapboxOptions.filter(l => {
+          return l.place_name == this.selectedLocationPlace;
+        });
+        // console.log("# -- loc selected --#");
+        // console.log(this.deepMapboxOptions);
+        // console.log(this.selectedLocationPlace);
+        // console.log(this.selectedLocationObj);
+        // console.log("# -- end loc selected --#");
+        if (this.selectedLocationObj.length > 0) {
+          this.profile.location = this.selectedLocationObj[0];
+        } else {
+          this.profile.location = {
+            place_name: e.target.value,
+            latitude: null,
+            longitude: null
+          };
+        }
+        // console.log(this.profile.location);
+        this.mapboxOptions = [];
+      } catch (e) {
+        console.log(e);
       }
-      // console.log(this.profile.location);
-      this.mapboxOptions = [];
     }
   },
   computed: {
