@@ -93,6 +93,12 @@ export default new Vuex.Store({
         localStorage.setItem('user', JSON.stringify(state.user));
       }
     },
+    setEmailConfirmed: (state) => {
+      if (state.user) {
+        state.user.email_confirmed = true;
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
     // initialiseStore: (state) => {
     //   console.log("INITIALIZING STORE")
     //   console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));

@@ -139,9 +139,16 @@ export default {
       topMessage: "Verifying request..."
     };
   },
-  async created() {
+  /*
+    https://forum.vuejs.org/t/cant-get-created-hook-to-work-when-its-async/28604/4
+    Yes, created is exectued synchonously, but it can still contain asynchonous code
+    Vue just won’t wait for it to finish, wether or not w use async-await, Promises or something else.
+    But if you want to use await inside of created, then adding the async keyword is required and will work fine.
+  */
+  // tested with timeout OK
+  created() {
     console.log("CREATED");
-    await this.checkRequestValid();
+    this.checkRequestValid();
   },
   computed: {
     reset_id: function() {

@@ -1,7 +1,13 @@
 generic errors page and redirects / or per page msg?
 X finish user profile, including 
     Make a check
-X validate your email post creation message
-X validate email page
 select location
 delete user
+
+// UI TODO NOT URGENT
+modal recover password: sending/loading make spinner in button and disable it (all modals)
+view profile spinner replace with an Overlay, the jumpy may be ugly (Not so sure)
+profile add website and all social stuff
+confirm email post create user
+
+

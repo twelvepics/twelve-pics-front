@@ -1,23 +1,11 @@
 <template>
-  <!-- me: authenticatedUser -->
-  <!-- other: user -->
-  <!-- TODO
-  format textareas
-  flash message email not confirmed
-  buttons disabled email not confirmed
-  Location-->
   <main>
     <!-- PROFILE COLUMN -->
     <div class="columns is-centered">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
         <!-- EMAIL NOT CONFIRMED WARNINGS -->
-        <div
-          class="notification is-danger"
-          :class="{ hideWarning:  !showWarning}"
-          v-if="ICannotSendMessage"
-        >
-          <button class="delete" @click.prevent="dismissWarning"></button>
+        <div class="notification is-warning" v-if="ICannotSendMessage && !is_loading">
           <span v-if="!confirmEmailSent">
             In order to send messages to other users of the site, you need to confirm your email address.
             <a
@@ -29,7 +17,7 @@
           >An email has been sent to you. Please click on the link in it to confirm your email address.</span>
           <br />
         </div>
-        <div v-else-if="userCannotReceiveMessage" class="notification is-warning">
+        <div v-else-if="userCannotReceiveMessage  && !is_loading" class="notification is-warning">
           <b>{{authenticatedUser && user && (user.profile.display_name || user.username)}}</b> did not confirm his email address. You cannot message him. Sorry.
         </div>
         <!-- END EMAIL NOT CONFIRMED WARNINGS -->
@@ -37,12 +25,16 @@
         <div
           class="card"
           v-if="is_loading || is_error"
-          style="text-align:center;height:60px;padding-top:10px;"
+          style="text-align:center;height:60px;padding-top:10px;margin-bottom:10px"
         >
-          <div v-if="is_error" class="isError" style="margin-top:7px;">{{ errorMessage }}</div>
+          <div
+            v-if="is_error && !is_loading"
+            class="isError"
+            style="margin-top:7px;"
+          >{{ errorMessage }}</div>
           <div v-if="is_loading" class="loader" style="margin:auto;"></div>
         </div>
-        <div class="card" v-if="!!user">
+        <div class="card" v-if="!!user && !is_loading">
           <!-- CARD CONTENT -->
           <div class="card-content">
             <div class="columns is-mobile" style="margin-bottom:0;">
@@ -72,7 +64,7 @@
             </div>
             <div v-if="profileIsEmpty">
               <p class="subtitle is-size-6">
-                <b>{{user.username}}</b> did not fill his profile yet
+                <b>{{user.username}}</b> did not fill his profile yet.
               </p>
             </div>
             <div v-else>
@@ -118,11 +110,11 @@
     <!-- ENDS PROFILE COLUMN -->
 
     <!-- STORIES COLUMN -->
-    <div class="columns is-centered">
+    <div class="columns is-centered" v-if="!!user && !is_loading">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
         <!-- START STORIES -->
-        <div class="card" v-if="!!user && !is_error">
+        <div class="card">
           <!-- CARD CONTENT -->
           <div class="card-content">
             <p class="title is-size-4">Alain's stories</p>
@@ -242,7 +234,6 @@ export default {
       //-- messaging --
       messageModalActive: false,
       //-- warnings --
-      showWarning: true,
       confirmEmailSent: false
     };
   },
@@ -258,9 +249,6 @@ export default {
       unlockBgScroll();
       this.messageModalActive = false;
     },
-    dismissWarning() {
-      this.showWarning = false;
-    },
     async sendConfirmEmail() {
       const response = await axiosBase.post(
         `/users/${this.authenticatedUser._key}/send-confirm-email`
@@ -270,6 +258,24 @@ export default {
     },
     nl2p: function(str) {
       return str.replace(/(?:\r\n|\r|\n)/g, "<br>");
+    },
+    async fetchData() {
+      try {
+        // await new Promise(resolve => setTimeout(resolve, 1000));
+        const response = await axiosBase.get(`/users/${this.username}`);
+        // console.log(response.data.user);
+        this.user = response.data.user;
+        this.is_loading = false;
+      } catch (e) {
+        this.is_loading = false;
+        this.is_error = true;
+        if (e.response.status === 404) {
+          this.errorMessage = "USER NOT FOUND";
+        } else {
+          // Most probably a 500
+          this.errorMessage = "SERVER ERROR";
+        }
+      }
     }
   },
   computed: {
@@ -324,29 +330,22 @@ export default {
         !p.intro &&
         !p.about_me &&
         !p.inspiration &&
-        p.location.has_location === false
+        !p.location.place
       ) {
         return true;
       }
       return false;
     }
   },
-  async created() {
-    try {
-      const response = await axiosBase.get(`/users/${this.username}`);
-      // console.log(response.data.user);
-      this.user = response.data.user;
-      this.is_loading = false;
-    } catch (e) {
-      this.is_loading = false;
-      this.is_error = true;
-      if (e.response.status === 404) {
-        this.errorMessage = "USER NOT FOUND";
-      } else {
-        // Most probably a 500
-        this.errorMessage = "SERVER ERROR";
-      }
-    }
+  /*
+    https://forum.vuejs.org/t/cant-get-created-hook-to-work-when-its-async/28604/4
+    Yes, created is exectued synchonously, but it can still contain asynchonous code
+    Vue just won’t wait for it to finish, wether or not w use async-await, Promises or something else.
+    But if you want to use await inside of created, then adding the async keyword is required and will work fine.
+  */
+  // tested with timeout ok but ugly - refacor
+  created() {
+    this.fetchData();
   },
   ////////////////////////////////////////////////////////////
   // Almost idem below but fucks up on 404
@@ -383,6 +382,8 @@ export default {
       // react to route changes...
       console.log("#--- BEFORE ROUTE UPDATE --#");
       console.log(to.params.username);
+      this.is_loading = true;
+      this.confirmEmailSent = false;
       axiosBase
         .get(`/users/${to.params.username}`)
         .then(response => {
@@ -469,9 +470,6 @@ footer {
   }
 }
 /***************** warnings **************/
-.hideWarning {
-  display: none;
-}
 
 /****************** v-html ***********/
 div.ta-html br {

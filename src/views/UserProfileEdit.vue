@@ -144,11 +144,25 @@
                 >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</p>
                 <div class="control" style="max-width: 500px;">
                   <input
+                    autocomplete="off"
                     class="input"
                     type="text"
-                    v-model="profile.location"
-                    placeholder="My location (Optional)"
+                    v-model="profile.location.place"
+                    placeholder="Type on and select your location"
+                    list="locations"
+                    @input="searchLocation"
+                    @change="setSelectedSelection"
+                    @keydown.enter.prevent
                   />
+                  <datalist id="locations">
+                    <select>
+                      <option
+                        v-for="(option, idx) in mapboxOptions"
+                        :value="option.place_name"
+                        :key="idx"
+                      ></option>
+                    </select>
+                  </datalist>
                 </div>
               </div>
               <!-- LOCATION -->
@@ -184,6 +198,7 @@
 <script>
 import { mapGetters } from "vuex";
 import axiosUpload from "../services/axiosUpload";
+import axiosBase from "../services/axiosBase";
 const UPLOAD_STATUS_INITIAL = 0,
   UPLOAD_STATUS_SAVING = 1,
   UPLOAD_STATUS_SUCCESS = 2,
@@ -202,7 +217,6 @@ export default {
       uploadErrorMessage: "",
       uploadCurrentStatus: null,
       uploadFieldName: "avatar",
-      /**/
       /* fetch avatars */
       avatars_base_url: AVATARS_BASE_URL,
       profile: {
@@ -212,7 +226,10 @@ export default {
         about_me: "",
         inspiration: "",
         location: {}
-      }
+      },
+      /* location */
+      mapboxOptions: [],
+      selectedLocation: ""
     };
   },
 
@@ -303,6 +320,34 @@ export default {
       this.resetAvatar();
       await this.$store.dispatch("save_avatar", "");
       // TODO SAVE TO DB AVATAR DELETED
+    },
+    async searchLocation(e) {
+      // console.log(e);
+      // // console.log(e instanceof InputEvent);
+      // console.log(e.target.value);
+      // console.log(e.target.value.length);
+      // this.mapboxOptions = [];
+      if (e.target.value.length > 1 && e.inputType === "insertText") {
+        try {
+          const foundLocations = await axiosBase.get(
+            `/users/${
+              this.authenticatedUser._key
+            }/locate?location=${encodeURIComponent(e.target.value)}`
+          );
+          // console.log(foundLocations);
+          this.mapboxOptions = foundLocations.data.found;
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        this.mapboxOptions = [];
+      }
+    },
+    setSelectedSelection(e) {
+      console.log("# -- loc selected --#");
+      console.log(e);
+      this.selectedLocation = e.target.value;
+      this.mapboxOptions = [];
     }
   },
   computed: {

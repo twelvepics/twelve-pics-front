@@ -104,8 +104,8 @@ export default {
   },
   props: ["isActive"],
   methods: {
-    closeLoginModal(e) {
-      console.log(e);
+    closeLoginModal() {
+      // console.log(e);
       this.resetForm();
       this.$emit("loginModalClosed", this.isActive);
     },

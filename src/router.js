@@ -77,10 +77,10 @@ export default new Router(
         path: '/contact',
         name: 'contact',
         // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
+        // this generates a separate chunk (contact.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         components: {
-          default: () => import(/* webpackChunkName: "about" */ './views/Contact.vue'),
+          default: () => import(/* webpackChunkName: "contact" */ './views/Contact.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },
@@ -101,18 +101,29 @@ export default new Router(
         path: '/auth/recoverPassword/:reset_id',
         name: 'recoverPassword',
         // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
+        // this generates a separate chunk (recover-password.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         components: {
-          default: () => import(/* webpackChunkName: "about" */ './views/RecoverPassword.vue'),
+          default: () => import(/* webpackChunkName: "recover-password" */ './views/RecoverPassword.vue'),
+          footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
+        }
+      },
+      // validate email feedback
+      {
+        path: '/validate-email/:validate_id',
+        name: 'validateEmail',
+        // route level code-splitting
+        // this generates a separate chunk (validate-email.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        components: {
+          default: () => import(/* webpackChunkName: "validate-email" */ './views/ValidateEmail.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },
 
       // TODO
-      // recover / new password page
-      // email has been validated thank you page
-      // error page -> unauthorized, server error etc...
+      // error page? -> unauthorized, server error etc...
+      // generic slotted page?
 
     ],
     // eslint-disable-next-line
