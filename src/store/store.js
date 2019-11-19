@@ -16,7 +16,8 @@ export default new Vuex.Store({
     storyComponentMounted: false,
     jwtToken: null, // localStorage.getItem('token'),
     user: null, // JSON.parse(localStorage.getItem('user')),
-    categories: ['documentary', 'stillLife', 'wildLife', 'wedding', 'travel', 'dailyLife', 'fineArt', 'portrait', 'sport', 'architecture', 'streetPhotography']
+    categories: ['documentary', 'stillLife', 'wildLife', 'wedding', 'travel', 'dailyLife', 'fineArt', 'portrait', 'sport', 'architecture', 'streetPhotography'],
+    userInited: false
   },
   getters: {
     isStoryComponentMounted: state => {
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     isAuthenticated: state => {
       return state.jwtToken != null;
+    },
+    isUserInited: state => {
+      return state.userInited;
     },
     authenticatedUser: state => {
       return state.user;
@@ -35,15 +39,15 @@ export default new Vuex.Store({
       // console.log("GET CATEGORIES STATE IS AUTH " + getters.isAuthenticated)
       // console.log("GET CATEGORIES GET AUTH USER " + getters.authenticatedUser)
       if (getters.isAuthenticated) {
-        console.log(`CATEGORIES ${state.user.categories}`)
+        console.log(`CATEGORIES ${state.user.categories}`);
         return state.user.categories;
       } else {
         return state.categories;
       }
     },
     getProfile: (state, getters) => {
-      // console.log("GET PROFILE STATE IS AUTH " + getters.isAuthenticated)
-      // console.log("GET PROFILE GET AUTH USER " + getters.authenticatedUser)
+      console.log("GET PROFILE STATE IS AUTH " + getters.isAuthenticated)
+      console.log("GET PROFILE GET AUTH USER " + getters.authenticatedUser)
       if (getters.isAuthenticated) {
         return state.user.profile;
       } else {
@@ -68,8 +72,9 @@ export default new Vuex.Store({
       state.jwtToken = userData.token;
       state.user = userData.user;
     },
-    userRefreshState: (state, userData) => {
+    initUserState: (state, userData) => {
       state.user = userData.user;
+      state.userInited = true;
     },
     clearAuthData: state => {
       state.jwtToken = null;
@@ -104,8 +109,8 @@ export default new Vuex.Store({
     },
     initialiseStore: (state) => {
       console.log("INITIALIZING STORE")
-      console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
-      console.log("USER => " + JSON.parse(localStorage.getItem('user')));
+      // console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
+      // console.log("USER => " + JSON.parse(localStorage.getItem('user')));
       if (localStorage.getItem('jwtToken')) {
         state.jwtToken = localStorage.getItem('jwtToken');
       }
@@ -115,6 +120,9 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    ///////////////////////////////////////////////////////////////////
+    // SETS an userRefreshDone in data too
+    ///////////////////////////////////////////////////////////////////
     refreshUser: async ({ commit, getters }) => {
       //////////////////////////////////////////////////////////////
       // refetch user in case he was updated from smwhere else
@@ -122,12 +130,12 @@ export default new Vuex.Store({
       if (getters.isAuthenticated) {
         console.log("REFRESHING USER")
         const user_key = getters.authenticatedUser._key
-        console.log(user_key)
+        // console.log(user_key)
         const user = await axiosBase.get(`users/${user_key}`);
         const user_data = user.data;
-        console.log(user_data)
+        // console.log(user_data)
         localStorage.setItem('user', JSON.stringify(user_data.user));
-        commit('userRefreshState', user_data);
+        commit('initUserState', user_data);
       }
     },
     setStoryComponentMounted: ({ commit }, payload) => {

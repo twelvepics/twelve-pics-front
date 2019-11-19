@@ -265,6 +265,7 @@
                     <br />
                     <router-link :to="{ name: 'user', params: { username: 'emptou' } }">Emptou</router-link>
                     <br />
+                    <router-link :to="{ name: 'testInit' }">Test init page</router-link>
                 </div>
             </div>
         </div>
@@ -397,7 +398,7 @@ export default {
     Vue just won’t wait for it to finish, wether or not w use async-await, Promises or something else.
     But if you want to use await inside of created, then adding the async keyword is required and will work fine.
   */
-    // tested with timeout ok but ugly - refacor
+    // tested with timeout ok but ugly - refactor
     created() {
         this.fetchData();
     },
