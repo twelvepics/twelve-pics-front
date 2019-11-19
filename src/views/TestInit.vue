@@ -2,8 +2,8 @@
     <div class="test">
         <p>Test init</p>
         <p>isAuthenticated: {{ isAuthenticated }}</p>
-        <p>user: {{ authenticatedUser.username }}</p>
-        <p>display name: {{ authenticatedUser.profile.display_name }}</p>
+        <p>user: {{ authenticatedUser && authenticatedUser.username }}</p>
+        <p>display name: {{ authenticatedUser && authenticatedUser.profile.display_name }}</p>
         <p>isUserInited: {{ isUserInited }}</p>
         <p v-if="isUserInited">I am refreshed</p>
         <p><input type="text" v-model="test" />{{ test }}</p>
@@ -25,8 +25,8 @@ export default {
     },
     methods: {
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        // if isUserInited => normal flow all has been inited before, proper data is fetched by created
         // if !isUserInited => first load or reload, await for updated event to fetch proper data
-        // isUserInited => normal floa all has been inited before, proper data is fetched by created
         ///////////////////////////////////////////////////////////////////////////////////////////////
         getData(by) {
             if (this.isUserInited) {
@@ -51,6 +51,8 @@ export default {
     updated() {
         console.log("UPDATED");
         if (!this.userLoaded) {
+            // created returned without calling getData because user was not refreshed yet
+            // !!! works perfect even if updated called for another reason
             console.log("UPDATED CALLED REFRESH");
             this.getData("updated");
         }

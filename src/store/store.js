@@ -71,6 +71,7 @@ export default new Vuex.Store({
     userToState: (state, userData) => {
       state.jwtToken = userData.token;
       state.user = userData.user;
+      state.userInited = true;
     },
     initUserState: (state, userData) => {
       state.user = userData.user;
@@ -81,6 +82,7 @@ export default new Vuex.Store({
       state.user = null;
       localStorage.removeItem('jwtToken');
       localStorage.removeItem('user');
+      state.userInited = false;
     },
     setCategories: (state, categories) => {
       if (state.user) {
