@@ -21,6 +21,8 @@ new Vue({
   // mediaQueries,
   beforeCreate() {
     this.$store.commit('initialiseStore');
+    this.$store.dispatch('refreshUser');
+
   },
   render: h => h(App)
 }).$mount('#app')

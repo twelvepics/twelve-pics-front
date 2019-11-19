@@ -68,6 +68,9 @@ export default new Vuex.Store({
       state.jwtToken = userData.token;
       state.user = userData.user;
     },
+    userRefreshState: (state, userData) => {
+      state.user = userData.user;
+    },
     clearAuthData: state => {
       state.jwtToken = null;
       state.user = null;
@@ -99,17 +102,6 @@ export default new Vuex.Store({
         localStorage.setItem('user', JSON.stringify(state.user));
       }
     },
-    // initialiseStore: (state) => {
-    //   console.log("INITIALIZING STORE")
-    //   console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
-    //   console.log("USER => " + JSON.parse(localStorage.getItem('user')));
-    //   if (localStorage.getItem('jwtToken')) {
-    //     state.jwtToken = localStorage.getItem('jwtToken');
-    //   }
-    //   if (localStorage.getItem('user')) {
-    //     state.user = JSON.parse(localStorage.getItem('user'));
-    //   }
-    // }
     initialiseStore: (state) => {
       console.log("INITIALIZING STORE")
       console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
@@ -123,6 +115,21 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    refreshUser: async ({ commit, getters }) => {
+      //////////////////////////////////////////////////////////////
+      // refetch user in case he was updated from smwhere else
+      //////////////////////////////////////////////////////////////
+      if (getters.isAuthenticated) {
+        console.log("REFRESHING USER")
+        const user_key = getters.authenticatedUser._key
+        console.log(user_key)
+        const user = await axiosBase.get(`users/${user_key}`);
+        const user_data = user.data;
+        console.log(user_data)
+        localStorage.setItem('user', JSON.stringify(user_data.user));
+        commit('userRefreshState', user_data);
+      }
+    },
     setStoryComponentMounted: ({ commit }, payload) => {
       commit('setStoryComponentMounted', payload);
     },

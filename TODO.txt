@@ -1,6 +1,9 @@
 generic errors page and redirects / or per page msg?
 X finish user profile, including 
     Make a check
+    cs/ss validation, avatar too
+    social links: website twitter facebook flickr Instagram
+    rotate pic button
 select location
 delete user
 
