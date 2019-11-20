@@ -13,6 +13,17 @@
                     <!-- CARD CONTENT -->
                     <div class="card-content">
                         <form @submit.prevent="onSubmit">
+                            <div v-if="is_api_error" class="isError" style="text-align:center;margin-bottom:12px;">
+                                <div v-if="apiErrorType == 'UPDATE ERROR'">
+                                    <p><b>VALIDATIONS ERRORS</b></p>
+                                    <ul id="apiErrors">
+                                        <li v-for="(k, v, idx) in apiErrors" :key="idx">{{ k | cleanApiError }}</li>
+                                    </ul>
+                                </div>
+                                <div v-else>
+                                    SERVER ERROR, SORRY. TRY AGAIN LATER.
+                                </div>
+                            </div>
                             <p class="title is-size-4">{{ user.username }}'s profile</p>
                             <p class="subtitle is-size-6">
                                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis
@@ -67,7 +78,7 @@
 
                             <!-- DISPLAY NAME -->
                             <div class="field m-30-0-15-0">
-                                <label class="label is-marginless">Display name (Optional)</label>
+                                <label class="label is-marginless">Display name</label>
                                 <p class="content is-small is-marginless pb-05">
                                     Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!
                                 </p>
@@ -127,7 +138,7 @@
                                     <textarea
                                         class="textarea"
                                         v-model="profile.inspiration"
-                                        placeholder="A few worlds about you..."
+                                        placeholder="Gear, technique, inspiration..."
                                     ></textarea>
                                 </div>
                             </div>
@@ -342,8 +353,13 @@ export default {
     data() {
         return {
             is_loading: true,
+            // fetch errors
             is_error: false,
             errorMessage: "",
+            // api submit errors
+            is_api_error: false,
+            apiErrors: "",
+            apiErrorType: "",
             /* file up */
             uploadedFile: null,
             uploadError: null,
@@ -370,6 +386,9 @@ export default {
     },
 
     methods: {
+        // TODO
+        // PUT API ERRORS SOMEWHERE, NOT DETAILED
+        // form errors
         async onSubmit() {
             try {
                 console.log("onSubmit");
@@ -380,7 +399,18 @@ export default {
                     params: { username: this.authenticatedUser.username }
                 });
             } catch (error) {
-                console.log(error);
+                console.log("__ERROR_CAUGHT__");
+                console.log(error.response.status);
+                console.log(error.response.data);
+                this.is_api_error = true;
+                if (error.response.data.error_type === "INVALID_UPDATE_ERROR") {
+                    this.apiErrors = error.response.data.errors;
+                    // this.apiErrorMessage = error.response.data.errors;
+                    this.apiErrorType = "UPDATE ERROR";
+                } else {
+                    this.apiErrorType = "SERVER ERROR";
+                }
+                window.scrollTo(0, 0);
             }
         },
         backToProfile() {
@@ -565,6 +595,28 @@ export default {
     },
     mounted() {
         this.initAvatar();
+    },
+    filters: {
+        cleanApiError: function(value) {
+            const cleans = {
+                display_name: "Display name",
+                intro: "Intro",
+                about_me: "More about you",
+                inspiration: "Gear, technique...",
+                "location.place_name": "Location",
+                "links.website": "Website",
+                "links.instagram": "Instagram",
+                "links.twitter": "Twitter",
+                "links.flickr": "Flickr",
+                "links.facebook": "Facebook"
+            };
+            for (let k of Object.keys(cleans)) {
+                if (value.includes(k)) {
+                    return value.replace(k, cleans[k]);
+                }
+            }
+            return value;
+        }
     }
 };
 </script>
