@@ -80,14 +80,23 @@
                             <div class="field m-30-0-15-0">
                                 <label class="label is-marginless">Display name</label>
                                 <p class="content is-small is-marginless pb-05">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!
+                                    <span style="color:red;" v-if="$v.profile.display_name.$error"
+                                        >Display name max length is 32 characters.</span
+                                    >
+                                    <span v-else>
+                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                    >
                                 </p>
                                 <div class="control" style="max-width: 500px;">
                                     <input
                                         class="input"
+                                        :class="{ 'is-danger': $v.profile.display_name.$error }"
                                         type="text"
                                         v-model="profile.display_name"
                                         placeholder="Display name (Optional)"
+                                        @keyup="$v.profile.display_name.$touch()"
+                                        @keyup.22="$v.profile.display_name.$touch()"
+                                        @input="resetApiErrors()"
                                         @keydown.enter.prevent
                                     />
                                 </div>
@@ -98,14 +107,23 @@
                             <div class="field m-30-0-15-0">
                                 <label class="label is-marginless">A short intro</label>
                                 <p class="content is-small is-marginless pb-05">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!
+                                    <span style="color:red;" v-if="$v.profile.intro.$error"
+                                        >Intro max length is 256 characters.</span
+                                    >
+                                    <span v-else>
+                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                    >
                                 </p>
                                 <div class="control">
                                     <input
                                         class="input"
+                                        :class="{ 'is-danger': $v.profile.intro.$error }"
                                         type="text"
                                         v-model="profile.intro"
                                         placeholder="A short intro"
+                                        @keyup="$v.profile.intro.$touch()"
+                                        @keyup.22="$v.profile.intro.$touch()"
+                                        @input="resetApiErrors()"
                                         @keydown.enter.prevent
                                     />
                                 </div>
@@ -116,13 +134,22 @@
                             <div class="field m-30-0-15-0">
                                 <label class="label is-marginless">More about you</label>
                                 <p class="content is-small is-marginless pb-05">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!
+                                    <span style="color:red;" v-if="$v.profile.about_me.$error"
+                                        >Max length is 3000 characters.</span
+                                    >
+                                    <span v-else>
+                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                    >
                                 </p>
                                 <div class="control">
                                     <textarea
                                         class="textarea"
+                                        :class="{ 'is-danger': $v.profile.about_me.$error }"
                                         v-model="profile.about_me"
                                         placeholder="A few worlds about you..."
+                                        @keyup="$v.profile.about_me.$touch()"
+                                        @keyup.22="$v.profile.about_me.$touch()"
+                                        @input="resetApiErrors()"
                                     ></textarea>
                                 </div>
                             </div>
@@ -132,13 +159,22 @@
                             <div class="field m-30-0-15-0">
                                 <label class="label is-marginless">Gear, technique, inspiration...</label>
                                 <p class="content is-small is-marginless pb-05">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!
+                                    <span style="color:red;" v-if="$v.profile.inspiration.$error"
+                                        >Max length is 3000 characters.</span
+                                    >
+                                    <span v-else>
+                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                    >
                                 </p>
                                 <div class="control">
                                     <textarea
                                         class="textarea"
+                                        :class="{ 'is-danger': $v.profile.inspiration.$error }"
                                         v-model="profile.inspiration"
                                         placeholder="Gear, technique, inspiration..."
+                                        @keyup="$v.profile.inspiration.$touch()"
+                                        @keyup.22="$v.profile.inspiration.$touch()"
+                                        @input="resetApiErrors()"
                                     ></textarea>
                                 </div>
                             </div>
@@ -148,18 +184,26 @@
                             <div class="field m-30-0-15-0">
                                 <label class="label is-marginless">Your location</label>
                                 <p class="content is-small is-marginless pb-05">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!
+                                    <span style="color:red;" v-if="$v.profile.location.place_name.$error"
+                                        >Max length is 128 characters.</span
+                                    >
+                                    <span v-else>
+                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                    >
                                 </p>
                                 <div class="control" style="max-width: 500px;">
                                     <input
                                         autocomplete="off"
                                         class="input"
+                                        :class="{ 'is-danger': $v.profile.location.place_name.$error }"
                                         type="text"
                                         v-model="profile.location.place_name"
                                         placeholder="Type on and select your location"
                                         list="locations"
                                         @input="searchLocation"
                                         @change="setSelectedSelection"
+                                        @keyup="$v.profile.location.place_name.$touch()"
+                                        @keyup.22="$v.profile.location.place_name.$touch()"
                                         @keydown.enter.prevent
                                     />
                                     <datalist id="locations">
@@ -179,7 +223,20 @@
                             <div class="field m-30-0-15-0">
                                 <label class="label is-marginless">Website and socials</label>
                                 <p class="content is-small is-marginless pb-05">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!
+                                    <span
+                                        style="color:red;"
+                                        v-if="
+                                            $v.profile.links.website.$error ||
+                                                $v.profile.links.instagram.$error ||
+                                                $v.profile.links.facebook.$error ||
+                                                $v.profile.links.twitter.$error ||
+                                                $v.profile.links.flickr.$error
+                                        "
+                                        >Max length is 128 characters.</span
+                                    >
+                                    <span v-else>
+                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                    >
                                 </p>
                                 <!-- HORIZONTAL 1 -->
                                 <div class="field is-horizontal socials">
@@ -191,9 +248,13 @@
                                             <p class="control is-expanded has-icons-left">
                                                 <input
                                                     class="input"
+                                                    :class="{ 'is-danger': $v.profile.links.website.$error }"
                                                     type="text"
                                                     placeholder="Your website url"
                                                     v-model="profile.links.website"
+                                                    @keyup="$v.profile.links.website.$touch()"
+                                                    @keyup.22="$v.profile.links.website.$touch()"
+                                                    @input="resetApiErrors()"
                                                     @keydown.enter.prevent
                                                 />
                                                 <span class="icon is-left">
@@ -210,9 +271,13 @@
                                             <p class="control is-expanded has-icons-left">
                                                 <input
                                                     class="input"
+                                                    :class="{ 'is-danger': $v.profile.links.instagram.$error }"
                                                     type="text"
                                                     placeholder="Your Instagram url"
                                                     v-model="profile.links.instagram"
+                                                    @keyup="$v.profile.links.instagram.$touch()"
+                                                    @keyup.22="$v.profile.links.instagram.$touch()"
+                                                    @input="resetApiErrors()"
                                                     @keydown.enter.prevent
                                                 />
                                                 <span class="icon is-left">
@@ -236,9 +301,13 @@
                                             <p class="control is-expanded has-icons-left">
                                                 <input
                                                     class="input"
+                                                    :class="{ 'is-danger': $v.profile.links.twitter.$error }"
                                                     type="text"
                                                     placeholder="Your Twitter url or handle"
                                                     v-model="profile.links.twitter"
+                                                    @keyup="$v.profile.links.twitter.$touch()"
+                                                    @keyup.22="$v.profile.links.twitter.$touch()"
+                                                    @input="resetApiErrors()"
                                                     @keydown.enter.prevent
                                                 />
                                                 <span class="icon is-left">
@@ -258,9 +327,13 @@
                                             <p class="control is-expanded has-icons-left">
                                                 <input
                                                     class="input"
+                                                    :class="{ 'is-danger': $v.profile.links.facebook.$error }"
                                                     type="text"
                                                     placeholder="Your Facebook url"
                                                     v-model="profile.links.facebook"
+                                                    @keyup="$v.profile.links.facebook.$touch()"
+                                                    @keyup.22="$v.profile.links.facebook.$touch()"
+                                                    @input="resetApiErrors()"
                                                     @keydown.enter.prevent
                                                 />
                                                 <span class="icon is-left">
@@ -284,9 +357,12 @@
                                             <p class="control is-expanded has-icons-left">
                                                 <input
                                                     class="input"
+                                                    :class="{ 'is-danger': $v.profile.links.flickr.$error }"
                                                     type="text"
                                                     placeholder="Your Flickr url"
                                                     v-model="profile.links.flickr"
+                                                    @blur="$v.profile.links.flickr.$touch()"
+                                                    @input="resetApiErrors()"
                                                     @keydown.enter.prevent
                                                 />
                                                 <span class="icon is-left">
@@ -315,7 +391,13 @@
                             <div class="is-divider" style="margin-top:35px;"></div>
                             <div class="field is-grouped submit-buttons">
                                 <div class="control">
-                                    <button type="submit" class="button is-primary">Save</button>
+                                    <button
+                                        type="submit"
+                                        class="button is-primary"
+                                        :disabled="$v.$invalid || is_saving"
+                                    >
+                                        Save
+                                    </button>
                                 </div>
                                 <div class="control">
                                     <button class="button is-dark" @click.prevent="backToProfile">Cancel</button>
@@ -327,15 +409,26 @@
                     </div>
                     <!-- END CARD CONTENT -->
                     <!-- <div>
-            <ul>
-              <li v-for="(item, key, index) in profile" :key="index">
-                {{ key }}: {{ item }}
-              </li>
-            </ul>
-          </div>-->
+                        <ul>
+                        <li v-for="(item, key, index) in profile" :key="index">
+                            {{ key }}: {{ item }}
+                        </li>
+                        </ul>
+                    </div>-->
                 </div>
             </div>
         </div>
+        <!-- DEBUG -->
+        <div class="columns is-centered">
+            <div v-if="is_debug" class="column is-three-quarters-desktop">
+                <!-- START PROFILE -->
+                <div class="card" style="padding:20px;">
+                    <p>DEBUG</p>
+                    <!-- <p>{{ $v }}</p> -->
+                </div>
+            </div>
+        </div>
+        <!-- END DEBUG -->
     </main>
 </template>
 
@@ -348,10 +441,12 @@ const UPLOAD_STATUS_INITIAL = 0,
     UPLOAD_STATUS_SUCCESS = 2,
     UPLOAD_STATUS_FAILED = 3;
 const AVATARS_BASE_URL = "http://localhost/images/avatars";
+import { maxLength } from "vuelidate/lib/validators";
 
 export default {
     data() {
         return {
+            is_debug: true,
             is_loading: true,
             // fetch errors
             is_error: false,
@@ -360,6 +455,7 @@ export default {
             is_api_error: false,
             apiErrors: "",
             apiErrorType: "",
+            is_saving: false,
             /* file up */
             uploadedFile: null,
             uploadError: null,
@@ -393,6 +489,8 @@ export default {
             try {
                 console.log("onSubmit");
                 console.log(this.profile);
+                this.is_saving = true;
+                this.resetApiErrors();
                 await this.$store.dispatch("save_profile", this.profile);
                 this.$router.push({
                     name: "user",
@@ -402,6 +500,7 @@ export default {
                 console.log("__ERROR_CAUGHT__");
                 console.log(error.response.status);
                 console.log(error.response.data);
+                this.is_saving = false;
                 this.is_api_error = true;
                 if (error.response.data.error_type === "INVALID_UPDATE_ERROR") {
                     this.apiErrors = error.response.data.errors;
@@ -414,6 +513,8 @@ export default {
             }
         },
         backToProfile() {
+            this.resetApiErrors();
+            this.is_saving = false;
             this.$router.push({
                 name: "user",
                 params: { username: this.authenticatedUser.username }
@@ -491,6 +592,7 @@ export default {
             // console.log(e.target.value);
             // console.log(e.target.value.length);
             // this.mapboxOptions = [];
+            this.resetApiErrors();
             try {
                 if (e.target.value.length > 1 && e.inputType === "insertText") {
                     console.log("@@@");
@@ -505,7 +607,7 @@ export default {
                     this.mapboxOptions = [];
                 }
             } catch (err) {
-                // DO WHAT?
+                // DO SOMETHING/WHAT?
                 console.log("++++");
                 console.log(err.response);
                 console.log(err.response.status);
@@ -541,6 +643,11 @@ export default {
             } catch (e) {
                 console.log(e);
             }
+        },
+        resetApiErrors() {
+            this.is_api_error = false;
+            this.apiErrors = "";
+            this.apiErrorType = "";
         }
     },
     computed: {
@@ -616,6 +723,44 @@ export default {
                 }
             }
             return value;
+        }
+    },
+    validations: {
+        profile: {
+            display_name: {
+                maxLen: maxLength(32)
+            },
+            intro: {
+                maxLen: maxLength(256)
+            },
+            about_me: {
+                maxLen: maxLength(3000)
+            },
+            inspiration: {
+                maxLen: maxLength(3000)
+            },
+            location: {
+                place_name: {
+                    maxLen: maxLength(128)
+                }
+            },
+            links: {
+                website: {
+                    maxLen: maxLength(128)
+                },
+                instagram: {
+                    maxLen: maxLength(128)
+                },
+                twitter: {
+                    maxLen: maxLength(128)
+                },
+                flickr: {
+                    maxLen: maxLength(128)
+                },
+                facebook: {
+                    maxLen: maxLength(128)
+                }
+            }
         }
     }
 };
