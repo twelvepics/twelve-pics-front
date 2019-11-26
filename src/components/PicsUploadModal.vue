@@ -3,86 +3,65 @@
   <div class="modal" id="pic-upload-modal" :class="{'is-active': isActive}">
     <div class="modal-background"></div>
     <div class="modal-content">
-      <div class="message">
-        <div class="message-header">
-          <p>Images upload</p>
-          <button class="delete is-medium" id="upload-close" @click.prevent="closeUploadModal"></button>
-        </div>
-        <div class="message-body">
-          <!-- SELECTED FILES LIST -->
-          <div v-if="selectFiles">
-            <div class="dropbox">
-              <input
-                multiple
-                type="file"
-                id="pics"
-                ref="pics"
-                :name="uploadFieldName"
-                @change="onFilesSelected"
-                accept="image/*"
-                class="input-file"
-              />
-              <p v-if="isUploadInitial">
-                Drag your file here
-                <br />or click to browse
-              </p>
-            </div>
+      <div :class="{maxOnSelected: !selectFiles}">
+        <div class="message" :class="{minOnSelected: !selectFiles}">
+          <div class="message-header">
+            <p>Images upload</p>
+            <button class="delete is-medium" id="upload-close" @click.prevent="closeUploadModal"></button>
           </div>
-          <div v-else>
-            <!-- START IMAGES -->
-            <div class="selectedImages" :class="{minOnSelected: !selectFiles}">
-              <div>
-                <button class="button is-warning is-fullwidth" style="margin-bottom:1rem">Upload</button>
+          <div class="message-body">
+            <!-- SELECTED FILES LIST -->
+            <div v-if="selectFiles">
+              <div class="dropbox">
+                <input
+                  multiple
+                  type="file"
+                  id="pics"
+                  ref="pics"
+                  :name="uploadFieldName"
+                  @change="onFilesSelected"
+                  accept="image/*"
+                  class="input-file"
+                />
+                <p v-if="isUploadInitial">
+                  Drag your file here
+                  <br />or click to browse
+                </p>
               </div>
-              <div class="is-divider upload-divider" style="margin-bottom:.7rem"></div>
-
-              <!-- ONE PIC -->
-              <div class="uploadPicInfo">
-                <!-- <div v-for="(file, idx) in filesToUpload" :key="idx">
-                  {{ file.name }}
-                  <br />
-                  {{ file.size }}
-                  <br />
-                  {{ (file.size / (1024 * 1024)).toFixed(1) + " MB" }}
-                  <br />
-                  <img class="preview" :ref="'pic'+parseInt( idx )" />
-                </div>-->
-                <!-- -->
-                <div v-for="(file, idx) in filesToUpload" :key="idx">
-                  <div class="columns is-mobile">
-                    <div class="column is-narrow picContainer">
-                      <img class="preview" :ref="'pic'+parseInt( idx )" />
-                    </div>
-                    <div
-                      class="column uploadFileInfo textContainer"
-                    >{{`${file.name} [${(file.size / (1024 * 1024)).toFixed(1)}MB]`}}</div>
-                    <div class="deleteButton">
-                      <a class="delete" @click="removeFromSelection(idx)"></a>
-                    </div>
-                  </div>
-                  <div class="is-divider upload-divider" style="margin:.2rem 0 .7rem 0"></div>
+            </div>
+            <div v-else>
+              <!-- START IMAGES -->
+              <div class="selectedImages">
+                <div>
+                  <button class="button is-warning is-fullwidth" style="margin-bottom:1rem">Upload</button>
                 </div>
-                <!-- -->
-                <!-- <div>
-                  <div class="columns is-mobile">
-                    <div class="column is-narrow picContainer">
-                      <img class="isHorizontal" src="/img/thumb1.png" />
+                <div class="is-divider upload-divider" style="margin-bottom:.7rem"></div>
+
+                <!-- PICS LOOP -->
+                <div class="uploadPicInfo">
+                  <!-- -->
+                  <div v-for="(file, idx) in filesToUpload" :key="idx">
+                    <div class="columns is-mobile">
+                      <div class="column is-narrow picContainer">
+                        <img class="preview" :ref="'pic'+parseInt( idx )" />
+                      </div>
+                      <div
+                        class="column uploadFileInfo textContainer"
+                      >{{`${file.name} [${(file.size / (1024 * 1024)).toFixed(1)}MB]`}}</div>
+                      <div class="deleteButton">
+                        <a class="delete" @click="removeFromSelection(idx)"></a>
+                      </div>
                     </div>
-                    <div class="column uploadFileInfo textContainer">sboobi.jpg [2M]</div>
-                    <div class="deleteButton">
-                      <a class="delete"></a>
-                    </div>
+                    <div class="is-divider upload-divider" style="margin:.2rem 0 .7rem 0"></div>
                   </div>
-                  <div class="is-divider upload-divider" style="margin:.2rem 0 .7rem 0"></div>
-                </div>-->
+                </div>
+                <!-- ENDS PICS LOOP -->
                 <!-- -->
               </div>
-
-              <!-- -->
+              <!-- ENDS IMAGES -->
             </div>
-            <!-- ENDS IMAGES -->
+            <!-- ENDS SELECTED FILES LIST -->
           </div>
-          <!-- ENDS SELECTED FILES LIST -->
         </div>
       </div>
     </div>
@@ -197,8 +176,10 @@ export default {
   height: 80rem;
 } */
 .minOnSelected {
-  // min-height: calc(60vh);
-  height: calc(60vh);
+  min-height: calc(65vh);
+}
+.maxOnSelected {
+  max-height: calc(65vh);
 }
 /************ File upload list *************/
 .upload-divider {
