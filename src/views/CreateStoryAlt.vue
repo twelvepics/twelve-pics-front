@@ -355,7 +355,9 @@
 </template>
 
 <script>
+// eslint-disable-next-line
 import axiosBase from "../services/axiosBase";
+// eslint-disable-next-line
 import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
