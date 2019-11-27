@@ -350,7 +350,11 @@
       </div>
     </div>
     <!-- Message composer modal -->
-    <pics-upload-modal :isActive="uploadModalActive" @uploadModalClosed="closeUploadModal"></pics-upload-modal>
+    <pics-upload-modal
+      :isActive="uploadModalActive"
+      @uploadModalClosed="closeUploadModal"
+      @onPicUpload="picUploaded"
+    ></pics-upload-modal>
   </main>
 </template>
 
@@ -379,6 +383,10 @@ export default {
     closeUploadModal() {
       unlockBgScroll();
       this.uploadModalActive = false;
+    },
+    picUploaded(pic) {
+      console.log("GOT IT");
+      console.log(pic);
     }
   }
 };

@@ -47,11 +47,23 @@
                   <div v-for="(file, idx) in selectedFiles" :key="idx">
                     <div class="columns is-mobile">
                       <div class="column is-narrow picContainer">
-                        <img class="preview" :ref="'pic'+parseInt( idx )" />
+                        <img
+                          class="preview"
+                          :src="previews[file.name] || ''"
+                          :ref="'pic'+parseInt( idx )"
+                        />
                       </div>
                       <div
                         class="column uploadFileInfo textContainer"
-                      >{{`${file.name} [${(file.size / (1024 * 1024)).toFixed(1)}MB]`}}</div>
+                        :class="{isError: fileIsTooBig(file)}"
+                      >
+                        <p style="margin:0;padding:0;">
+                          {{`${file.name} [${(file.size / (1024 * 1024)).toFixed(1)}MB]`}}
+                          <span
+                            v-if="fileIsTooBig(file)"
+                          >- Error: maximum file size is 5 MB</span>
+                        </p>
+                      </div>
                       <div class="deleteButton">
                         <a class="delete" @click="removeFromSelection(idx)"></a>
                       </div>
@@ -69,6 +81,11 @@
             <div v-else-if="uploadFiles">
               <!-- UPLOADING PICS -->
               <div class="imagesToUpload">
+                <div
+                  v-if="uploadError"
+                  class="notification is-danger"
+                  style="padding:.5rem;"
+                >{{ uploadErrorMessage }}</div>
                 <div>
                   <b>Uploading</b>
                 </div>
@@ -77,7 +94,8 @@
                   <div v-for="(file, idx) in filesToUpload" :key="idx" style="margin-bottom:12px;">
                     <div class="columns is-mobile">
                       <div class="column is-narrow picContainer">
-                        <img class="preview" :ref="'pic'+parseInt( idx )" />
+                        <!-- <img class="preview" :ref="'pic'+parseInt( idx )" /> -->
+                        <img class="preview" :src="previews[file.name]" />
                       </div>
                       <div
                         class="column uploadFileInfo textContainer"
@@ -88,7 +106,7 @@
                       :ref="'progress'+parseInt( idx )"
                       value="0"
                       max="100"
-                    >0%</progress>
+                    ></progress>
                   </div>
                 </div>
               </div>
@@ -103,13 +121,14 @@
                   <div v-for="(file, idx) in completedFiles" :key="idx" style="margin-bottom:12px;">
                     <div class="columns is-mobile">
                       <div class="column is-narrow picContainer">
-                        <img class="preview" :ref="'pic'+parseInt( idx )" />
+                        <!-- <img class="preview" :ref="'pic'+parseInt( idx )" /> -->
+                        <img class="preview" :src="previews[file.name]" />
                       </div>
                       <div
                         class="column uploadFileInfo textContainer"
                       >{{`${file.name} [${(file.size / (1024 * 1024)).toFixed(1)}MB]`}}</div>
                     </div>
-                    <progress class="progress is-success" value="0" max="100">0%</progress>
+                    <progress class="progress is-success" value="100" max="100"></progress>
                   </div>
                 </div>
               </div>
@@ -124,18 +143,20 @@
 </template>
 
 <script>
+// TODO
+// validation / errors
+// pass uploaded to parent
+
 import { mapGetters } from "vuex";
 import axiosUpload from "../services/axiosUpload";
 // eslint-disable-next-line
 import axiosBase from "../services/axiosBase";
-// const UPLOAD_STATUS_INITIAL = 0,
-//   UPLOAD_STATUS_SAVING = 1,
-//   UPLOAD_STATUS_SUCCESS = 2,
-//   UPLOAD_STATUS_FAILED = 3;
 // eslint-disable-next-line
 const PICS_BASE_URL = "http://localhost/images/pics";
 // eslint-disable-next-line
 import { maxLength } from "vuelidate/lib/validators";
+
+const MAX_FILE_SIZE = 1024 * 1024 * 5;
 
 export default {
   props: ["isActive"],
@@ -149,106 +170,165 @@ export default {
       selectedFiles: [],
       filesToUpload: [],
       completedFiles: [],
+      previews: {},
       uploadError: null,
-      currentStatus: null
+      uploadErrorMessage: ""
     };
   },
   methods: {
-    getImagePreviews(target) {
+    getImagePreviews() {
       // console.log(target.length);
       // console.log(target[0]);
-      for (let i = 0; i < target.length; i++) {
+      for (let i = 0; i < this.selectedFiles.length; i++) {
         // console.log(target[i]);
-        if (/\.(jpe?g|png|gif)$/i.test(target[i].name)) {
+        if (
+          !this.previews[this.selectedFiles[i].name] &&
+          /\.(jpe?g|png|gif)$/i.test(this.selectedFiles[i].name)
+        ) {
           let reader = new FileReader();
           reader.addEventListener(
             "load",
             function() {
               this.$refs["pic" + parseInt(i)][0].src = reader.result;
+              // console.log(this.selectedFiles[i]);
+              this.previews[this.selectedFiles[i].name] = reader.result;
             }.bind(this),
             false
           );
-          reader.readAsDataURL(target[i]);
+          reader.readAsDataURL(this.selectedFiles[i]);
         }
       }
     },
-    closeUploadModal(e) {
-      console.log(e);
+    closeUploadModal() {
+      // console.log(e);
       this.reset();
       this.$emit("uploadModalClosed");
     },
-    onFilesSelected(e) {
-      console.log(e);
-      console.log("files selected");
+    onFilesSelected() {
+      // console.log(e);
+      // console.log("files selected");
       this.selectFiles = false;
       this.viewFilesList = true;
       const sel = this.$refs.pics.files;
+      // for (let f of sel) {
+      //   console.log(f.size);
+      // }
       // keep track of selected files
       for (let i = 0; i < sel.length; i++) {
         this.selectedFiles.push(sel[i]);
       }
-      this.getImagePreviews(this.selectedFiles);
+      this.getImagePreviews();
     },
     async submitFiles() {
       this.selectFiles = false;
       this.viewFilesList = false;
       this.uploadFiles = true;
+      // clean big files
+      for (let i = 0; i < this.selectedFiles.length; i++) {
+        if (this.fileIsTooBig(this.selectedFiles[i])) {
+          this.selectedFiles.splice(i, 1);
+        }
+      }
+      // copy to display array
       for (let i = 0; i < this.selectedFiles.length; i++) {
         this.filesToUpload.push(this.selectedFiles[i]);
       }
-      console.log("++++++++++++++++++");
-      console.log(this.filesToUpload);
-      console.log("++++++++++++++++++");
-      for (let i = 0; i < this.filesToUpload.length; i++) {
-        let formData = new FormData();
-        let file = this.filesToUpload[i];
-        file.id = i;
-        // console.log(file.name);
-        // formData.append("pics[" + i + "]", file, file.name);
-        formData.append("pics", file, file.name);
-        /////////////////////////////////////////////////////////
-        // single
-        /////////////////////////////////////////////////////////
-        const uploaded = await axiosUpload.post(
-          `/stories/${this.authenticatedUser._key}/upload-file`,
-          formData,
-          {
-            onUploadProgress: uploadEvent => {
-              let progress = Math.round(
-                (uploadEvent.loaded / uploadEvent.total) * 100
-              );
-              console.log(`UploadProgress[${i}]: ${progress}%`);
-              this.$refs["progress" + parseInt(i)][0].value = progress;
+      // console.log("++++++++++++++++++");
+      // console.log(this.filesToUpload);
+      // console.log(this.previews);
+      // console.log("++++++++++++++++++");
+      try {
+        for (let i = 0; i < this.selectedFiles.length; i++) {
+          let formData = new FormData();
+          let file = this.selectedFiles[i];
+          file.id = i;
+          // console.log(file.name);
+          // formData.append("pics[" + i + "]", file, file.name);
+          formData.append("pics", file, file.name);
+          /////////////////////////////////////////////////////////
+          // single
+          /////////////////////////////////////////////////////////
+          const uploaded = await axiosUpload.post(
+            `/stories/${this.authenticatedUser._key}/upload-file`,
+            formData,
+            {
+              onUploadProgress: uploadEvent => {
+                try {
+                  let progress = Math.round(
+                    (uploadEvent.loaded / uploadEvent.total) * 100
+                  );
+                  // console.log(`UploadProgress[${i}]: ${progress}%`);
+                  this.$refs["progress" + parseInt(i)][0].value = progress;
+                } catch (err) {
+                  // console.log(err.message);
+                }
+              }
+            }
+          );
+          console.log("---------------");
+          console.log(uploaded);
+          console.log("---------------");
+          // console.log(uploaded.data.fileinfo.originalname);
+          // move to completed
+          // get idx
+          const fname = uploaded.data.fileinfo.originalname;
+          let idx = -1;
+          for (let i = 0; i < this.filesToUpload.length; i++) {
+            if (this.filesToUpload[i].name === fname) {
+              idx = i;
+              break;
             }
           }
-        );
-        console.log("---------------");
-        console.log(uploaded);
-        console.log("---------------");
-      }
-      try {
-        /////////////////////////////////////////////////////////
-        // multi
-        /////////////////////////////////////////////////////////
-        // let config;
-        // const myUploadProgress = myFileId => progress => {
-        //   let percentage = Math.floor((progress.loaded * 100) / progress.total);
-        //   console.log(`${myFileId} -> ${percentage}`);
-        // };
-        // for (var i = 0; i < this.filesToUpload.length; i++) {
-        //   console.log(this.filesToUpload[i].id);
-        //   config = {
-        //     onUploadProgress: myUploadProgress(this.filesToUpload[i].id)
-        //   };
-        // }
-        // // eslint-disable-next-line
-        // const uploaded = await axiosUpload.post(
-        //   `/stories/${this.authenticatedUser._key}/upload-files`,
-        //   formData,
-        //   config
-        // );
+          // console.log(`found => ${idx}`);
+          let done;
+          if (idx !== -1) {
+            done = this.filesToUpload.splice(idx, 1);
+          }
+          //
+          // console.log(done[0]);
+          // console.log(done[0].name);
+          // console.log(this.previews);
+          // copy too done array
+          this.completedFiles.push(done[0]);
+          console.log("@@@@@@@@@@@@@@@@@@");
+          console.log(uploaded.data.fileinfo.path);
+          console.log(uploaded.data.thumb.path);
+          console.log("@@@@@@@@@@@@@@@@@@");
+          // send to parent
+          const thisPic = {
+            filepath: uploaded.data.fileinfo.path,
+            thumb: uploaded.data.thumb.path
+          };
+          await this.$emit("onPicUpload", thisPic);
+          // --
+          // Done close
+          if (this.filesToUpload.length === 0) {
+            console.log("DONE");
+            setTimeout(() => {
+              this.closeUploadModal();
+            }, 1500);
+          }
+        }
       } catch (error) {
+        // TODO VUE ERRORS NOT CARED OF
         console.log(error);
+        this.uploadError = true;
+        const uploadErrorDetail = error.response;
+        console.log("XOXOXOXO");
+        console.log(uploadErrorDetail);
+        console.log("XOXOXOXO");
+        // console.log(this.uploadError.data);
+        // console.log(uploadErrorDetail.status === 400);
+        // console.log(uploadErrorDetail.data.error);
+        if (uploadErrorDetail.status === 400) {
+          this.uploadErrorMessage = uploadErrorDetail.data.error;
+        } else if ([401, 403].includes(uploadErrorDetail.status)) {
+          // auth error
+          this.uploadErrorMessage = "AUTHENTICATION ERROR";
+        } else {
+          // Most probably 500
+          this.uploadErrorMessage = "SERVOR ERROR";
+        }
       }
     },
     removeFromSelection(idx) {
@@ -257,44 +337,33 @@ export default {
       this.selectedFiles.splice(idx, 1);
       // this.selectedFiles[idx] = null;
       // don't fuckin change index, set pic to null
-      this.getImagePreviews(this.selectedFiles);
+      this.getImagePreviews();
       if (this.selectedFiles.length === 0) {
         this.reset();
       }
     },
     init() {
       // reset form to initial state
-      // this.uploadCurrentStatus = UPLOAD_STATUS_INITIAL;
       this.selectFiles = true;
       this.viewFilesList = false;
       this.uploadFiles = false;
       this.selectedFiles = [];
       this.filesToUpload = [];
       this.completedFiles = [];
+      this.previews = [];
       this.uploadError = null;
+      this.uploadErrorMessage = "";
     },
     reset() {
       // reset form to initial state
       this.init();
+    },
+    fileIsTooBig(f) {
+      return f.size > MAX_FILE_SIZE;
     }
   },
   computed: {
     ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"])
-    // user: function() {
-    //   return this.authenticatedUser;
-    // }
-    // isUploadInitial() {
-    //   return this.uploadCurrentStatus === UPLOAD_STATUS_INITIAL;
-    // },
-    // isUploadSaving() {
-    //   return this.uploadCurrentStatus === UPLOAD_STATUS_SAVING;
-    // },
-    // isUploadSuccess() {
-    //   return this.uploadCurrentStatus === UPLOAD_STATUS_SUCCESS;
-    // },
-    // isUploadFailed() {
-    //   return this.uploadCurrentStatus === UPLOAD_STATUS_FAILED;
-    // }
   },
   created() {
     console.log("created");
@@ -395,5 +464,10 @@ img.isHorizontal {
   font-size: 1em;
   text-align: center;
   padding: 50px 0;
+}
+
+/***** Errors ******/
+.isError {
+  color: red;
 }
 </style>
