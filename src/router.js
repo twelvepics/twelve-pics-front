@@ -22,7 +22,7 @@ export default new Router(
         path: '/story/create',
         name: 'create-story',
         components: {
-          default: () => import(/* webpackChunkName: "create-story" */ './views/CreateStoryAlt.vue'),
+          default: () => import(/* webpackChunkName: "create-story" */ './views/CreateStory.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },
