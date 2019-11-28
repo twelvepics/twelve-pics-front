@@ -14,54 +14,9 @@
         </div>
         <div class="message-body">
           <ul class="categories-grid">
-            <li class="field">
-              <input id="documentary" type="checkbox" value="documentary" v-model="categories" />
-              <label for="documentary">Documentary</label>
-            </li>
-            <li class="field">
-              <input id="stillLife" type="checkbox" value="stillLife" v-model="categories" />
-              <label for="stillLife">Still life</label>
-            </li>
-            <li class="field">
-              <input
-                id="streetPhotography"
-                type="checkbox"
-                value="streetPhotography"
-                v-model="categories"
-              />
-              <label for="streetPhotography">Street photography</label>
-            </li>
-            <li class="field">
-              <input id="wildLife" type="checkbox" value="wildLife" v-model="categories" />
-              <label for="wildLife">Nature and Wildlife</label>
-            </li>
-            <li class="field">
-              <input id="wedding" type="checkbox" value="wedding" v-model="categories" />
-              <label for="wedding">Wedding</label>
-            </li>
-            <li class="field">
-              <input id="travel" type="checkbox" value="travel" v-model="categories" />
-              <label for="travel">Travel</label>
-            </li>
-            <li class="field">
-              <input id="dailyLife" type="checkbox" value="dailyLife" v-model="categories" />
-              <label for="dailyLife">Daily life</label>
-            </li>
-            <li class="field">
-              <input id="fineQrt" type="checkbox" value="fineArt" v-model="categories" />
-              <label for="fineArt">Fine art</label>
-            </li>
-            <li class="field">
-              <input id="portrait" type="checkbox" value="portrait" v-model="categories" />
-              <label for="portrait">Portrait</label>
-            </li>
-            <li class="field">
-              <input id="sport" type="checkbox" value="sport" v-model="categories" />
-              <label for="sport">Sport</label>
-            </li>
-            <li class="field">
-              <input id="architecture" type="checkbox" value="architecture" v-model="categories" />
-              <label for="architecture">Architecture</label>
+            <li v-for="category in categoriesList" :key="category.id" class="field">
+              <input :id="category.key" type="checkbox" :value="category.key" v-model="categories" />
+              <label :for="category.key">{{ category.display }}</label>
             </li>
           </ul>
           <div class="is-divider"></div>
@@ -73,11 +28,11 @@
               <button class="button is-dark" @click.prevent="closeCategoriesModal">Cancel</button>
             </div>
           </div>
-          <!-- <div>
-            <ul>
-                <li v-for="(category, index) in categories" :key="index">{{ category }}</li>
-            </ul>
-          </div>-->
+          <div>
+            <!-- <ul>
+              <li v-for="category in categoriesList" :key="category.id">{{ category.display }}</li>
+            </ul>-->
+          </div>
         </div>
       </form>
     </div>
@@ -87,12 +42,17 @@
  
  <script>
 // import { mapGetters } from "vuex";
+import { categoriesList } from "../utils/categories";
 
 export default {
+  //////////////////////////////////////////////
+  // TODO REFACTOR: MAKE A DICT AND LOOP!!!!!
+  //////////////////////////////////////////////
   data() {
     return {
       // categories: [],
-      loading: false
+      loading: false,
+      categoriesList
     };
   },
   props: ["isActive"],

@@ -3,62 +3,71 @@
     <div class="columns is-centered">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
+        <!-- ERRORS AND AUTH -->
+        <div
+          class="card"
+          v-if="is_loading || is_error"
+          style="text-align:center;height:60px;padding-top:10px;"
+        >
+          <div v-if="is_error" class="isError" style="margin-top:7px;">{{ errorMessage }}</div>
+        </div>
         <!-- START FORM -->
-        <div class="card">
+        <div class="card" v-else>
           <!-- CARD CONTENT -->
           <div class="card-content">
-            <p class="title is-size-4">Add a story</p>
-            <p class="subtitle is-size-6">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum,
-              facilis
-              praesentium esse veritatis nemo!
-            </p>
-            <!-- TOP BOXES -->
-            <div class="top-boxes-grid" style="margin-top:40px;">
-              <div>
-                <article class="message is-small box-has-shadow">
-                  <div class="message-header">
-                    <p>LAYOUT</p>
-                  </div>
-                  <div
-                    class="message-body add-story-layout-icons-box p8"
-                    style="background-color:#999;"
-                  >
-                    <p class="content" style="margin-bottom:0;">
-                      <img
-                        class="icon-hover"
-                        style="width:48px; height:auto;"
-                        src="/img/layout-horizontal-on.png"
-                      />
-                    </p>
-                    <p class="content" style="margin-bottom:0;">
-                      <img
-                        class="icon-hover"
-                        style="width:48px; height:auto;"
-                        src="/img/layout-tile.png"
-                      />
-                    </p>
+            <form @submit.prevent="onSubmit">
+              <p class="title is-size-4">Add a story</p>
+              <p class="subtitle is-size-6">
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum,
+                facilis
+                praesentium esse veritatis nemo!
+              </p>
+              <!-- TOP BOXES -->
+              <div class="top-boxes-grid" style="margin-top:40px;">
+                <div>
+                  <article class="message is-small box-has-shadow">
+                    <div class="message-header">
+                      <p>LAYOUT</p>
+                    </div>
+                    <div
+                      class="message-body add-story-layout-icons-box p8"
+                      style="background-color:#999;"
+                    >
+                      <p class="content" style="margin-bottom:0;">
+                        <img
+                          class="icon-hover"
+                          style="width:48px; height:auto;"
+                          src="/img/layout-horizontal-on.png"
+                        />
+                      </p>
+                      <p class="content" style="margin-bottom:0;">
+                        <img
+                          class="icon-hover"
+                          style="width:48px; height:auto;"
+                          src="/img/layout-tile.png"
+                        />
+                      </p>
 
-                    <p class="content" style="margin-bottom:0;">
-                      <img
-                        class="icon-hover"
-                        style="width:48px; height:auto;"
-                        src="/img/layout-list.png"
-                      />
-                    </p>
-                    <p class="content" style="margin-bottom:0;">
-                      <img
-                        class="icon-hover"
-                        style="width:48px; height:auto;"
-                        src="/img/layout-carousel.png"
-                      />
-                    </p>
-                    <p class="content selected-layout">HORIZONTAL</p>
-                  </div>
-                </article>
-              </div>
-              <!-- STATUS PUBLISHED -->
-              <!-- <div>
+                      <p class="content" style="margin-bottom:0;">
+                        <img
+                          class="icon-hover"
+                          style="width:48px; height:auto;"
+                          src="/img/layout-vertical.png"
+                        />
+                      </p>
+                      <p class="content" style="margin-bottom:0;">
+                        <img
+                          class="icon-hover"
+                          style="width:48px; height:auto;"
+                          src="/img/layout-carousel.png"
+                        />
+                      </p>
+                      <p class="content selected-layout">HORIZONTAL</p>
+                    </div>
+                  </article>
+                </div>
+                <!-- STATUS PUBLISHED -->
+                <!-- <div>
                               <article class="message is-success is-small box-has-shadow">
                                   <div class="message-header">
                                       <p>STATUS</p>
@@ -74,125 +83,116 @@
                                       </p>
                                   </div>
                               </article>
-              </div>-->
-              <!-- STATUS DRAFT -->
-              <div>
-                <article class="message is-warning is-small box-has-shadow">
-                  <div class="message-header">
-                    <p>STATUS</p>
-                  </div>
-                  <div class="message-body pub-unpub-story-layout-box">
-                    <p
-                      class="icon icon-hover has-text-warning is-large"
-                      style="padding:0 0 0 0;margin-bottom:0;"
-                    >
-                      <span class="icon is-small is-left">
-                        <font-awesome-icon class="fas fa-3x" icon="ban"></font-awesome-icon>
-                      </span>
-                    </p>
-                    <p class="content has-text-warning is-medium pub-unpub-story-txt">DRAFT</p>
-                  </div>
-                </article>
+                </div>-->
+                <!-- STATUS DRAFT -->
+                <div>
+                  <article class="message is-warning is-small box-has-shadow">
+                    <div class="message-header">
+                      <p>STATUS</p>
+                    </div>
+                    <div class="message-body pub-unpub-story-layout-box">
+                      <p
+                        class="icon icon-hover has-text-warning is-large"
+                        style="padding:0 0 0 0;margin-bottom:0;"
+                      >
+                        <span class="icon is-small is-left">
+                          <font-awesome-icon class="fas fa-3x" icon="ban"></font-awesome-icon>
+                        </span>
+                      </p>
+                      <p class="content has-text-warning is-medium pub-unpub-story-txt">DRAFT</p>
+                    </div>
+                  </article>
+                </div>
+                <div>
+                  <article class="message is-danger is-small box-has-shadow">
+                    <div class="message-header">
+                      <p>DELETE</p>
+                    </div>
+                    <div class="message-body delete-story">
+                      <p class="icon icon-hover has-text-danger is-large">
+                        <font-awesome-icon class="fas fa-3x" icon="trash-alt"></font-awesome-icon>
+                      </p>
+                    </div>
+                  </article>
+                </div>
               </div>
-              <div>
-                <article class="message is-danger is-small box-has-shadow">
-                  <div class="message-header">
-                    <p>DELETE</p>
-                  </div>
-                  <div class="message-body delete-story">
-                    <p class="icon icon-hover has-text-danger is-large">
-                      <font-awesome-icon class="fas fa-3x" icon="trash-alt"></font-awesome-icon>
-                    </p>
-                  </div>
-                </article>
+              <!-- TOP BOXES -->
+              <!-- CATEGORY -->
+              <div class="field m-30-0-15-0">
+                <label class="label is-marginless">Category</label>
+                <p class="content is-small is-marginless pb-05">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                  accusamus!
+                </p>
+                <div class="select">
+                  <select v-model="story.category">
+                    <option disabled value="0">Select a theme</option>
+                    <option
+                      v-for="category in categoriesList"
+                      :key="category.id"
+                      :value="category.key"
+                    >{{ category.display }}</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <!-- TOP BOXES -->
-            <!-- CATEGORY -->
-            <div class="field m-30-0-15-0">
-              <label class="label is-marginless">Category</label>
-              <p class="content is-small is-marginless pb-05">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                accusamus!
-              </p>
-              <div class="select">
-                <select>
-                  <option>Select a theme</option>
-                  <option>Documentary</option>
-                  <option>Still life</option>
-                  <option>Street photography</option>
-                  <option>Nature and Wildlife</option>
-                  <option>Wedding</option>
-                  <option>Travel</option>
-                  <option>Daily life</option>
-                  <option>Fine art</option>
-                  <option>Portrait</option>
-                  <option>Sport</option>
-                  <option>Architecture</option>
-                </select>
-              </div>
-            </div>
-            <!-- CATEGORY -->
+              <!-- CATEGORY -->
 
-            <!-- TITLE -->
-            <div class="field m-30-0-15-0">
-              <label class="label is-marginless">Title</label>
-              <p class="content is-small is-marginless pb-05">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                accusamus!
-              </p>
-              <div class="control">
-                <input class="input" type="text" placeholder="Title" />
+              <!-- TITLE -->
+              <div class="field m-30-0-15-0">
+                <label class="label is-marginless">Title</label>
+                <p class="content is-small is-marginless pb-05">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                  accusamus!
+                </p>
+                <div class="control">
+                  <input
+                    class="input"
+                    type="text"
+                    placeholder="Title"
+                    v-model="story.title"
+                    @keydown.enter.prevent
+                  />
+                </div>
               </div>
-            </div>
-            <!-- TITLE -->
+              <!-- TITLE -->
 
-            <!-- ABOUT MY STORY -->
-            <div class="field m-30-0-15-0">
-              <label class="label is-marginless">Pitch your story</label>
-              <p class="content is-small is-marginless pb-05">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                accusamus!
-              </p>
-              <div class="control">
-                <textarea class="textarea" placeholder="Pitch your story"></textarea>
+              <!-- ABOUT MY STORY -->
+              <div class="field m-30-0-15-0">
+                <label class="label is-marginless">Pitch your story</label>
+                <p class="content is-small is-marginless pb-05">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                  accusamus!
+                </p>
+                <div class="control">
+                  <textarea class="textarea" placeholder="Pitch your story" v-model="story.pitch"></textarea>
+                </div>
               </div>
-            </div>
-            <!-- ABOUT MY STORY -->
+              <!-- ABOUT MY STORY -->
 
-            <!-- UPOLAD PICS -->
-            <div class="field m-30-0-15-0">
-              <p class="content is-marginless">
-                <b>Upload your images</b>
-              </p>
-              <p class="content is-small is-marginless pb-05">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                accusamus!
-              </p>
+              <!-- UPOLAD PICS -->
+              <div class="field m-30-0-15-0">
+                <p class="content is-marginless">
+                  <b>Upload your images</b>
+                </p>
+                <p class="content is-small is-marginless pb-05">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                  accusamus!
+                </p>
 
-              <!-- PIC UPLOAD BUTTON-->
-              <div class="file is-primary" style="margin:0;">
-                <!-- <label class="file-label">
-                  <input class="file-input" type="file" name="pics-upload" />
-                  <span class="file-cta">
-                    <span class="file-icon">
+                <!-- PIC UPLOAD BUTTON-->
+                <div class="file is-primary" style="margin:0;">
+                  <button class="button is-primary" @click="openUploadModal">
+                    <span class="icon">
                       <font-awesome-icon class="fas" icon="upload"></font-awesome-icon>
                     </span>
-                    <span class="file-label">Add images</span>
-                  </span>
-                </label>-->
+                    <span>Add your images</span>
+                  </button>
+                </div>
+                <!-- PIC UPLOAD BUTTON-->
 
-                <button class="button is-primary" @click="openUploadModal">
-                  <span class="icon">
-                    <font-awesome-icon class="fas" icon="upload"></font-awesome-icon>
-                  </span>
-                  <span>Add your images</span>
-                </button>
-              </div>
-              <!-- PIC UPLOAD BUTTON-->
-              <!-- UPLOADED PICS -->
-              <!-- ONE PIC-->
-              <!--
+                <!-- UPLOADED PICS -->
+                <!-- ONE PIC-->
+                <!--
               <div class="box uploadedImageBox first">
                 <div class="controlIcons">
                   <span class="icon icon-hover is-medium">
@@ -229,10 +229,10 @@
                   </div>
                 </div>
               </div>
-              -->
-              <!-- END ONE PIC -->
-              <!-- ONE PIC-->
-              <!-- 
+                -->
+                <!-- END ONE PIC -->
+                <!-- ONE PIC-->
+                <!-- 
               <div class="box uploadedImageBox">
                 <div class="pic">
                   <img src="/img/thumb6.png" width="130" height="auto" />
@@ -258,100 +258,119 @@
                   </div>
                 </div>
               </div>
-              -->
-              <!-- END ONE PIC -->
-              <!-- UPLOADED PICS -->
-            </div>
-            <!-- UPOLAD PICS -->
-
-            <!-- MORE INFO -->
-            <div class="field m-30-0-15-0">
-              <label class="label is-marginless">Gear, technique, inspiration... (Optional)</label>
-              <p class="content is-small is-marginless pb-05">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                accusamus!
-              </p>
-              <div class="control">
-                <textarea class="textarea" placeholder="A few worlds about you..."></textarea>
+                -->
+                <!-- END ONE PIC -->
+                <!-- UPLOADED PICS -->
               </div>
-            </div>
-            <!-- MORE INFO -->
+              <!-- UPOLAD PICS -->
 
-            <!-- TAGS -->
-            <div class="field m-30-0-15-0">
-              <label class="label is-marginless">Add tags (Optional)</label>
-              <p class="content is-small is-marginless pb-05">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                accusamus!
-              </p>
-              <div class="control">
-                <input class="input" type="tags" placeholder="Add Tag" value="Tag1,Tag2,Tag3" />
-              </div>
-            </div>
-            <!-- TAGS -->
-
-            <!-- LOCATION -->
-            <div class="field m-40-0-15-0">
-              <label class="label is-marginless">Story's location (Optional)</label>
-              <p class="content is-small is-marginless pb-05">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                accusamus!
-              </p>
-              <div class="control" style="max-width: 500px;">
-                <input class="input" type="text" placeholder="My location (Optional)" />
-              </div>
-            </div>
-            <!-- LOCATION -->
-
-            <!-- ALLOW COMMENTS -->
-            <div class="field m-30-0-15-0">
-              <div>
-                <label class="label is-marginless">
-                  Allows users to comment my
-                  story
-                </label>
+              <!-- MORE INFO -->
+              <div class="field m-30-0-15-0">
+                <label class="label is-marginless">Gear, technique, inspiration...</label>
                 <p class="content is-small is-marginless pb-05">
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
                   accusamus!
                 </p>
+                <div class="control">
+                  <textarea
+                    class="textarea"
+                    placeholder="A few worlds about you..."
+                    v-model="story.inspiration"
+                  ></textarea>
+                </div>
               </div>
-              <div></div>
-              <div class="field switch-btn-align">
-                <input
-                  id="switch-contact"
-                  type="checkbox"
-                  name="witch-contact"
-                  class="switch is-success"
-                  checked="checked"
-                />
-                <label for="switch-contact">Allow</label>
-              </div>
-            </div>
-            <!-- ALLOW COMMENTS-->
+              <!-- MORE INFO -->
 
-            <!-- SUBMIT -->
-            <div class="is-divider" style="margin-top:35px;"></div>
-            <div class="field is-grouped submit-buttons">
-              <div class="control">
-                <button class="button is-primary">Save</button>
+              <!-- TAGS -->
+              <div class="field m-30-0-15-0">
+                <label class="label is-marginless">Add tags</label>
+                <p class="content is-small is-marginless pb-05">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                  accusamus!
+                </p>
+                <div class="control">
+                  <input class="input" type="tags" placeholder="Add Tag" value="Tag1,Tag2,Tag3" />
+                </div>
               </div>
-              <div class="control">
-                <button class="button is-success">Save and publish</button>
+              <!-- TAGS -->
+
+              <!-- LOCATION -->
+              <div class="field m-40-0-15-0">
+                <label class="label is-marginless">Story's location</label>
+                <p class="content is-small is-marginless pb-05">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                  accusamus!
+                </p>
+                <div class="control" style="max-width: 500px;">
+                  <input class="input" type="text" placeholder="My location" />
+                </div>
               </div>
-              <div class="control">
-                <button class="button is-dark">Cancel</button>
+              <!-- LOCATION -->
+
+              <!-- ALLOW COMMENTS -->
+              <div class="field m-30-0-15-0">
+                <div>
+                  <label class="label is-marginless">
+                    Allows users to comment my
+                    story
+                  </label>
+                  <p class="content is-small is-marginless pb-05">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                    accusamus!
+                  </p>
+                </div>
+                <div></div>
+                <div class="field switch-btn-align">
+                  <input
+                    id="switch-contact"
+                    type="checkbox"
+                    name="witch-contact"
+                    class="switch is-success"
+                    checked="checked"
+                  />
+                  <label for="switch-contact">Allow</label>
+                </div>
               </div>
-            </div>
-            <!-- SUBMIT -->
-            <div style="margin-top:25px;"></div>
+              <!-- ALLOW COMMENTS-->
+
+              <!-- SUBMIT -->
+              <div class="is-divider" style="margin-top:35px;"></div>
+              <div class="field is-grouped submit-buttons">
+                <div class="control">
+                  <button class="button is-primary">Save</button>
+                </div>
+                <div class="control">
+                  <button class="button is-success">Save and publish</button>
+                </div>
+                <div class="control">
+                  <button class="button is-dark">Cancel</button>
+                </div>
+              </div>
+              <!-- SUBMIT -->
+              <div style="margin-top:25px;"></div>
+            </form>
           </div>
           <!-- END CARD CONTENT -->
         </div>
       </div>
     </div>
+    <!-- DEBUG -->
+    <div class="columns is-centered">
+      <div v-if="is_debug" class="column is-three-quarters-desktop">
+        <!-- START PROFILE -->
+        <div class="card" style="padding:20px;">
+          <p>DEBUG</p>
+          <!-- <p>{{ $v }}</p> -->
+          <p>category selected: {{ story.category }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- END DEBUG -->
     <!-- Message composer modal -->
     <pics-upload-modal
       :isActive="uploadModalActive"
+      :type="create"
+      :maxUploads="12"
       @uploadModalClosed="closeUploadModal"
       @onPicUpload="picUploaded"
     ></pics-upload-modal>
@@ -365,10 +384,43 @@ import axiosBase from "../services/axiosBase";
 import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
+import { categoriesList } from "../utils/categories";
 
 export default {
   data() {
     return {
+      is_debug: true,
+      is_loading: false,
+      // fetch errors
+      is_error: false,
+      errorMessage: "",
+      // api submit errors
+      is_api_error: false,
+      apiErrors: "",
+      apiErrorType: "",
+      //
+      categoriesList,
+      story: {
+        layout: "",
+        status: "draft",
+        is_in: true,
+        category: "0",
+        title: "",
+        pics: {},
+        inspiration: "",
+        tags: "",
+        location: {},
+        allow_comments: true,
+        author_key: "",
+        author_info: {},
+        use_white_borders: false
+      },
+      // location
+      mapboxOptions: [],
+      deepMapboxOptions: [],
+      selectedLocationPlace: "",
+      selectedLocationObj: null,
+      // pics modal
       uploadModalActive: false
     };
   },
@@ -387,7 +439,36 @@ export default {
     picUploaded(pic) {
       console.log("GOT IT");
       console.log(pic);
+    },
+    async onSubmit() {
+      try {
+        console.log("onSubmit");
+      } catch (error) {
+        console.log(error);
+      }
     }
+  },
+  computed: {
+    ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),
+    user: function() {
+      return this.authenticatedUser;
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      console.log("BEFORE ROUTE ENTER");
+      // access to component instance via `vm`
+      // console.log(vm);
+      // console.log(vm.isAuthenticated);
+      // console.log(vm.authenticatedUser._key);
+      // console.log(vm.$route.params.user_key);
+      if (!vm.isAuthenticated) {
+        vm.is_error = true;
+        vm.errorMessage = "PLEASE AUTHENTICATE";
+      }
+      vm.is_loading = false;
+      next();
+    });
   }
 };
 </script>
@@ -535,5 +616,10 @@ footer {
   -webkit-filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.2));
   filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.2));
   /* Similar syntax to box-shadow */
+}
+
+/*************** errors  *************/
+.isError {
+  color: red;
 }
 </style>
