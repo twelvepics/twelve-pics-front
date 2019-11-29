@@ -205,31 +205,42 @@ export default {
       this.$emit("uploadModalClosed");
     },
     onFilesSelected() {
-      // console.log(e);
-      // console.log("files selected");
+      // SELECT FILES
       this.selectFiles = false;
       this.viewFilesList = true;
+      ////////////////////////////
+      // SELECTED FILES
+      ////////////////////////////
       const sel = this.$refs.pics.files;
-      // for (let f of sel) {
-      //   console.log(f.size);
-      // }
-      // keep track of selected files
+      /////////////////////////////////////
+      // KEEP TRACK OF SELECTED FILES
+      // COPY TO selectedFiles
+      /////////////////////////////////////
       for (let i = 0; i < sel.length; i++) {
         this.selectedFiles.push(sel[i]);
       }
+      // load images and make mini thumbs with a file reader
       this.getImagePreviews();
     },
+
     async submitFiles() {
       this.selectFiles = false;
       this.viewFilesList = false;
       this.uploadFiles = true;
-      // clean big files
+      ////////////////////////////////////////
+      // FILTER TOO BIG FILES
+      // REMOVE THEM FROM selectedFiles
+      ////////////////////////////////////////
       for (let i = 0; i < this.selectedFiles.length; i++) {
         if (this.fileIsTooBig(this.selectedFiles[i])) {
           this.selectedFiles.splice(i, 1);
         }
       }
-      // copy to display array
+
+      //////////////////////////////////////////////////////
+      // COPY TO UPLOADS DISPLAY ARRAY filesToUpload
+      // WILL use previews to show mini thumbs
+      //////////////////////////////////////////////////////
       for (let i = 0; i < this.selectedFiles.length; i++) {
         this.filesToUpload.push(this.selectedFiles[i]);
       }
@@ -237,16 +248,19 @@ export default {
       // console.log(this.filesToUpload);
       // console.log(this.previews);
       // console.log("++++++++++++++++++");
+
+      //////////////////////////////////////////////////////
+      // UPLOAD ALL from selectedfiles
+      // may need to be sequenced/windowed later
+      //////////////////////////////////////////////////////
       try {
         for (let i = 0; i < this.selectedFiles.length; i++) {
           let formData = new FormData();
           let file = this.selectedFiles[i];
           file.id = i;
-          // console.log(file.name);
-          // formData.append("pics[" + i + "]", file, file.name);
           formData.append("pics", file, file.name);
           /////////////////////////////////////////////////////////
-          // single
+          // USE multer single
           /////////////////////////////////////////////////////////
           const uploaded = await axiosUpload.post(
             `/stories/${this.authenticatedUser._key}/upload-file`,
@@ -257,9 +271,9 @@ export default {
                   let progress = Math.round(
                     (uploadEvent.loaded / uploadEvent.total) * 100
                   );
-                  // console.log(`UploadProgress[${i}]: ${progress}%`);
                   this.$refs["progress" + parseInt(i)][0].value = progress;
                 } catch (err) {
+                  // Do what here
                   // console.log(err.message);
                 }
               }
@@ -268,10 +282,12 @@ export default {
           console.log("---------------");
           console.log(uploaded);
           console.log("---------------");
-          // console.log(uploaded.data.fileinfo.originalname);
-          // move to completed
-          // get idx
-          const fname = uploaded.data.fileinfo.originalname;
+
+          //////////////////////////////////////////////
+          // MOVE UPLOADED FILES TO comleted array
+          //////////////////////////////////////////////
+          // need to get idx from file name to splice
+          const fname = uploaded.data.original.original_name;
           let idx = -1;
           for (let i = 0; i < this.filesToUpload.length; i++) {
             if (this.filesToUpload[i].name === fname) {
@@ -279,27 +295,20 @@ export default {
               break;
             }
           }
-          // console.log(`found => ${idx}`);
           let done;
+          // remove from filesToUpload array
           if (idx !== -1) {
             done = this.filesToUpload.splice(idx, 1);
           }
-          //
-          // console.log(done[0]);
-          // console.log(done[0].name);
-          // console.log(this.previews);
-          // copy too done array
+          // copy too completed array
           this.completedFiles.push(done[0]);
-          console.log("@@@@@@@@@@@@@@@@@@");
-          console.log(uploaded.data.fileinfo.path);
-          console.log(uploaded.data.thumb.path);
-          console.log("@@@@@@@@@@@@@@@@@@");
-          // send to parent
-          const thisPic = {
-            filepath: uploaded.data.fileinfo.path,
-            thumb: uploaded.data.thumb.path
-          };
-          await this.$emit("onPicUpload", thisPic);
+          /////////////////////////////////////////////
+          // EMIT FILE DATA TO PARENT COMP
+          /////////////////////////////////////////////
+          await this.$emit("onPicUpload", {
+            original: uploaded.data.original,
+            thumb: uploaded.data.thumb
+          });
           // --
           // Done close
           if (this.filesToUpload.length === 0) {
@@ -311,23 +320,22 @@ export default {
         }
       } catch (error) {
         // TODO VUE ERRORS NOT CARED OF
-        console.log(error);
-        this.uploadError = true;
-        const uploadErrorDetail = error.response;
-        // console.log("XOXOXOXO");
-        // console.log(uploadErrorDetail);
-        // console.log("XOXOXOXO");
-        // console.log(this.uploadError.data);
-        // console.log(uploadErrorDetail.status === 400);
-        // console.log(uploadErrorDetail.data.error);
-        if (uploadErrorDetail.status === 400) {
-          this.uploadErrorMessage = uploadErrorDetail.data.error;
-        } else if ([401, 403].includes(uploadErrorDetail.status)) {
-          // auth error
-          this.uploadErrorMessage = "AUTHENTICATION ERROR";
+        if (error.response) {
+          console.log(error);
+          this.uploadError = true;
+          const uploadErrorDetail = error.response;
+          if (uploadErrorDetail.status === 400) {
+            this.uploadErrorMessage = uploadErrorDetail.data.error;
+          } else if ([401, 403].includes(uploadErrorDetail.status)) {
+            // auth error
+            this.uploadErrorMessage = "AUTHENTICATION ERROR";
+          } else {
+            // Most probably 500
+            this.uploadErrorMessage = "SERVOR ERROR";
+          }
         } else {
-          // Most probably 500
-          this.uploadErrorMessage = "SERVOR ERROR";
+          // vue error
+          console.log(error);
         }
       }
     },

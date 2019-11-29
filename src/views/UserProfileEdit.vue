@@ -536,7 +536,7 @@ export default {
                     }
                 );
                 this.uploadedFile = uploaded;
-                this.profile.avatar_path = `${AVATARS_BASE_URL}/${uploaded.data.filename}`;
+                this.profile.avatar_path = uploaded.data.web_path;
                 this.uploadCurrentStatus = UPLOAD_STATUS_SUCCESS;
                 // TODO SAVE AVATAR TO DB
                 await this.$store.dispatch("save_avatar", this.profile.avatar_path);

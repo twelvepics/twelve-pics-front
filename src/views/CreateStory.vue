@@ -221,77 +221,54 @@
                   </button>
                 </div>
                 <!-- PIC UPLOAD BUTTON-->
-
                 <!-- UPLOADED PICS -->
-                <!-- ONE PIC-->
-                <!--
-              <div class="box uploadedImageBox first">
-                <div class="controlIcons">
-                  <span class="icon icon-hover is-medium">
-                    <font-awesome-icon class="fas fa-lg shadow" icon="arrow-up"></font-awesome-icon>
-                  </span>
-                  <span class="icon icon-hover is-medium">
-                    <font-awesome-icon class="fas fa-lg shadow" icon="arrow-down"></font-awesome-icon>
-                  </span>
-                  <span class="icon icon-hover has-text-danger is-medium">
-                    <font-awesome-icon class="fas fa-lg shadow" icon="trash-alt"></font-awesome-icon>
-                  </span>
-                </div>
-                <div class="pic">
-                  <img src="/img/thumb2.png" width="200" height="auto" />
-                </div>
-                <div class="picInfo">
-                  <div class="field">
-                    <label class="label">Caption</label>
-                    <div class="control">
-                      <textarea class="textarea" placeholder="2 lines of textarea" rows="2"></textarea>
-                    </div>
+                <!-- LOOP PICS PIC-->
+                <div
+                  v-for="(pic, idx) in pics_uploaded"
+                  :key="idx"
+                  class="box uploadedImageBox"
+                  :class="{first: idx === 0}"
+                >
+                  <div class="controlIcons">
+                    <span class="icon icon-hover is-medium">
+                      <font-awesome-icon class="fas fa-lg shadow" icon="arrow-up"></font-awesome-icon>
+                    </span>
+                    <span class="icon icon-hover is-medium">
+                      <font-awesome-icon class="fas fa-lg shadow" icon="arrow-down"></font-awesome-icon>
+                    </span>
+                    <span class="icon icon-hover has-text-danger is-medium">
+                      <font-awesome-icon class="fas fa-lg shadow" icon="trash-alt"></font-awesome-icon>
+                    </span>
                   </div>
+                  <div class="pic">
+                    <img
+                      :src="pic.thumb.web_path"
+                      :width="isHorizontal(pic) ? 300 : 200"
+                      height="auto"
+                    />
+                  </div>
+                  <div class="picInfo">
+                    <div class="field">
+                      <label class="label">Caption</label>
+                      <div class="control">
+                        <textarea class="textarea" placeholder="2 lines of textarea" rows="2"></textarea>
+                      </div>
+                    </div>
 
-                  <div class="field">
-                    <label class="label">Description</label>
-                    <div class="control">
-                      <input
-                        class="input"
-                        type="text"
-                        placeholder="A short description"
-                        style="max-width:30rem;"
-                      />
+                    <div class="field">
+                      <label class="label">Description</label>
+                      <div class="control">
+                        <input
+                          class="input"
+                          type="text"
+                          placeholder="A short description"
+                          style="max-width:30rem;"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-                -->
-                <!-- END ONE PIC -->
-                <!-- ONE PIC-->
-                <!-- 
-              <div class="box uploadedImageBox">
-                <div class="pic">
-                  <img src="/img/thumb6.png" width="130" height="auto" />
-                </div>
-                <div class="picInfo">
-                  <div class="field">
-                    <label class="label">Caption</label>
-                    <div class="control">
-                      <textarea class="textarea" placeholder="2 lines of textarea" rows="2"></textarea>
-                    </div>
-                  </div>
-
-                  <div class="field">
-                    <label class="label">Description</label>
-                    <div class="control">
-                      <input
-                        class="input"
-                        type="text"
-                        placeholder="A short description"
-                        style="max-width:30rem;"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-                -->
-                <!-- END ONE PIC -->
+                <!-- END LOOP PICS -->
                 <!-- UPLOADED PICS -->
               </div>
               <!-- UPOLAD PICS -->
@@ -333,14 +310,35 @@
               <!-- TAGS -->
 
               <!-- LOCATION -->
-              <div class="field m-40-0-15-0">
-                <label class="label is-marginless">Story's location</label>
+              <div class="field m-30-0-15-0">
+                <label class="label is-marginless">Your location</label>
                 <p class="content is-small is-marginless pb-05">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus!
+                  <span style="color:red;" v-if="false">Max length is 128 characters.</span>
+                  <span
+                    v-else
+                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
                 </p>
                 <div class="control" style="max-width: 500px;">
-                  <input class="input" type="text" placeholder="My location" />
+                  <input
+                    autocomplete="off"
+                    class="input"
+                    type="text"
+                    v-model="story.location.place_name"
+                    placeholder="Type on and select your location"
+                    list="locations"
+                    @input="searchLocation"
+                    @change="setSelectedSelection"
+                    @keydown.enter.prevent
+                  />
+                  <datalist id="locations">
+                    <select>
+                      <option
+                        v-for="(option, idx) in mapboxOptions"
+                        :value="option.place_name"
+                        :key="idx"
+                      ></option>
+                    </select>
+                  </datalist>
                 </div>
               </div>
               <!-- LOCATION -->
@@ -364,9 +362,13 @@
                     type="checkbox"
                     name="witch-contact"
                     class="switch is-success"
-                    checked="checked"
+                    :checked="story.allow_comments"
+                    v-model="story.allow_comments"
+                    @change="setAllowComments"
                   />
-                  <label for="switch-contact">Allow</label>
+                  <label
+                    for="switch-contact"
+                  >Comments are {{ story.allow_comments ? "" : "not"}} allowed</label>
                 </div>
               </div>
               <!-- ALLOW COMMENTS-->
@@ -419,6 +421,18 @@
             <b>Tags:</b>
             {{ story.tags }}
           </p>
+          <p>
+            <b>Location:</b>
+            {{ story.location }}
+          </p>
+          <p>
+            <b>Allow comments:</b>
+            {{ story.allow_comments }}
+          </p>
+          <p>
+            <b>Pics uploaded:</b>
+            {{ pics_uploaded }}
+          </p>
         </div>
       </div>
     </div>
@@ -456,6 +470,7 @@ import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 import { categoriesList } from "../utils/categories";
+import { isHorizontal, isVertical } from "../utils/pics";
 
 export default {
   data() {
@@ -493,7 +508,10 @@ export default {
       selectedLocationObj: null,
       // pics modal
       uploadModalActive: false,
+
       modalAction: "create",
+      // pics uploaded
+      pics_uploaded: [],
       remainingUploads: 12
     };
   },
@@ -501,6 +519,8 @@ export default {
     PicsUploadModal
   },
   methods: {
+    isHorizontal,
+    isVertical,
     openUploadModal() {
       lockBgScroll();
       this.uploadModalActive = true;
@@ -512,6 +532,7 @@ export default {
     picUploaded(pic) {
       console.log("GOT IT");
       console.log(pic);
+      this.pics_uploaded.push(pic);
     },
     async onSubmit() {
       try {
@@ -538,6 +559,63 @@ export default {
         // TODO AXIOS SET IS_IN=FALSE SERVER SIDE
         // TODO POST STORY BUTTON DOESN'T WORK ANYMORE AFTER DELETE BECAUSE SAME URL
       }
+    },
+    async searchLocation(e) {
+      this.resetApiErrors();
+      try {
+        if (e.target.value.length > 1 && e.inputType === "insertText") {
+          // console.log("@@@");
+          const foundLocations = await axiosBase.get(
+            `/stories/${
+              this.authenticatedUser._key
+            }/locate?location=${encodeURIComponent(e.target.value)}`
+          );
+          // console.log("@@@");
+          // console.log(foundLocations);
+          this.mapboxOptions = foundLocations.data.found;
+          this.deepMapboxOptions = foundLocations.data.found;
+        } else {
+          this.mapboxOptions = [];
+        }
+      } catch (err) {
+        // DO SOMETHING/WHAT?
+        console.log("++++");
+        console.log(err.response);
+        // console.log(err.response.status);
+        // console.log(err.response.statusText);
+        // console.log(err.response.data.errorType);
+        // console.log(err.response.data.error);
+        // console.log("++++");
+      }
+    },
+    async setSelectedSelection(e) {
+      try {
+        this.selectedLocationPlace = e.target.value;
+        this.selectedLocationObj = await this.deepMapboxOptions.filter(l => {
+          return l.place_name == this.selectedLocationPlace;
+        });
+        if (this.selectedLocationObj.length > 0) {
+          this.story.location = this.selectedLocationObj[0];
+        } else {
+          this.story.location = {
+            place_name: e.target.value,
+            latitude: null,
+            longitude: null
+          };
+        }
+        this.mapboxOptions = [];
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    setAllowComments(e) {
+      console.log(e.target.checked);
+      this.story.allow_comments = e.target.checked;
+    },
+    resetApiErrors() {
+      this.is_api_error = false;
+      this.apiErrors = "";
+      this.apiErrorType = "";
     }
   },
   computed: {
