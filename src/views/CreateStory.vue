@@ -243,7 +243,7 @@
                   <div class="pic">
                     <img
                       :src="pic.thumb.web_path"
-                      :width="isHorizontal(pic) ? 300 : 200"
+                      :width="isHorizontal(pic.thumb) ? 300 : 200"
                       height="auto"
                     />
                   </div>
