@@ -223,7 +223,7 @@
                 <!-- PIC UPLOAD BUTTON-->
                 <!-- UPLOADED PICS -->
                 <!-- LOOP PICS PIC-->
-                <div
+                <!-- <div
                   v-for="(pic, idx) in pics_uploaded"
                   :key="idx"
                   class="box uploadedImageBox"
@@ -267,11 +267,61 @@
                       </div>
                     </div>
                   </div>
+                </div>-->
+                <!-- END LOOP PICS -->
+                <!-- LOOP PICS PIC-->
+                <div
+                  v-for="(pic, idx) in pics_uploaded"
+                  :key="idx"
+                  class="columns box uploadedImageBox"
+                  :class="{first: idx === 0}"
+                >
+                  <div class="controlIcons">
+                    <span class="icon icon-hover is-medium">
+                      <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
+                    </span>
+                    <span class="icon icon-hover is-medium">
+                      <font-awesome-icon class="fas fa-lg shadow" icon="arrow-up"></font-awesome-icon>
+                    </span>
+                    <span class="icon icon-hover is-medium">
+                      <font-awesome-icon class="fas fa-lg shadow" icon="arrow-down"></font-awesome-icon>
+                    </span>
+                    <span class="icon icon-hover has-text-danger is-medium">
+                      <font-awesome-icon class="fas fa-lg shadow" icon="trash-alt"></font-awesome-icon>
+                    </span>
+                  </div>
+                  <div class="pic column is-narrow">
+                    <img
+                      :src="pic.thumb.web_path"
+                      :width="isHorizontal(pic.thumb) ? 270 : 160"
+                      height="auto"
+                    />
+                  </div>
+                  <div class="picInfo column">
+                    <div class="field">
+                      <label class="label">Caption</label>
+                      <div class="control">
+                        <textarea class="textarea" placeholder="2 lines of textarea" rows="2"></textarea>
+                      </div>
+                    </div>
+
+                    <div class="field">
+                      <label class="label">Description</label>
+                      <div class="control">
+                        <input
+                          class="input"
+                          type="text"
+                          placeholder="A short description"
+                          style="max-width:30rem;"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <!-- END LOOP PICS -->
-                <!-- UPLOADED PICS -->
+                <!-- END UPLOADED PICS -->
               </div>
-              <!-- UPOLAD PICS -->
+              <!-- END UPOLAD PICS -->
 
               <!-- MORE INFO -->
               <div class="field m-30-0-15-0">
@@ -778,13 +828,30 @@ footer {
 /***** Uploaded images ******/
 .uploadedImageBox {
   margin: 12px 0 0 0;
-  padding: 10px;
+  padding: 0;
   border-radius: 0;
   position: relative;
 }
 .uploadedImageBox.first {
   margin: 15px 0 0 0;
 }
+.picInfo {
+  margin-top: 15px;
+}
+@media only screen and (max-width: 768px) {
+  .picInfo {
+    margin-top: 0;
+  }
+  .picInfo.column {
+    padding-top: 0;
+    margin-top: 0;
+  }
+  .pic.column {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+}
+
 .picInfo label {
   margin: 0 !important;
   padding: 0 !important;

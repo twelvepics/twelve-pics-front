@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 // Import a Google Font
-@import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
+// @import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
 
 $myprimary: rgb(10, 97, 197);
 $beige-light: #d0d1cd;
@@ -11,7 +11,9 @@ $my-darker-grey: #bbb;
 $mywarning: #ffc610;
 
 // Update Bulma's global variables
-$family-sans-serif: "Nunito", sans-serif;
+// TODO include Nunito font don't fetch it
+// $family-sans-serif: "Nunito", sans-serif;
+$family-sans-serif: "Trebuchet MS", Helvetica, sans-serif;
 $warning: $mywarning;
 $link: $myprimary;
 $primary: $myprimary;
