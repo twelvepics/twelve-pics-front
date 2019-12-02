@@ -213,7 +213,7 @@
 
                 <!-- PIC UPLOAD BUTTON-->
                 <div class="file is-primary" style="margin:0;">
-                  <button class="button is-primary" @click="openUploadModal">
+                  <button class="button is-primary" @click.prevent="openUploadModal">
                     <span class="icon">
                       <font-awesome-icon class="fas" icon="upload"></font-awesome-icon>
                     </span>
@@ -222,54 +222,11 @@
                 </div>
                 <!-- PIC UPLOAD BUTTON-->
                 <!-- UPLOADED PICS -->
-                <!-- LOOP PICS PIC-->
-                <!-- <div
-                  v-for="(pic, idx) in pics_uploaded"
-                  :key="idx"
-                  class="box uploadedImageBox"
-                  :class="{first: idx === 0}"
-                >
-                  <div class="controlIcons">
-                    <span class="icon icon-hover is-medium">
-                      <font-awesome-icon class="fas fa-lg shadow" icon="arrow-up"></font-awesome-icon>
-                    </span>
-                    <span class="icon icon-hover is-medium">
-                      <font-awesome-icon class="fas fa-lg shadow" icon="arrow-down"></font-awesome-icon>
-                    </span>
-                    <span class="icon icon-hover has-text-danger is-medium">
-                      <font-awesome-icon class="fas fa-lg shadow" icon="trash-alt"></font-awesome-icon>
-                    </span>
-                  </div>
-                  <div class="pic">
-                    <img
-                      :src="pic.thumb.web_path"
-                      :width="isHorizontal(pic.thumb) ? 300 : 200"
-                      height="auto"
-                    />
-                  </div>
-                  <div class="picInfo">
-                    <div class="field">
-                      <label class="label">Caption</label>
-                      <div class="control">
-                        <textarea class="textarea" placeholder="2 lines of textarea" rows="2"></textarea>
-                      </div>
-                    </div>
-
-                    <div class="field">
-                      <label class="label">Description</label>
-                      <div class="control">
-                        <input
-                          class="input"
-                          type="text"
-                          placeholder="A short description"
-                          style="max-width:30rem;"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>-->
-                <!-- END LOOP PICS -->
-                <!-- LOOP PICS PIC-->
+                
+                <!-- LOOP PICS-->
+                <!-- <draggable :list="pics_uploaded"  filter=".not-draggable" ghost-class="moving-card" :animation="200"> -->
+                <draggable :list="pics_uploaded" ghost-class="moving-card" handle=".handle" :animation="200">
+                
                 <div
                   v-for="(pic, idx) in pics_uploaded"
                   :key="idx"
@@ -277,20 +234,14 @@
                   :class="{first: idx === 0}"
                 >
                   <div class="controlIcons">
-                    <span class="icon icon-hover is-medium">
+                    <span class="icon icon-hover is-medium handle">
                       <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
-                    </span>
-                    <span class="icon icon-hover is-medium">
-                      <font-awesome-icon class="fas fa-lg shadow" icon="arrow-up"></font-awesome-icon>
-                    </span>
-                    <span class="icon icon-hover is-medium">
-                      <font-awesome-icon class="fas fa-lg shadow" icon="arrow-down"></font-awesome-icon>
                     </span>
                     <span class="icon icon-hover has-text-danger is-medium">
                       <font-awesome-icon class="fas fa-lg shadow" icon="trash-alt"></font-awesome-icon>
                     </span>
                   </div>
-                  <div class="pic column is-narrow">
+                  <div class="pic column is-narrow handle">
                     <img
                       :src="pic.thumb.web_path"
                       :width="isHorizontal(pic.thumb) ? 270 : 160"
@@ -301,7 +252,11 @@
                     <div class="field">
                       <label class="label">Caption</label>
                       <div class="control">
-                        <textarea class="textarea" placeholder="2 lines of textarea" rows="2"></textarea>
+                        <textarea class="textarea" 
+                          placeholder="2 lines of textarea" 
+                          rows="2" 
+                          :value="pic.caption"  
+                          @input="setPicCaption(idx, $event)"></textarea>
                       </div>
                     </div>
 
@@ -313,11 +268,15 @@
                           type="text"
                           placeholder="A short description"
                           style="max-width:30rem;"
+                          :value="pic.description"
+                          @input="setPicDescription(idx, $event)"
+                          @keydown.enter.prevent
                         />
                       </div>
                     </div>
                   </div>
                 </div>
+                </draggable>
                 <!-- END LOOP PICS -->
                 <!-- END UPLOADED PICS -->
               </div>
@@ -351,9 +310,9 @@
                   <input
                     class="input"
                     type="tags"
-                    placeholder="Add Tag"
-                    value="Tag1,Tag2,Tag3"
-                    v-model="story.tags"
+                    placeholder="Tag1,Tag2,Tag3"
+                    value=""
+                    v-model="tagsStr"
                   />
                 </div>
               </div>
@@ -427,14 +386,17 @@
               <div class="is-divider" style="margin-top:35px;"></div>
               <div class="field is-grouped submit-buttons">
                 <div class="control">
-                  <button class="button is-primary">Save</button>
+                  <button class="button is-primary"
+                  type="submit"
+                  :disabled="is_saving_story"
+                  >Save</button>
                 </div>
-                <div class="control">
+                <!-- <div class="control">
                   <button class="button is-success">Save and publish</button>
                 </div>
                 <div class="control">
                   <button class="button is-dark">Cancel</button>
-                </div>
+                </div> -->
               </div>
               <!-- SUBMIT -->
               <div style="margin-top:25px;"></div>
@@ -469,7 +431,7 @@
           </p>
           <p>
             <b>Tags:</b>
-            {{ story.tags }}
+            {{ tagsStr }}
           </p>
           <p>
             <b>Location:</b>
@@ -479,10 +441,15 @@
             <b>Allow comments:</b>
             {{ story.allow_comments }}
           </p>
-          <p>
+          <!-- <p>
             <b>Pics uploaded:</b>
             {{ pics_uploaded }}
-          </p>
+          </p> -->
+          <ul>
+            <li v-for="(pic, idx) in pics_uploaded" :key="idx">
+            {{ idx }} => {{ pic.original.original_name }}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
@@ -491,7 +458,8 @@
     <pics-upload-modal
       :isActive="uploadModalActive"
       :action="modalAction"
-      :maxUploads="remainingUploads"
+      :maxUploads="maxUploads"
+      :remainingUploads="remainingUploads"
       @uploadModalClosed="closeUploadModal"
       @onPicUpload="picUploaded"
     ></pics-upload-modal>
@@ -499,28 +467,27 @@
 </template>
 
 <script>
-// TODO DELETE STORY
-// TODO AXIOS SET IS_IN=FALSE SERVER SIDE
+// TODO SAVE STORY
+// TODO VIEW PAGE LINK ON SAVE OR ALREADY SAVED
+// TODO DELETE STORY AXIOS SET IS_IN=FALSE SERVER SIDE
 // TODO POST STORY BUTTON DOESN'T WORK ANYMORE AFTER DELETE BECAUSE SAME URL
-//      SEND TO A DELETED KINDA STATIC PAGE?
+//      SEND TO A DELETED KINDA STATIC PAGE? COMPONENT KEY?
 //      Voir https://michaelnthiessen.com/force-re-render/
+// TODO TAGS TO ARRAY ON SUBMIT, TO COMMA LIST IN INPUT
+// CLIENT SIDE AND SERVER SIDE VALIATIONS
 
-// TODO PICS
-// MAX REMAINING UPLOADS
-// SHOW DOWNLOADED ON CREATE PAGE
-// ETC...
-
-// TODO TAGS
-// to array on submit
-
-// eslint-disable-next-line
 import axiosBase from "../services/axiosBase";
+import Draggable from 'vuedraggable'
 // eslint-disable-next-line
 import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 import { categoriesList } from "../utils/categories";
 import { isHorizontal, isVertical } from "../utils/pics";
+
+const MAX_PICS = 12;
+// eslint-disable-next-line
+const MIN_PICS = 6;
 
 export default {
   data() {
@@ -536,19 +503,20 @@ export default {
       apiErrorType: "",
       //
       categoriesList,
+      tagsStr: "",
       story: {
         layout: "vertical",
         status: "draft",
         is_in: true,
         category: "0",
         title: "",
-        pics: {},
+        pics: [],
         inspiration: "",
-        tags: "",
+        tags: [],
         location: {},
         allow_comments: true,
-        author_key: "",
-        author_info: {},
+        // author_key: "",
+        // author_info: {},
         use_white_borders: false
       },
       // location
@@ -558,17 +526,61 @@ export default {
       selectedLocationObj: null,
       // pics modal
       uploadModalActive: false,
-
       modalAction: "create",
       // pics uploaded
       pics_uploaded: [],
-      remainingUploads: 12
+      maxUploads: MAX_PICS,
+      // save
+      is_saving_story: false
     };
   },
   components: {
-    PicsUploadModal
+    PicsUploadModal,
+    Draggable
   },
   methods: {
+    async onSubmit() {
+      try {
+          console.log("onSubmit");
+          console.log(this.story);
+          this.is_saving_story = true;
+          this.resetApiErrors();
+          // copy pics to story
+          for(let pic of this.pics_uploaded) {
+            // console.log('----------------------------')
+            // console.log(pic)
+            // console.log('----------------------------')
+            this.story.pics.push(pic)
+          }
+          // tags to Array
+          this.story.tags = this.tagsStr.split(',').map(x => x.trim());
+          // Go
+          const response = await axiosBase.post('/stories', {
+            story: this.story
+          })
+          const data = response.data;
+          this.is_saving_story = false;
+          console.log(data)
+      } catch (error) {
+          console.log("__ERROR_CAUGHT__");
+          this.is_saving_story = false;
+          this.is_api_error = true;
+          if (error.response) {
+            console.log(error.response.status);
+            console.log(error.response.data);
+            if (error.response.data.error_type === "INVALID_STORY_ERROR") {
+                this.apiErrors = error.response.data.errors;
+                
+                this.apiErrorType = "INVALID_STORY_ERROR";
+            } else {
+                this.apiErrorType = "SERVER ERROR";
+            }
+          } else {
+            console.log(error)
+          }
+          window.scrollTo(0, 0);
+      }
+        },
     isHorizontal,
     isVertical,
     openUploadModal() {
@@ -582,14 +594,15 @@ export default {
     picUploaded(pic) {
       console.log("GOT IT");
       console.log(pic);
-      this.pics_uploaded.push(pic);
+      this.pics_uploaded.push({original:pic.original, thumb: pic.thumb});
     },
-    async onSubmit() {
-      try {
-        console.log("onSubmit");
-      } catch (error) {
-        console.log(error);
-      }
+    setPicDescription(idx, event) {
+      console.log(event.target.value);
+      this.pics_uploaded[idx].description = event.target.value;
+    },
+    setPicCaption(idx, event) {
+      console.log(event.target.value)
+      this.pics_uploaded[idx].caption = event.target.value;
     },
     selectLayout(layout) {
       console.log(`selectLayout(${layout}`);
@@ -611,7 +624,7 @@ export default {
       }
     },
     async searchLocation(e) {
-      this.resetApiErrors();
+      // this.resetApiErrors();
       try {
         if (e.target.value.length > 1 && e.inputType === "insertText") {
           // console.log("@@@");
@@ -672,6 +685,9 @@ export default {
     ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),
     user: function() {
       return this.authenticatedUser;
+    },
+    remainingUploads: function() {
+      return this.maxUploads - this.pics_uploaded.length;
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -870,6 +886,16 @@ footer {
   -webkit-filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.2));
   filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.2));
   /* Similar syntax to box-shadow */
+}
+
+/*************** draggable ******************/
+.moving-card {
+  opacity: 0.7;
+  border: 1px solid #aaa;
+  background: #eee;
+}
+.handle {
+  cursor: move;
 }
 
 /*************** errors  *************/

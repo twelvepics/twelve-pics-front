@@ -32,11 +32,17 @@
             <!-- VIEW FILES LIST -->
             <div v-else-if="viewFilesList">
               <div class="selectedImages">
+                <div
+                  v-if="tooManyPics"
+                  class="notification is-danger"
+                  style="padding:.3rem;margin-bottom:.6rem;"
+                >You can upload at most {{maxUploads}} pics. {{remainingUploads}} remaining</div>
                 <div>
                   <button
                     class="button is-warning is-fullwidth"
                     style="margin-bottom:1rem"
                     @click="submitFiles"
+                    :disabled="tooManyPics"
                   >Upload</button>
                 </div>
                 <div class="is-divider upload-divider" style="margin-bottom:.7rem"></div>
@@ -136,6 +142,15 @@
             </div>
             <!-- ENDS UPLOAD FILES -->
           </div>
+          <!-- DEBUG -->
+          <div style="margin: 0 22px">
+            <p>DEBUG</p>
+            <p>Remaining: {{remainingUploads}}</p>
+            <p>Too many: {{ tooManyPics }} -> {{ remainingUploads }}</p>
+            <p>Remaining: {{ remainingUploads }}</p>
+            <p>Selected: {{ selectedFiles.length }}</p>
+          </div>
+          <!-- END DEBUG -->
         </div>
       </div>
     </div>
@@ -159,7 +174,7 @@ import { maxLength } from "vuelidate/lib/validators";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 
 export default {
-  props: ["isActive", "maxUploads", "action"],
+  props: ["isActive", "maxUploads", "remainingUploads", "action"],
   data() {
     return {
       /** file uploads **/
@@ -371,7 +386,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"])
+    ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),
+    tooManyPics() {
+      return this.remainingUploads < this.selectedFiles.length;
+    }
   },
   created() {
     console.log("created");
