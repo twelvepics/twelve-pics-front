@@ -24,9 +24,27 @@
               <p class="title is-size-4">Add a story</p>
               <p class="subtitle is-size-6">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum,
-                facilis
-                praesentium esse veritatis nemo!
+                facilis praesentium esse veritatis nemo! Quis autem vel eum iure reprehenderit qui in ea voluptate 
+                velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur
               </p>
+              <!-- <div v-if="story.page_url" style="margin-bottom:-1rem;">
+                <p class="is-size-6 page-link-title"><b>PAGE URL</b></p>
+                <p class="content">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                  accusamus.
+                  <br />
+                  <a class="has-text-link" :href="story.page_url">{{story.page_url}}</a>
+                </p>
+              </div> -->
+              <div v-if="true" style="margin-bottom:-.8rem; line-height:150%;">
+                <p class="is-size-5 page-link-title"><b>PAGE URL</b></p>
+                <p class="content">
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
+                  accusamus:
+                  <br />
+                  <a class="page-link-title is-size-5" :href="story.page_url">http://xoxo.xixi</a>
+                </p>
+              </div>
               <!-- TOP BOXES -->
               <div class="top-boxes-grid" style="margin-top:40px;">
                 <div>
@@ -445,6 +463,10 @@
             <b>Pics uploaded:</b>
             {{ pics_uploaded }}
           </p> -->
+          <p>
+            <b>Page url:</b>
+            {{ story.page_url }}
+          </p>
           <ul>
             <li v-for="(pic, idx) in pics_uploaded" :key="idx">
             {{ idx }} => {{ pic.original.original_name }}
@@ -467,14 +489,14 @@
 </template>
 
 <script>
-// TODO SAVE STORY
-// TODO VIEW PAGE LINK ON SAVE OR ALREADY SAVED
-// TODO DELETE STORY AXIOS SET IS_IN=FALSE SERVER SIDE
+// TODO ADD STORY TO USER.STORIES IN DB
+// TODO DELETE STORY AXIOS SET IS_IN=FALSE SERVER SIDE (DONE UNTESTED)
 // TODO POST STORY BUTTON DOESN'T WORK ANYMORE AFTER DELETE BECAUSE SAME URL
 //      SEND TO A DELETED KINDA STATIC PAGE? COMPONENT KEY?
 //      Voir https://michaelnthiessen.com/force-re-render/
 // TODO TAGS TO ARRAY ON SUBMIT, TO COMMA LIST IN INPUT
-// CLIENT SIDE AND SERVER SIDE VALIATIONS
+// CLIENT SIDE AND SERVER SIDE VALIDATIONS
+// UPDATE STORY
 
 import axiosBase from "../services/axiosBase";
 import Draggable from 'vuedraggable'
@@ -559,6 +581,7 @@ export default {
             story: this.story
           })
           const data = response.data;
+          this.story.page_url = data.story.page_url
           this.is_saving_story = false;
           console.log(data)
       } catch (error) {
@@ -902,4 +925,14 @@ footer {
 .isError {
   color: red;
 }
+
+/************** misc ***********/
+.page-link-title {
+  color: #f8aa0f;
+}
+a.page-link-title {
+  color: #f8aa0f;
+}
+
+
 </style>
