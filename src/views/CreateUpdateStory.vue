@@ -24,7 +24,7 @@
               <p class="title is-size-4">Add a story</p>
               <p class="subtitle is-size-6">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum,
-                facilis praesentium esse veritatis nemo! Quis autem vel eum iure reprehenderit qui in ea voluptate 
+                facilis praesentium esse veritatis nemo! Quis autem vel eum iure reprehenderit qui in ea voluptate
                 velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur
               </p>
               <!-- <div v-if="story.page_url" style="margin-bottom:-1rem;">
@@ -35,14 +35,19 @@
                   <br />
                   <a class="has-text-link" :href="story.page_url">{{story.page_url}}</a>
                 </p>
-              </div> -->
-              <div v-if="true" style="margin-bottom:-.8rem; line-height:150%;">
-                <p class="is-size-5 page-link-title"><b>PAGE URL</b></p>
+              </div>-->
+              <div v-if="story.page_url" style="margin-bottom:-.8rem; line-height:150%;">
+                <p class="is-size-5 page-link-title">
+                  <b>PAGE URL</b>
+                </p>
                 <p class="content">
                   Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
                   accusamus:
                   <br />
-                  <a class="page-link-title is-size-5" :href="story.page_url">http://xoxo.xixi</a>
+                  <router-link
+                    :to="{ name: 'view-story', params: { slug: story.slug }}"
+                    class="page-link-title is-size-5"
+                  >{{ story.page_url}}</router-link>
                 </p>
               </div>
               <!-- TOP BOXES -->
@@ -240,60 +245,66 @@
                 </div>
                 <!-- PIC UPLOAD BUTTON-->
                 <!-- UPLOADED PICS -->
-                
+
                 <!-- LOOP PICS-->
                 <!-- <draggable :list="pics_uploaded"  filter=".not-draggable" ghost-class="moving-card" :animation="200"> -->
-                <draggable :list="pics_uploaded" ghost-class="moving-card" handle=".handle" :animation="200">
-                
-                <div
-                  v-for="(pic, idx) in pics_uploaded"
-                  :key="idx"
-                  class="columns box uploadedImageBox"
-                  :class="{first: idx === 0}"
+                <draggable
+                  :list="pics_uploaded"
+                  ghost-class="moving-card"
+                  handle=".handle"
+                  :animation="200"
                 >
-                  <div class="controlIcons">
-                    <span class="icon icon-hover is-medium handle">
-                      <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
-                    </span>
-                    <span class="icon icon-hover has-text-danger is-medium">
-                      <font-awesome-icon class="fas fa-lg shadow" icon="trash-alt"></font-awesome-icon>
-                    </span>
-                  </div>
-                  <div class="pic column is-narrow handle">
-                    <img
-                      :src="pic.thumb.web_path"
-                      :width="isHorizontal(pic.thumb) ? 270 : 160"
-                      height="auto"
-                    />
-                  </div>
-                  <div class="picInfo column">
-                    <div class="field">
-                      <label class="label">Caption</label>
-                      <div class="control">
-                        <textarea class="textarea" 
-                          placeholder="2 lines of textarea" 
-                          rows="2" 
-                          :value="pic.caption"  
-                          @input="setPicCaption(idx, $event)"></textarea>
-                      </div>
+                  <div
+                    v-for="(pic, idx) in pics_uploaded"
+                    :key="idx"
+                    class="columns box uploadedImageBox"
+                    :class="{first: idx === 0}"
+                  >
+                    <div class="controlIcons">
+                      <span class="icon icon-hover is-medium handle">
+                        <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
+                      </span>
+                      <span class="icon icon-hover has-text-danger is-medium">
+                        <font-awesome-icon class="fas fa-lg shadow" icon="trash-alt"></font-awesome-icon>
+                      </span>
                     </div>
+                    <div class="pic column is-narrow handle">
+                      <img
+                        :src="pic.thumb.web_path"
+                        :width="isHorizontal(pic.thumb) ? 270 : 160"
+                        height="auto"
+                      />
+                    </div>
+                    <div class="picInfo column">
+                      <div class="field">
+                        <label class="label">Caption</label>
+                        <div class="control">
+                          <textarea
+                            class="textarea"
+                            placeholder="2 lines of textarea"
+                            rows="2"
+                            :value="pic.caption"
+                            @blur="setPicCaption(idx, $event)"
+                          ></textarea>
+                        </div>
+                      </div>
 
-                    <div class="field">
-                      <label class="label">Description</label>
-                      <div class="control">
-                        <input
-                          class="input"
-                          type="text"
-                          placeholder="A short description"
-                          style="max-width:30rem;"
-                          :value="pic.description"
-                          @input="setPicDescription(idx, $event)"
-                          @keydown.enter.prevent
-                        />
+                      <div class="field">
+                        <label class="label">Description</label>
+                        <div class="control">
+                          <input
+                            class="input"
+                            type="text"
+                            placeholder="A short description"
+                            style="max-width:30rem;"
+                            :value="pic.description"
+                            @blur="setPicDescription(idx, $event)"
+                            @keydown.enter.prevent
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
                 </draggable>
                 <!-- END LOOP PICS -->
                 <!-- END UPLOADED PICS -->
@@ -329,7 +340,7 @@
                     class="input"
                     type="tags"
                     placeholder="Tag1,Tag2,Tag3"
-                    value=""
+                    value
                     v-model="tagsStr"
                   />
                 </div>
@@ -404,17 +415,14 @@
               <div class="is-divider" style="margin-top:35px;"></div>
               <div class="field is-grouped submit-buttons">
                 <div class="control">
-                  <button class="button is-primary"
-                  type="submit"
-                  :disabled="is_saving_story"
-                  >Save</button>
+                  <button class="button is-primary" type="submit" :disabled="is_saving_story">Save</button>
                 </div>
                 <!-- <div class="control">
                   <button class="button is-success">Save and publish</button>
                 </div>
                 <div class="control">
                   <button class="button is-dark">Cancel</button>
-                </div> -->
+                </div>-->
               </div>
               <!-- SUBMIT -->
               <div style="margin-top:25px;"></div>
@@ -462,15 +470,16 @@
           <!-- <p>
             <b>Pics uploaded:</b>
             {{ pics_uploaded }}
-          </p> -->
+          </p>-->
           <p>
             <b>Page url:</b>
             {{ story.page_url }}
           </p>
           <ul>
-            <li v-for="(pic, idx) in pics_uploaded" :key="idx">
-            {{ idx }} => {{ pic.original.original_name }}
-            </li>
+            <li
+              v-for="(pic, idx) in pics_uploaded"
+              :key="idx"
+            >{{ idx }} => {{ pic.original.original_name }}</li>
           </ul>
         </div>
       </div>
@@ -479,7 +488,6 @@
     <!-- Message composer modal -->
     <pics-upload-modal
       :isActive="uploadModalActive"
-      :action="modalAction"
       :maxUploads="maxUploads"
       :remainingUploads="remainingUploads"
       @uploadModalClosed="closeUploadModal"
@@ -489,17 +497,17 @@
 </template>
 
 <script>
-// TODO ADD STORY TO USER.STORIES IN DB
-// TODO DELETE STORY AXIOS SET IS_IN=FALSE SERVER SIDE (DONE UNTESTED)
+// TODO PUB / UNPUB GO SERVER SIDE, ADD OPTIONAL CONDITION TO GET N LIST STORYS
+// TODO DELETE STORY AXIOS SET IS_IN=FALSE SERVER SIDE (MAKE FRONT CALL - SS DONE UNTESTED)
 // TODO POST STORY BUTTON DOESN'T WORK ANYMORE AFTER DELETE BECAUSE SAME URL
 //      SEND TO A DELETED KINDA STATIC PAGE? COMPONENT KEY?
 //      Voir https://michaelnthiessen.com/force-re-render/
-// TODO TAGS TO ARRAY ON SUBMIT, TO COMMA LIST IN INPUT
 // CLIENT SIDE AND SERVER SIDE VALIDATIONS
-// UPDATE STORY
+// TODO UPDATE VERIF USER IS STORY'S OWNER (DONE IN fetchAndSetData TO BE TESTED)
+// LOAD STORY FOR UPDATE IN CREATED (DONE TO BE TESTED)
 
 import axiosBase from "../services/axiosBase";
-import Draggable from 'vuedraggable'
+import Draggable from "vuedraggable";
 // eslint-disable-next-line
 import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
@@ -537,8 +545,8 @@ export default {
         tags: [],
         location: {},
         allow_comments: true,
-        // author_key: "",
-        // author_info: {},
+        author_key: "",
+        author_info: {},
         use_white_borders: false
       },
       // location
@@ -548,7 +556,6 @@ export default {
       selectedLocationObj: null,
       // pics modal
       uploadModalActive: false,
-      modalAction: "create",
       // pics uploaded
       pics_uploaded: [],
       maxUploads: MAX_PICS,
@@ -563,47 +570,59 @@ export default {
   methods: {
     async onSubmit() {
       try {
-          console.log("onSubmit");
-          console.log(this.story);
-          this.is_saving_story = true;
-          this.resetApiErrors();
-          // copy pics to story
-          for(let pic of this.pics_uploaded) {
-            // console.log('----------------------------')
-            // console.log(pic)
-            // console.log('----------------------------')
-            this.story.pics.push(pic)
-          }
-          // tags to Array
-          this.story.tags = this.tagsStr.split(',').map(x => x.trim());
-          // Go
-          const response = await axiosBase.post('/stories', {
+        console.log("onSubmit");
+        let response = null;
+        this.is_saving_story = true;
+        this.resetApiErrors();
+        // copy pics to story
+        this.story.pics = [];
+        for (let pic of this.pics_uploaded) {
+          this.story.pics.push(pic);
+        }
+        // tags to Array
+        this.story.tags = this.tagsStr.trim().length
+          ? this.tagsStr.split(",").map(x => x.trim())
+          : [];
+        if (this.story._key) {
+          console.log("I am an update");
+          response = await axiosBase.put(`/stories/${this.story._key}`, {
             story: this.story
-          })
-          const data = response.data;
-          this.story.page_url = data.story.page_url
-          this.is_saving_story = false;
-          console.log(data)
+          });
+        } else {
+          console.log("I am a create");
+          response = await axiosBase.post("/stories", {
+            story: this.story
+          });
+        }
+        const data = response.data;
+        console.log(data);
+        // this.story.page_url = data.story.page_url
+        this.story = Object.assign({}, data.story);
+        this.pics_uploaded = this.story.pics;
+        this.story.tags = this.story.tags.join(", ");
+        this.is_saving_story = false;
       } catch (error) {
-          console.log("__ERROR_CAUGHT__");
-          this.is_saving_story = false;
-          this.is_api_error = true;
-          if (error.response) {
-            console.log(error.response.status);
-            console.log(error.response.data);
-            if (error.response.data.error_type === "INVALID_STORY_ERROR") {
-                this.apiErrors = error.response.data.errors;
-                
-                this.apiErrorType = "INVALID_STORY_ERROR";
-            } else {
-                this.apiErrorType = "SERVER ERROR";
-            }
+        console.log("__ERROR_CAUGHT__");
+        this.is_saving_story = false;
+        this.is_api_error = true;
+        if (error.response) {
+          console.log(error.response.status);
+          console.log(error.response.data);
+          if (error.response.data.error_type === "INVALID_STORY_ERROR") {
+            this.apiErrors = error.response.data.errors;
+
+            this.apiErrorType = "INVALID_STORY_ERROR";
           } else {
-            console.log(error)
+            this.apiErrorType = "SERVER ERROR";
           }
-          window.scrollTo(0, 0);
+        } else {
+          console.log(error);
+        }
+      } finally {
+        window.scrollTo(0, 0);
       }
-        },
+    },
+
     isHorizontal,
     isVertical,
     openUploadModal() {
@@ -617,14 +636,14 @@ export default {
     picUploaded(pic) {
       console.log("GOT IT");
       console.log(pic);
-      this.pics_uploaded.push({original:pic.original, thumb: pic.thumb});
+      this.pics_uploaded.push({ original: pic.original, thumb: pic.thumb });
     },
     setPicDescription(idx, event) {
       console.log(event.target.value);
       this.pics_uploaded[idx].description = event.target.value;
     },
     setPicCaption(idx, event) {
-      console.log(event.target.value)
+      console.log(event.target.value);
       this.pics_uploaded[idx].caption = event.target.value;
     },
     selectLayout(layout) {
@@ -702,6 +721,34 @@ export default {
       this.is_api_error = false;
       this.apiErrors = "";
       this.apiErrorType = "";
+    },
+    async fetchAndSetData() {
+      try {
+        const slug = this.$route.params.slug;
+        const response = await axiosBase.get(`/stories/${slug}`);
+
+        const data = response.data;
+        const author_key = data.story.author_key;
+        if (author_key !== this.authenticatedUser._key) {
+          this.is_error = true;
+          this.errorMessage = "NOT AUTHORIZED";
+        }
+        // console.log(data);
+        // this.story.page_url = data.story.page_url
+        this.story = Object.assign({}, data.story);
+        this.pics_uploaded = this.story.pics;
+        this.story.tags = this.storytags.join(", ");
+        this.is_loading = false;
+      } catch (e) {
+        this.is_error = true;
+        if (e.response.status === 404) {
+          this.errorMessage = "STORY NOT FOUND";
+        } else {
+          // Most probably a 500
+          this.errorMessage = "SERVER ERROR";
+        }
+        this.is_loading = false;
+      }
     }
   },
   computed: {
@@ -714,13 +761,9 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
+    // TODO UPDATE VERIF USER IS STORY'S OWNER
     next(vm => {
       console.log("BEFORE ROUTE ENTER");
-      // access to component instance via `vm`
-      // console.log(vm);
-      // console.log(vm.isAuthenticated);
-      // console.log(vm.authenticatedUser._key);
-      // console.log(vm.$route.params.user_key);
       if (!vm.isAuthenticated) {
         vm.is_error = true;
         vm.errorMessage = "PLEASE AUTHENTICATE";
@@ -728,6 +771,16 @@ export default {
       vm.is_loading = false;
       next();
     });
+  },
+  created() {
+    // IF I AM AN UPDATE LOAD STORY
+    if (this.$route.name === "edit-story") {
+      console.log("CREATED: I AM AN UPDATE");
+      this.is_loading = true;
+      this.fetchAndSetData();
+    } else {
+      console.log("CREATED: I AM A CREATE");
+    }
   }
 };
 </script>
@@ -933,6 +986,4 @@ footer {
 a.page-link-title {
   color: #f8aa0f;
 }
-
-
 </style>

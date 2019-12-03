@@ -174,7 +174,7 @@ import { maxLength } from "vuelidate/lib/validators";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 
 export default {
-  props: ["isActive", "maxUploads", "remainingUploads", "action"],
+  props: ["isActive", "maxUploads", "remainingUploads"],
   data() {
     return {
       /** file uploads **/

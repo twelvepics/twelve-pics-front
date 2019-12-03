@@ -22,7 +22,7 @@ export default new Router(
         path: '/story/create',
         name: 'create-story',
         components: {
-          default: () => import(/* webpackChunkName: "create-story" */ './views/CreateStory.vue'),
+          default: () => import(/* webpackChunkName: "create-story" */ './views/CreateUpdateStory.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },
@@ -36,10 +36,10 @@ export default new Router(
         }
       },
       {
-        path: '/story/:id/edit',
+        path: '/story/:key/edit',
         name: 'edit-story',
         components: {
-          default: () => import(/* webpackChunkName: "create-story" */ './views/EditStory.vue'),
+          default: () => import(/* webpackChunkName: "create-story" */ './views/CreateUpdateStory.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },
