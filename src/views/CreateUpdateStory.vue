@@ -151,7 +151,7 @@
                       <p>
                         <button
                           class="button is-warning"
-                          style="font-size:.85rem"
+                          style="font-size:.85rem;"
                           @click.prevent="setStatus('published')"
                         >PUBLISH</button>
                       </p>
@@ -417,12 +417,12 @@
                 <div class="control">
                   <button class="button is-primary" type="submit" :disabled="is_saving_story">Save</button>
                 </div>
-                <!-- <div class="control">
-                  <button class="button is-success">Save and publish</button>
+                <div class="control" v-if="!isPublished">
+                  <button class="button is-success" @click.prevent="saveAndPublish">Save and publish</button>
                 </div>
                 <div class="control">
-                  <button class="button is-dark">Cancel</button>
-                </div>-->
+                  <button class="button is-dark" @click.prevent="goBack">Cancel</button>
+                </div>
               </div>
               <!-- SUBMIT -->
               <div style="margin-top:25px;"></div>
@@ -497,8 +497,7 @@
 </template>
 
 <script>
-// TODO PUB / UNPUB GO SERVER SIDE, ADD OPTIONAL CONDITION TO GET N LIST STORYS
-// TODO DELETE STORY AXIOS SET IS_IN=FALSE SERVER SIDE (MAKE FRONT CALL - SS DONE UNTESTED)
+// UPDATE USERS WHEN UPDATING AND DELETING STORIES SERVER SIDE
 // TODO POST STORY BUTTON DOESN'T WORK ANYMORE AFTER DELETE BECAUSE SAME URL
 //      SEND TO A DELETED KINDA STATIC PAGE? COMPONENT KEY?
 //      Voir https://michaelnthiessen.com/force-re-render/
@@ -650,21 +649,6 @@ export default {
       console.log(`selectLayout(${layout}`);
       this.story.layout = layout;
     },
-    setStatus(status) {
-      console.log(`selectLayout(${status}`);
-      this.story.status = status;
-    },
-    deleteStory() {
-      console.log("deleteStory()");
-      const resp = window.confirm("Really, delete?");
-      console.log(resp);
-      if (resp) {
-        this.story.is_in = false;
-        // TODO DELETE STORY
-        // TODO AXIOS SET IS_IN=FALSE SERVER SIDE
-        // TODO POST STORY BUTTON DOESN'T WORK ANYMORE AFTER DELETE BECAUSE SAME URL
-      }
-    },
     async searchLocation(e) {
       // this.resetApiErrors();
       try {
@@ -749,6 +733,42 @@ export default {
         }
         this.is_loading = false;
       }
+    },
+    //////////////// TODO /////////////////
+    async saveAndPublish() {
+      console.log("saveAndPublish");
+      this.setStatus("published");
+      this.onSubmit();
+    },
+    async setStatus(status) {
+      console.log(`selectLayout(${status}`);
+      this.story.status = status;
+      // save Server side only if already saved
+      if (this.story._key) {
+        this.onSubmit();
+      }
+    },
+    async deleteStory() {
+      console.log("deleteStory()");
+      const resp = window.confirm("Really, delete?");
+      console.log(resp);
+      if (resp) {
+        this.story.is_in = false;
+        // delete Server side only if already saved
+        if (this.story._key) {
+          // this.onSubmit();
+          try {
+            await axiosBase.delete(`/stories/${this.story._key}`);
+          } catch (err) {
+            // ERR TODO
+            console.log(err);
+          }
+        }
+      }
+    },
+    goBack() {
+      console.log("goBack");
+      this.$router.go(-1);
     }
   },
   computed: {
@@ -758,6 +778,12 @@ export default {
     },
     remainingUploads: function() {
       return this.maxUploads - this.pics_uploaded.length;
+    },
+    isUpdate: function() {
+      return !!this.story._key;
+    },
+    isPublished() {
+      return this.story.status === "published";
     }
   },
   beforeRouteEnter(to, from, next) {
