@@ -3,6 +3,14 @@
     <div class="columns is-centered">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
+        <div
+          class="notification is-danger"
+          v-if="!is_loading && showDeletedNotif"
+          style="padding:.5rem .8rem"
+        >
+          <button class="delete" @click="dismissDeletedNotif"></button>
+          The story has been deleted
+        </div>
         <!-- ERRORS AND AUTH -->
         <div
           class="card"
@@ -10,11 +18,6 @@
           style="text-align:center;height:60px;padding-top:10px;"
         >
           <div v-if="is_error" class="isError" style="margin-top:7px;">{{ errorMessage }}</div>
-          <div
-            v-if="(story && !story.is_in)"
-            class="isError"
-            style="margin-top:7px;"
-          >THIS STORY HAS BEEN DELETED</div>
         </div>
         <!-- START FORM -->
         <div class="card" v-else>
@@ -497,7 +500,6 @@
 </template>
 
 <script>
-// UPDATE USERS WHEN UPDATING AND DELETING STORIES SERVER SIDE
 // TODO POST STORY BUTTON DOESN'T WORK ANYMORE AFTER DELETE BECAUSE SAME URL
 //      SEND TO A DELETED KINDA STATIC PAGE? COMPONENT KEY?
 //      Voir https://michaelnthiessen.com/force-re-render/
@@ -559,7 +561,9 @@ export default {
       pics_uploaded: [],
       maxUploads: MAX_PICS,
       // save
-      is_saving_story: false
+      is_saving_story: false,
+      // delete
+      showDeletedNotif: false
     };
   },
   components: {
@@ -753,7 +757,9 @@ export default {
       const resp = window.confirm("Really, delete?");
       console.log(resp);
       if (resp) {
-        this.story.is_in = false;
+        window.scrollTo(0, 0);
+        this.is_loading = true;
+        this.showDeletedNotif = true;
         // delete Server side only if already saved
         if (this.story._key) {
           // this.onSubmit();
@@ -764,11 +770,50 @@ export default {
             console.log(err);
           }
         }
+        this.resetAll();
       }
     },
     goBack() {
       console.log("goBack");
       this.$router.go(-1);
+    },
+    resetAll() {
+      this.is_loading = false;
+      this.is_error = false;
+      this.errorMessage = "";
+      // api submit errors
+      this.is_api_error = false;
+      this.apiErrors = "";
+      this.apiErrorType = "";
+      (this.tagsStr = ""),
+        (this.story = {
+          layout: "vertical",
+          status: "draft",
+          is_in: true,
+          category: "0",
+          title: "",
+          pics: [],
+          inspiration: "",
+          tags: [],
+          location: {},
+          allow_comments: true,
+          author_key: "",
+          author_info: {},
+          use_white_borders: false
+        }),
+        // location
+        (this.mapboxOptions = []);
+      this.deepMapboxOptions = [];
+      this.selectedLocationPlace = "";
+      this.selectedLocationObj = null;
+      // pics modal
+      this.uploadModalActive = false;
+      // pics uploaded
+      this.pics_uploaded = [];
+      this.is_saving_story = false;
+    },
+    dismissDeletedNotif() {
+      this.showDeletedNotif = false;
     }
   },
   computed: {
