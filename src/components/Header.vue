@@ -63,14 +63,21 @@
         <!-- BUTTONS-->
         <div class="navbar-item">
           <div class="buttons">
-            <router-link
+            <!-- <router-link
               class="button is-primary"
               id="post-story-btn"
               to="/story/create"
               v-if="isAuthenticated"
+              @click.native="resetCreateForm"
+            ></router-link>-->
+            <a
+              class="button is-primary"
+              id="post-story-btn"
+              @click="goToCreateStory"
+              v-if="isAuthenticated"
             >
               <strong>Post a story</strong>
-            </router-link>
+            </a>
             <a
               class="button is-primary"
               id="signup-btn"
@@ -111,6 +118,20 @@
                 <font-awesome-icon icon="user"></font-awesome-icon>
               </span>
               <span>My profile</span>
+            </router-link>
+
+            <router-link
+              v-if="isAuthenticated"
+              class="navbar-item"
+              :to="{ name: 'user-stories', params: { username: authenticatedUser.username }}"
+              exact
+              exact-active-class="is-active"
+              @click.native="hideDropdown()"
+            >
+              <span class="fa-icon-pr7">
+                <font-awesome-icon icon="user"></font-awesome-icon>
+              </span>
+              <span>My stories</span>
             </router-link>
             <!-- SETTINGS LATER -->
             <!-- <router-link
@@ -262,6 +283,13 @@ export default {
             throw err;
           }
         });
+    },
+    async goToCreateStory() {
+      if (this.$route.name !== "create-story") {
+        console.log("resetCreateForm");
+        await this.$store.dispatch("clearCreateFormCache");
+        this.$router.push({ name: "create-story" });
+      }
     }
   },
   computed: {

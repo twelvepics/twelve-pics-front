@@ -17,6 +17,15 @@ export default new Router(
         name: 'home',
         component: Home,
       },
+      // list my stories
+      {
+        path: '/:username/stories',
+        name: 'user-stories',
+        components: {
+          default: () => import(/* webpackChunkName: "create-story" */ './views/StoriesList.vue'),
+          footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
+        }
+      },
       // create a story
       {
         path: '/story/create',
@@ -24,7 +33,7 @@ export default new Router(
         components: {
           default: () => import(/* webpackChunkName: "create-story" */ './views/CreateUpdateStory.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
-        }
+        },
       },
       // view a story
       {

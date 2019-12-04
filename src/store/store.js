@@ -17,7 +17,8 @@ export default new Vuex.Store({
     jwtToken: null, // localStorage.getItem('token'),
     user: null, // JSON.parse(localStorage.getItem('user')),
     categories: ['documentary', 'stillLife', 'wildLife', 'wedding', 'travel', 'dailyLife', 'fineArt', 'portrait', 'sport', 'architecture', 'streetPhotography'],
-    userInited: false
+    userInited: false,
+    createFormCache: {},
   },
   getters: {
     isStoryComponentMounted: state => {
@@ -53,6 +54,9 @@ export default new Vuex.Store({
       } else {
         return { profile: {} }
       }
+    },
+    getCreateFormCache: state => {
+      return state.createFormCache;
     }
   },
   mutations: {
@@ -119,6 +123,14 @@ export default new Vuex.Store({
       if (localStorage.getItem('user')) {
         state.user = JSON.parse(localStorage.getItem('user'));
       }
+    },
+    // create form cache
+    // this.$store.commit('setCreateFormCache', story)
+    setCreateFormCache: (state, payload) => {
+      state.createFormCache = { story: payload }
+    },
+    clearCreateFormCache: (state) => {
+      state.createFormCache = {};
     }
   },
   actions: {
@@ -176,7 +188,8 @@ export default new Vuex.Store({
     logout: async ({ commit }) => {
       // delete token server side
       const deleted = await axiosBase.post('auth/logout')
-      console.log(deleted)
+      console.log(deleted);
+      await commit('clearCreateFormCache');
       await commit('clearAuthData');
     },
     // eslint-disable-next-line
@@ -223,5 +236,8 @@ export default new Vuex.Store({
         console.log(update)
       }
     },
+    clearCreateFormCache: async ({ commit }) => {
+      await commit('clearCreateFormCache');
+    }
   },
 })

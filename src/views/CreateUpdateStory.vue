@@ -30,15 +30,8 @@
                 facilis praesentium esse veritatis nemo! Quis autem vel eum iure reprehenderit qui in ea voluptate
                 velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur
               </p>
-              <!-- <div v-if="story.page_url" style="margin-bottom:-1rem;">
-                <p class="is-size-6 page-link-title"><b>PAGE URL</b></p>
-                <p class="content">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus.
-                  <br />
-                  <a class="has-text-link" :href="story.page_url">{{story.page_url}}</a>
-                </p>
-              </div>-->
+
+              <!-- SHOW STORY URL -->
               <div v-if="story.page_url" style="margin-bottom:-.8rem; line-height:150%;">
                 <p class="is-size-5 page-link-title">
                   <b>PAGE URL</b>
@@ -53,6 +46,7 @@
                   >{{ story.page_url}}</router-link>
                 </p>
               </div>
+              <!-- ENDS SHOW STORY URL -->
               <!-- TOP BOXES -->
               <div class="top-boxes-grid" style="margin-top:40px;">
                 <div>
@@ -418,13 +412,25 @@
               <div class="is-divider" style="margin-top:35px;"></div>
               <div class="field is-grouped submit-buttons">
                 <div class="control">
-                  <button class="button is-primary" type="submit" :disabled="is_saving_story">Save</button>
+                  <button
+                    class="button is-primary"
+                    type="submit"
+                    @click.prevent="saveAndGoToList"
+                    :disabled="is_saving_story"
+                  >Save</button>
+                </div>
+                <div class="control">
+                  <button
+                    class="button is-primary"
+                    type="submit"
+                    :disabled="is_saving_story"
+                  >Save and continue editing</button>
                 </div>
                 <div class="control" v-if="!isPublished">
                   <button class="button is-success" @click.prevent="saveAndPublish">Save and publish</button>
                 </div>
                 <div class="control">
-                  <button class="button is-dark" @click.prevent="goBack">Cancel</button>
+                  <button class="button is-dark" @click.prevent="cancel">Cancel</button>
                 </div>
               </div>
               <!-- SUBMIT -->
@@ -500,12 +506,11 @@
 </template>
 
 <script>
-// TODO POST STORY BUTTON DOESN'T WORK ANYMORE AFTER DELETE BECAUSE SAME URL
-//      SEND TO A DELETED KINDA STATIC PAGE? COMPONENT KEY?
-//      Voir https://michaelnthiessen.com/force-re-render/
-// CLIENT SIDE AND SERVER SIDE VALIDATIONS
+// TODO CHECK is_loading
+// TODO SERVER SIDE TESTS AND POSTMAN VERIFS
+// TODO CLIENT SIDE AND SERVER SIDE VALIDATIONS
 // TODO UPDATE VERIF USER IS STORY'S OWNER (DONE IN fetchAndSetData TO BE TESTED)
-// LOAD STORY FOR UPDATE IN CREATED (DONE TO BE TESTED)
+// TODO LOAD STORY FOR UPDATE IN CREATED (DONE TO BE TESTED)
 
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
@@ -521,6 +526,7 @@ const MAX_PICS = 12;
 const MIN_PICS = 6;
 
 export default {
+  name: "CreateUpdateStory",
   data() {
     return {
       is_debug: true,
@@ -571,6 +577,19 @@ export default {
     Draggable
   },
   methods: {
+    persistStory() {
+      console.log("persisting story to store");
+      // copy pics to story
+      this.story.pics = [];
+      for (let pic of this.pics_uploaded) {
+        this.story.pics.push(pic);
+      }
+      // tags to Array
+      this.story.tags = this.tagsStr.trim().length
+        ? this.tagsStr.split(",").map(x => x.trim())
+        : [];
+      this.$store.commit("setCreateFormCache", this.story);
+    },
     async onSubmit() {
       try {
         console.log("onSubmit");
@@ -602,8 +621,9 @@ export default {
         // this.story.page_url = data.story.page_url
         this.story = Object.assign({}, data.story);
         this.pics_uploaded = this.story.pics;
-        this.story.tags = this.story.tags.join(", ");
+        this.tagsStr = this.story.tags.join(", ");
         this.is_saving_story = false;
+        // this.$store.commit("setCreateFormCache", this.story);
       } catch (error) {
         console.log("__ERROR_CAUGHT__");
         this.is_saving_story = false;
@@ -625,7 +645,16 @@ export default {
         window.scrollTo(0, 0);
       }
     },
-
+    async saveAndGoToList() {
+      await this.onSubmit();
+      // if no errors go to list
+      if (!this.is_error && !this.is_api_error) {
+        this.$router.push({
+          name: "user-stories",
+          params: { username: this.authenticatedUser.username }
+        });
+      }
+    },
     isHorizontal,
     isVertical,
     openUploadModal() {
@@ -674,11 +703,6 @@ export default {
         // DO SOMETHING/WHAT?
         console.log("++++");
         console.log(err.response);
-        // console.log(err.response.status);
-        // console.log(err.response.statusText);
-        // console.log(err.response.data.errorType);
-        // console.log(err.response.data.error);
-        // console.log("++++");
       }
     },
     async setSelectedSelection(e) {
@@ -725,7 +749,7 @@ export default {
         // this.story.page_url = data.story.page_url
         this.story = Object.assign({}, data.story);
         this.pics_uploaded = this.story.pics;
-        this.story.tags = this.storytags.join(", ");
+        this.tagsStr = this.storytags.join(", ");
         this.is_loading = false;
       } catch (e) {
         this.is_error = true;
@@ -738,7 +762,6 @@ export default {
         this.is_loading = false;
       }
     },
-    //////////////// TODO /////////////////
     async saveAndPublish() {
       console.log("saveAndPublish");
       this.setStatus("published");
@@ -760,6 +783,7 @@ export default {
         window.scrollTo(0, 0);
         this.is_loading = true;
         this.showDeletedNotif = true;
+        this.$store.commit("clearCreateFormCache");
         // delete Server side only if already saved
         if (this.story._key) {
           // this.onSubmit();
@@ -773,8 +797,10 @@ export default {
         this.resetAll();
       }
     },
-    goBack() {
+    cancel() {
       console.log("goBack");
+      // this.resetAll();
+      this.$store.commit("clearCreateFormCache");
       this.$router.go(-1);
     },
     resetAll() {
@@ -785,24 +811,24 @@ export default {
       this.is_api_error = false;
       this.apiErrors = "";
       this.apiErrorType = "";
-      (this.tagsStr = ""),
-        (this.story = {
-          layout: "vertical",
-          status: "draft",
-          is_in: true,
-          category: "0",
-          title: "",
-          pics: [],
-          inspiration: "",
-          tags: [],
-          location: {},
-          allow_comments: true,
-          author_key: "",
-          author_info: {},
-          use_white_borders: false
-        }),
-        // location
-        (this.mapboxOptions = []);
+      this.tagsStr = "";
+      this.story = {
+        layout: "vertical",
+        status: "draft",
+        is_in: true,
+        category: "0",
+        title: "",
+        pics: [],
+        inspiration: "",
+        tags: [],
+        location: {},
+        allow_comments: true,
+        author_key: "",
+        author_info: {},
+        use_white_borders: false
+      };
+      // location
+      this.mapboxOptions = [];
       this.deepMapboxOptions = [];
       this.selectedLocationPlace = "";
       this.selectedLocationObj = null;
@@ -817,7 +843,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getProfile", "isAuthenticated", "authenticatedUser"]),
+    ...mapGetters([
+      "getProfile",
+      "isAuthenticated",
+      "authenticatedUser",
+      "getCreateFormCache"
+    ]),
     user: function() {
       return this.authenticatedUser;
     },
@@ -840,10 +871,27 @@ export default {
         vm.errorMessage = "PLEASE AUTHENTICATE";
       }
       vm.is_loading = false;
+      const cache = vm.$store.getters.getCreateFormCache;
+      const story = cache.story;
+      console.log(story);
+      if (story) {
+        vm.story = story;
+        vm.pics_uploaded = story.pics;
+        vm.tagsStr = story.tags.join(", ");
+      }
       next();
     });
   },
+  beforeRouteLeave(to, from, next) {
+    console.log("before route leave");
+    this.persistStory();
+    next();
+  },
   created() {
+    console.log("---------");
+    console.log(this);
+    console.log("---------");
+
     // IF I AM AN UPDATE LOAD STORY
     if (this.$route.name === "edit-story") {
       console.log("CREATED: I AM AN UPDATE");
