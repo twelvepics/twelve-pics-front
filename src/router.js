@@ -34,6 +34,7 @@ export default new Router(
           default: () => import(/* webpackChunkName: "create-story" */ './views/CreateUpdateStory.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         },
+
       },
       // view a story
       {
@@ -50,7 +51,7 @@ export default new Router(
         components: {
           default: () => import(/* webpackChunkName: "create-story" */ './views/CreateUpdateStory.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
-        }
+        },
       },
 
       // view user profile

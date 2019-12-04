@@ -96,6 +96,19 @@
       </div>
     </div>
     <!-- ENDS STORIES COLUMN -->
+    <!-- DEBUG -->
+    <div class="columns is-centered">
+      <div v-if="is_debug" class="column is-three-quarters-desktop">
+        <!-- START PROFILE -->
+        <div class="card" style="padding:20px;">
+          <p>DEBUG</p>
+          <p>
+            <a @click="goToEditStory('0055fa2f-6157-4b97-891d-eb27731655f1')">Edit story</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- END DEBUG -->
   </main>
 </template>
 
@@ -108,6 +121,15 @@ export default {
       // fetch errors
       is_error: false
     };
+  },
+  methods: {
+    async goToEditStory(key) {
+      await this.$store.dispatch("clearCreateFormCache");
+      this.$router.push({
+        name: "edit-story",
+        params: { key }
+      });
+    }
   }
 };
 </script>

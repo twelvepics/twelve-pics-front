@@ -24,7 +24,7 @@
           <!-- CARD CONTENT -->
           <div class="card-content">
             <form @submit.prevent="onSubmit">
-              <p class="title is-size-4">Add a story</p>
+              <p class="title is-size-4">{{ action === 'create' ? 'Add a' : 'Edit' }} story</p>
               <p class="subtitle is-size-6">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum,
                 facilis praesentium esse veritatis nemo! Quis autem vel eum iure reprehenderit qui in ea voluptate
@@ -506,11 +506,10 @@
 </template>
 
 <script>
-// TODO CHECK is_loading
+// TODO CHECK is_loading / set clean loading for all cases including errors
 // TODO SERVER SIDE TESTS AND POSTMAN VERIFS
 // TODO CLIENT SIDE AND SERVER SIDE VALIDATIONS
-// TODO UPDATE VERIF USER IS STORY'S OWNER (DONE IN fetchAndSetData TO BE TESTED)
-// TODO LOAD STORY FOR UPDATE IN CREATED (DONE TO BE TESTED)
+// review errors front and / ss
 
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
@@ -735,9 +734,11 @@ export default {
       this.apiErrorType = "";
     },
     async fetchAndSetData() {
+      //USE only for update
       try {
-        const slug = this.$route.params.slug;
-        const response = await axiosBase.get(`/stories/${slug}`);
+        this.is_loading = true;
+        const key = this.$route.params.key;
+        const response = await axiosBase.get(`/stories/${key}`);
 
         const data = response.data;
         const author_key = data.story.author_key;
@@ -749,17 +750,21 @@ export default {
         // this.story.page_url = data.story.page_url
         this.story = Object.assign({}, data.story);
         this.pics_uploaded = this.story.pics;
-        this.tagsStr = this.storytags.join(", ");
+        this.tagsStr = this.story.tags.join(", ");
         this.is_loading = false;
       } catch (e) {
-        this.is_error = true;
-        if (e.response.status === 404) {
-          this.errorMessage = "STORY NOT FOUND";
+        if (e.response) {
+          this.is_error = true;
+          if (e.response.status === 404) {
+            this.errorMessage = "STORY NOT FOUND";
+          } else {
+            // Most probably a 500
+            this.errorMessage = "SERVER ERROR";
+          }
+          this.is_loading = false;
         } else {
-          // Most probably a 500
-          this.errorMessage = "SERVER ERROR";
+          console.log(e);
         }
-        this.is_loading = false;
       }
     },
     async saveAndPublish() {
@@ -860,6 +865,13 @@ export default {
     },
     isPublished() {
       return this.story.status === "published";
+    },
+    action() {
+      if (this.$route.name === "edit-story") {
+        return "edit";
+      } else {
+        return "create";
+      }
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -879,7 +891,6 @@ export default {
         vm.pics_uploaded = story.pics;
         vm.tagsStr = story.tags.join(", ");
       }
-      next();
     });
   },
   beforeRouteLeave(to, from, next) {
@@ -888,11 +899,8 @@ export default {
     next();
   },
   created() {
-    console.log("---------");
-    console.log(this);
-    console.log("---------");
-
     // IF I AM AN UPDATE LOAD STORY
+    console.log(this.action);
     if (this.$route.name === "edit-story") {
       console.log("CREATED: I AM AN UPDATE");
       this.is_loading = true;

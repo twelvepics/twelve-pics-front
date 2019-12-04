@@ -285,10 +285,18 @@ export default {
         });
     },
     async goToCreateStory() {
+      console.log("*****");
+      console.log(this.$route.name);
+      console.log("*****");
+      // don't create if I am in edit story
+      if (this.$route.name === "edit-story") return;
+      // don't route to same route
       if (this.$route.name !== "create-story") {
         console.log("resetCreateForm");
         await this.$store.dispatch("clearCreateFormCache");
-        this.$router.push({ name: "create-story" });
+        this.$router.push({
+          name: "create-story"
+        });
       }
     }
   },
