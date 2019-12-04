@@ -104,6 +104,8 @@
           <p>DEBUG</p>
           <p>
             <a @click="goToEditStory('0055fa2f-6157-4b97-891d-eb27731655f1')">Edit story</a>
+            <br />
+            <a @click="goToEditStory('056ca2a2-b2bd-41e9-9742-04319f9f1acb')">Edit other story</a>
           </p>
         </div>
       </div>
@@ -123,6 +125,7 @@ export default {
     };
   },
   methods: {
+    // CLEAN  EDIT / CREATE STORY FORM BEFORE LOADING IT
     async goToEditStory(key) {
       await this.$store.dispatch("clearCreateFormCache");
       this.$router.push({

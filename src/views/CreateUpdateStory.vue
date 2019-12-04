@@ -739,7 +739,7 @@ export default {
         this.is_loading = true;
         const key = this.$route.params.key;
         const response = await axiosBase.get(`/stories/${key}`);
-
+        console.log("fetched");
         const data = response.data;
         const author_key = data.story.author_key;
         if (author_key !== this.authenticatedUser._key) {
@@ -885,7 +885,7 @@ export default {
       vm.is_loading = false;
       const cache = vm.$store.getters.getCreateFormCache;
       const story = cache.story;
-      console.log(story);
+      // console.log(story);
       if (story) {
         vm.story = story;
         vm.pics_uploaded = story.pics;
@@ -901,7 +901,10 @@ export default {
   created() {
     // IF I AM AN UPDATE LOAD STORY
     console.log(this.action);
-    if (this.$route.name === "edit-story") {
+    const cache = this.$store.getters.getCreateFormCache;
+    const story = cache.story;
+    console.log(story);
+    if (this.$route.name === "edit-story" && !story) {
       console.log("CREATED: I AM AN UPDATE");
       this.is_loading = true;
       this.fetchAndSetData();

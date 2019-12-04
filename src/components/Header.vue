@@ -70,14 +70,24 @@
               v-if="isAuthenticated"
               @click.native="resetCreateForm"
             ></router-link>-->
-            <a
+            <button
               class="button is-primary"
               id="post-story-btn"
               @click="goToCreateStory"
               v-if="isAuthenticated"
+              :disabled="isCreateStoryForm || isEditStoryForm"
             >
               <strong>Post a story</strong>
-            </a>
+            </button>
+            <!-- <a
+              class="button is-primary"
+              id="post-story-btn"
+              @click="goToCreateStory"
+              v-if="isAuthenticated"
+              :disabled="isCreateStoryForm || isEditStoryForm"
+            >
+              <strong>Post a story</strong>
+            </a>-->
             <a
               class="button is-primary"
               id="signup-btn"
@@ -284,21 +294,30 @@ export default {
           }
         });
     },
+
+    // if button not disabled
+    // clear create form cache
     async goToCreateStory() {
-      console.log("*****");
-      console.log(this.$route.name);
-      console.log("*****");
-      // don't create if I am in edit story
-      if (this.$route.name === "edit-story") return;
-      // don't route to same route
-      if (this.$route.name !== "create-story") {
-        console.log("resetCreateForm");
-        await this.$store.dispatch("clearCreateFormCache");
-        this.$router.push({
-          name: "create-story"
-        });
-      }
+      await this.$store.dispatch("clearCreateFormCache");
+      this.$router.push({
+        name: "create-story"
+      });
     }
+    // async goToCreateStory() {
+    //   console.log("*****");
+    //   console.log(this.$route.name);
+    //   console.log("*****");
+    //   // don't route to create if I am in edit story
+    //   if (this.$route.name === "edit-story") return;
+    //   // don't route to same route
+    //   if (this.$route.name !== "create-story") {
+    //     console.log("resetCreateForm");
+    //     await this.$store.dispatch("clearCreateFormCache");
+    //     this.$router.push({
+    //       name: "create-story"
+    //     });
+    //   }
+    // }
   },
   computed: {
     // style scrollbar hidden when story is mounted
@@ -306,7 +325,13 @@ export default {
       "isStoryComponentMounted",
       "isAuthenticated",
       "authenticatedUser"
-    ])
+    ]),
+    isCreateStoryForm: function() {
+      return this.$route.name === "create-story";
+    },
+    isEditStoryForm: function() {
+      return this.$route.name === "edit-story";
+    }
   }
 };
 </script>
@@ -332,6 +357,11 @@ export default {
 
 .navbar.is-dark .navbar-dropdown a.navbar-item.is-active {
   background-color: #bbb;
+}
+
+.navbar .button[disabled] {
+  opacity: 0.7;
+  cursor: default;
 }
 /** END NAVBAR **/
 </style>
