@@ -106,6 +106,8 @@
             <a @click="goToEditStory('0055fa2f-6157-4b97-891d-eb27731655f1')">Edit story</a>
             <br />
             <a @click="goToEditStory('056ca2a2-b2bd-41e9-9742-04319f9f1acb')">Edit other story</a>
+            <br />
+            <a @click="goToEditStory('056ca2a2-b2bd-41e9-9742-04319f9f1a')">Edit not found story</a>
           </p>
         </div>
       </div>

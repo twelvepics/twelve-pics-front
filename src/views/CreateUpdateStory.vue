@@ -506,10 +506,8 @@
 </template>
 
 <script>
-// TODO CHECK is_loading / set clean loading for all cases including errors
 // TODO SERVER SIDE TESTS AND POSTMAN VERIFS
-// TODO CLIENT SIDE AND SERVER SIDE VALIDATIONS
-// review errors front and / ss
+// TODO CLIENT SIDE AND SERVER SIDE VALIDATIONS, REVIEW AND INSURE PROPER ERRORS, ITS A MESS FOR NOW
 
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
