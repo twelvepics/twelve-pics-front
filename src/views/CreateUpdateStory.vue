@@ -33,7 +33,9 @@
                 class="isError"
                 style="text-align:center;margin-bottom:12px;"
               >
-                <div v-if="apiErrorType == 'INVALID_CREATE_STORY_ERROR'">
+                <div
+                  v-if="['INVALID_CREATE_STORY_ERROR', 'INVALID_UPDATE_STORY_ERROR'].includes(apiErrorType)"
+                >
                   <p>
                     <b>VALIDATIONS ERRORS</b>
                   </p>
@@ -44,7 +46,9 @@
                 <div v-else>SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
               </div>
               <!-- ENDS API ERRORS -->
-              <p class="title is-size-4">{{ action === 'create' ? 'Add a' : 'Edit' }} story</p>
+              <p
+                class="title is-size-4"
+              >{{ $route.name === "create-story" ? 'Add a' : 'Edit' }} story</p>
               <p class="subtitle is-size-6">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum,
                 facilis praesentium esse veritatis nemo! Quis autem vel eum iure reprehenderit qui in ea voluptate
@@ -193,8 +197,10 @@
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Category</label>
                 <p class="content is-small is-marginless pb-05">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus!
+                  <span class="isError" v-if="$v.story.category.$error">Please select a category</span>
+                  <span
+                    v-else
+                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
                 </p>
                 <div class="select">
                   <select v-model="story.category">
@@ -213,8 +219,13 @@
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Title</label>
                 <p class="content is-small is-marginless pb-05">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus!
+                  <span
+                    class="isError"
+                    v-if="$v.story.title.$error"
+                  >Title must be min 8 characters and max 128 characters</span>
+                  <span
+                    v-else
+                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
                 </p>
                 <div class="control">
                   <input
@@ -222,6 +233,8 @@
                     type="text"
                     placeholder="Title"
                     v-model="story.title"
+                    @blur="{$v.story.title.$touch(); $v.story.category.$touch()}"
+                    @input="resetApiErrors()"
                     @keydown.enter.prevent
                   />
                 </div>
@@ -232,11 +245,19 @@
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Pitch your story</label>
                 <p class="content is-small is-marginless pb-05">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus!
+                  <span class="isError" v-if="$v.story.pitch.$error">Must be at most 5000 Characters</span>
+                  <span
+                    v-else
+                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
                 </p>
                 <div class="control">
-                  <textarea class="textarea" placeholder="Pitch your story" v-model="story.pitch"></textarea>
+                  <textarea
+                    class="textarea"
+                    placeholder="Pitch your story"
+                    v-model="story.pitch"
+                    @keyup="{$v.story.pitch.$touch(); $v.story.category.$touch()}"
+                    @keyup.22="$v.story.pitch.$touch()"
+                  ></textarea>
                 </div>
               </div>
               <!-- ABOUT MY STORY -->
@@ -366,7 +387,7 @@
 
               <!-- LOCATION -->
               <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Your location</label>
+                <label class="label is-marginless">Your story's location</label>
                 <p class="content is-small is-marginless pb-05">
                   <span style="color:red;" v-if="false">Max length is 128 characters.</span>
                   <span
@@ -468,48 +489,7 @@
         <div class="card" style="padding:20px;">
           <p>DEBUG</p>
           <!-- <p>{{ $v }}</p> -->
-          <p>
-            <b>category selected:</b>
-            {{ story.category }}
-          </p>
-          <p>
-            <b>Title:</b>
-            {{ story.title }}
-          </p>
-          <p>
-            <b>Layout:</b>
-            {{ story.layout }}
-          </p>
-          <p>
-            <b>Status:</b>
-            {{ story.status }}
-          </p>
-          <p>
-            <b>Tags:</b>
-            {{ tagsStr }}
-          </p>
-          <p>
-            <b>Location:</b>
-            {{ story.location }}
-          </p>
-          <p>
-            <b>Allow comments:</b>
-            {{ story.allow_comments }}
-          </p>
-          <!-- <p>
-            <b>Pics uploaded:</b>
-            {{ pics_uploaded }}
-          </p>-->
-          <p>
-            <b>Page url:</b>
-            {{ story.page_url }}
-          </p>
-          <ul>
-            <li
-              v-for="(pic, idx) in pics_uploaded"
-              :key="idx"
-            >{{ idx }} => {{ pic.original.original_name }}</li>
-          </ul>
+          <p>{{ $v }}</p>
         </div>
       </div>
     </div>
@@ -532,6 +512,8 @@
 
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
+import { required, minLength, maxLength } from "vuelidate/lib/validators";
+
 // eslint-disable-next-line
 import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
@@ -543,12 +525,16 @@ const MAX_PICS = 12;
 // eslint-disable-next-line
 const MIN_PICS = 6;
 
+// custom validators
+const notZero = value => value !== "0";
+
 export default {
   name: "CreateUpdateStory",
   data() {
     return {
       is_debug: true,
       is_loading: false,
+      action: "",
       // fetch auth / not found errors, hide the rest of the page
       is_error: false,
       errorMessage: "",
@@ -657,7 +643,12 @@ export default {
         if (error.response) {
           console.log(error.response.status);
           console.log(error.response.data);
-          if (error.response.data.error_type === "INVALID_CREATE_STORY_ERROR") {
+          if (
+            [
+              "INVALID_CREATE_STORY_ERROR",
+              "INVALID_UPDATE_STORY_ERROR"
+            ].includes(error.response.data.error_type)
+          ) {
             this.apiErrors = error.response.data.errors;
             this.apiErrorType = error.response.data.error_type;
           } else {
@@ -901,22 +892,11 @@ export default {
     remainingUploads: function() {
       return this.maxUploads - this.pics_uploaded.length;
     },
-    isUpdate: function() {
-      return !!this.story._key;
-    },
     isPublished() {
       return this.story.status === "published";
-    },
-    action() {
-      if (this.$route.name === "edit-story") {
-        return "edit";
-      } else {
-        return "create";
-      }
     }
   },
   beforeRouteEnter(to, from, next) {
-    // TODO UPDATE VERIF USER IS STORY'S OWNER
     next(vm => {
       console.log("BEFORE ROUTE ENTER");
       if (!vm.isAuthenticated) {
@@ -924,14 +904,6 @@ export default {
         vm.errorMessage = "PLEASE AUTHENTICATE";
       }
       vm.is_loading = false;
-      const cache = vm.$store.getters.getCreateFormCache;
-      const story = cache.story;
-      // console.log(story);
-      if (story) {
-        vm.story = story;
-        vm.pics_uploaded = story.pics;
-        vm.tagsStr = story.tags.join(", ");
-      }
     });
   },
   beforeRouteLeave(to, from, next) {
@@ -940,17 +912,46 @@ export default {
     next();
   },
   created() {
-    // IF I AM AN UPDATE LOAD STORY
-    console.log(this.action);
+    console.log("CREATED");
     const cache = this.$store.getters.getCreateFormCache;
-    const story = cache.story;
-    console.log(story);
-    if (this.$route.name === "edit-story" && !story) {
-      console.log("CREATED: I AM AN UPDATE");
-      this.is_loading = true;
-      return this.fetchAndSetData(); // errors handled in fetchAndSetData(), test if it ok
-    } else {
-      console.log("CREATED: I AM A CREATE");
+    console.log(cache);
+    if (this.$route.name === "create-story") {
+      if (!cache.story) {
+        this.action = "create";
+      } else if (cache.story && !cache.story._key) {
+        this.action = "create";
+      } else if (cache.story && cache.story._key) {
+        this.action = "update";
+      }
+    } else if (this.$route.name === "edit-story") {
+      this.action = "update";
+      if (!cache.story) {
+        // just landinglanding
+        this.is_loading = true;
+        return this.fetchAndSetData();
+      }
+    }
+    if (cache.story) {
+      this.story = cache.story;
+      this.pics_uploaded = cache.story.pics;
+      this.tagsStr = cache.story.tags.join(", ");
+    }
+    console.log(`Action -> ${this.action}`);
+  },
+  validations: {
+    story: {
+      category: {
+        required,
+        notZero
+      },
+      title: {
+        required,
+        minLen: minLength(8),
+        maxLen: maxLength(128)
+      },
+      pitch: {
+        maxLen: maxLength(500)
+      }
     }
   }
 };

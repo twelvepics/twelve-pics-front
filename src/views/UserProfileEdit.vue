@@ -608,7 +608,7 @@ export default {
                     this.mapboxOptions = [];
                 }
             } catch (err) {
-                // DO SOMETHING/WHAT?
+                // DO SOMETHING/WHAT? LOG IT
                 console.log("++++");
                 console.log(err.response);
                 console.log(err.response.status);
