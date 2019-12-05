@@ -3,6 +3,7 @@
     <div class="columns is-centered">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
+        <!-- DELETED NOTIF -->
         <div
           class="notification is-danger"
           v-if="!is_loading && showDeletedNotif"
@@ -11,7 +12,8 @@
           <button class="delete" @click="dismissDeletedNotif"></button>
           The story has been deleted
         </div>
-        <!-- ERRORS AND AUTH -->
+        <!-- END DELETED NOTIF -->
+        <!-- SERVER SIDE ERRORS AND AUTH -->
         <div
           class="card"
           v-if="is_loading || is_error || (story && !story.is_in)"
@@ -19,11 +21,29 @@
         >
           <div v-if="is_error" class="isError" style="margin-top:7px;">{{ errorMessage }}</div>
         </div>
+        <!-- ENDS SERVER ERRORS AND AUTH -->
         <!-- START FORM -->
         <div class="card" v-else>
           <!-- CARD CONTENT -->
           <div class="card-content">
             <form @submit.prevent="onSubmit">
+              <!-- API ERRORS -->
+              <div
+                v-if="is_api_error"
+                class="isError"
+                style="text-align:center;margin-bottom:12px;"
+              >
+                <div v-if="apiErrorType == 'INVALID_CREATE_STORY_ERROR'">
+                  <p>
+                    <b>VALIDATIONS ERRORS</b>
+                  </p>
+                  <ul id="apiErrors">
+                    <li v-for="(k, v, idx) in apiErrors" :key="idx">{{ k }}</li>
+                  </ul>
+                </div>
+                <div v-else>SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
+              </div>
+              <!-- ENDS API ERRORS -->
               <p class="title is-size-4">{{ action === 'create' ? 'Add a' : 'Edit' }} story</p>
               <p class="subtitle is-size-6">
                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum,
@@ -508,6 +528,7 @@
 <script>
 // TODO SERVER SIDE TESTS AND POSTMAN VERIFS
 // TODO CLIENT SIDE AND SERVER SIDE VALIDATIONS, REVIEW AND INSURE PROPER ERRORS, ITS A MESS FOR NOW
+// TODO REMOVE SELECTED PIC
 
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
@@ -528,14 +549,15 @@ export default {
     return {
       is_debug: true,
       is_loading: false,
-      // fetch errors
+      // fetch auth / not found errors, hide the rest of the page
       is_error: false,
       errorMessage: "",
-      // api submit errors
+      // api submit validation errors
+      // don't block the page
       is_api_error: false,
       apiErrors: "",
       apiErrorType: "",
-      //
+      // --=
       categoriesList,
       tagsStr: "",
       story: {
@@ -545,6 +567,7 @@ export default {
         category: "0",
         title: "",
         pics: [],
+        pitch: "",
         inspiration: "",
         tags: [],
         location: {},
@@ -587,6 +610,7 @@ export default {
         : [];
       this.$store.commit("setCreateFormCache", this.story);
     },
+    // ERRORS OK
     async onSubmit() {
       try {
         console.log("onSubmit");
@@ -602,7 +626,7 @@ export default {
         this.story.tags = this.tagsStr.trim().length
           ? this.tagsStr.split(",").map(x => x.trim())
           : [];
-        if (this.story._key) {
+        if (this.action === "update") {
           console.log("I am an update");
           response = await axiosBase.put(`/stories/${this.story._key}`, {
             story: this.story
@@ -622,26 +646,32 @@ export default {
         this.is_saving_story = false;
         // this.$store.commit("setCreateFormCache", this.story);
       } catch (error) {
+        // as we are here these are non blocking errors
+        // is_api_error / apiErrors
+        // or vuejs errors
         console.log("__ERROR_CAUGHT__");
         this.is_saving_story = false;
         this.is_api_error = true;
+        // at this point bother only for validation errors
+        // all the rest goes as 500 whatever
         if (error.response) {
           console.log(error.response.status);
           console.log(error.response.data);
-          if (error.response.data.error_type === "INVALID_STORY_ERROR") {
+          if (error.response.data.error_type === "INVALID_CREATE_STORY_ERROR") {
             this.apiErrors = error.response.data.errors;
-
-            this.apiErrorType = "INVALID_STORY_ERROR";
+            this.apiErrorType = error.response.data.error_type;
           } else {
             this.apiErrorType = "SERVER ERROR";
           }
         } else {
+          // vue error
           console.log(error);
         }
       } finally {
         window.scrollTo(0, 0);
       }
     },
+    // ERRORS OK
     async saveAndGoToList() {
       await this.onSubmit();
       // if no errors go to list
@@ -679,6 +709,7 @@ export default {
       console.log(`selectLayout(${layout}`);
       this.story.layout = layout;
     },
+    // ERRORS TODO
     async searchLocation(e) {
       // this.resetApiErrors();
       try {
@@ -731,21 +762,23 @@ export default {
       this.apiErrors = "";
       this.apiErrorType = "";
     },
+    // ERRORS OK
     async fetchAndSetData() {
-      //USE only for update
+      // USE only for update story load initial data
       try {
         this.is_loading = true;
         const key = this.$route.params.key;
         const response = await axiosBase.get(`/stories/${key}`);
         console.log("fetched");
         const data = response.data;
+        // get story is unchecked server side, must validate auth here
         const author_key = data.story.author_key;
         if (author_key !== this.authenticatedUser._key) {
+          // blocking
           this.is_error = true;
           this.errorMessage = "NOT AUTHORIZED";
         }
         // console.log(data);
-        // this.story.page_url = data.story.page_url
         this.story = Object.assign({}, data.story);
         this.pics_uploaded = this.story.pics;
         this.tagsStr = this.story.tags.join(", ");
@@ -753,16 +786,20 @@ export default {
       } catch (e) {
         if (e.response) {
           this.is_error = true;
+          console.log(e); // GET ERROR MESSAGE FROM SERVER
+          // get error message from server
           if (e.response.status === 404) {
+            // blocking
             this.errorMessage = "STORY NOT FOUND";
           } else {
             // Most probably a 500
             this.errorMessage = "SERVER ERROR";
           }
-          this.is_loading = false;
         } else {
           console.log(e);
         }
+      } finally {
+        this.is_loading = false;
       }
     },
     async saveAndPublish() {
@@ -778,6 +815,9 @@ export default {
         this.onSubmit();
       }
     },
+    // ERRORS OK
+    // user cannot access story if its not his own or not found
+    // properly handled server side, so it's fine
     async deleteStory() {
       console.log("deleteStory()");
       const resp = window.confirm("Really, delete?");
@@ -794,6 +834,8 @@ export default {
             await axiosBase.delete(`/stories/${this.story._key}`);
           } catch (err) {
             // ERR TODO
+            // 401 403 404 500 handled server side
+            this.is_error = true;
             console.log(err);
           }
         }
@@ -823,6 +865,7 @@ export default {
         title: "",
         pics: [],
         inspiration: "",
+        pitch: "",
         tags: [],
         location: {},
         allow_comments: true,
@@ -905,7 +948,7 @@ export default {
     if (this.$route.name === "edit-story" && !story) {
       console.log("CREATED: I AM AN UPDATE");
       this.is_loading = true;
-      this.fetchAndSetData();
+      return this.fetchAndSetData(); // errors handled in fetchAndSetData(), test if it ok
     } else {
       console.log("CREATED: I AM A CREATE");
     }
