@@ -158,10 +158,6 @@
 </template>
 
 <script>
-// TODO
-// validation / errors
-// pass uploaded to parent
-
 import { mapGetters } from "vuex";
 import axiosUpload from "../services/axiosUpload";
 // eslint-disable-next-line
@@ -330,7 +326,7 @@ export default {
             console.log("DONE");
             setTimeout(() => {
               this.closeUploadModal();
-            }, 1500);
+            }, 1000);
           }
         }
       } catch (error) {

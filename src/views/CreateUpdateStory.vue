@@ -29,7 +29,7 @@
             <form @submit.prevent="onSubmit">
               <!-- API ERRORS -->
               <div
-                v-if="is_api_error"
+                v-if="is_api_error || is_form_error"
                 class="isError"
                 style="text-align:center;margin-bottom:12px;"
               >
@@ -43,6 +43,7 @@
                     <li v-for="(k, v, idx) in apiErrors" :key="idx">{{ k }}</li>
                   </ul>
                 </div>
+                <div v-else-if="is_form_error">PLEASE FIX THE FORM ERRORS.</div>
                 <div v-else>SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
               </div>
               <!-- ENDS API ERRORS -->
@@ -202,7 +203,7 @@
                     v-else
                   >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
                 </p>
-                <div class="select">
+                <div class="select" :class="{ 'is-danger': $v.story.category.$error }">
                   <select v-model="story.category">
                     <option disabled value="0">Select a theme</option>
                     <option
@@ -233,6 +234,7 @@
                     type="text"
                     placeholder="Title"
                     v-model="story.title"
+                    :class="{ 'is-danger': $v.story.title.$error }"
                     @blur="{$v.story.title.$touch(); $v.story.category.$touch()}"
                     @input="resetApiErrors()"
                     @keydown.enter.prevent
@@ -253,6 +255,7 @@
                 <div class="control">
                   <textarea
                     class="textarea"
+                    :class="{ 'is-danger': $v.story.pitch.$error }"
                     placeholder="Pitch your story"
                     v-model="story.pitch"
                     @keyup="{$v.story.pitch.$touch(); $v.story.category.$touch()}"
@@ -268,8 +271,10 @@
                   <b>Upload your images</b>
                 </p>
                 <p class="content is-small is-marginless pb-05">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus!
+                  <span class="isError" v-if="$v.pics_uploaded.$error">Minimum 6, Maximum 12 photos.</span>
+                  <span
+                    v-else
+                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
                 </p>
 
                 <!-- PIC UPLOAD BUTTON-->
@@ -281,11 +286,10 @@
                     <span>Add your images</span>
                   </button>
                 </div>
-                <!-- PIC UPLOAD BUTTON-->
-                <!-- UPLOADED PICS -->
+                <!-- END PIC UPLOAD BUTTON-->
 
+                <!-- UPLOADED PICS -->
                 <!-- LOOP PICS-->
-                <!-- <draggable :list="pics_uploaded"  filter=".not-draggable" ghost-class="moving-card" :animation="200"> -->
                 <draggable
                   :list="pics_uploaded"
                   ghost-class="moving-card"
@@ -303,7 +307,11 @@
                         <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
                       </span>
                       <span class="icon icon-hover has-text-danger is-medium">
-                        <font-awesome-icon class="fas fa-lg shadow" icon="trash-alt"></font-awesome-icon>
+                        <font-awesome-icon
+                          class="fas fa-lg shadow"
+                          icon="trash-alt"
+                          @click="removePic(idx)"
+                        ></font-awesome-icon>
                       </span>
                     </div>
                     <div class="pic column is-narrow handle">
@@ -353,14 +361,22 @@
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Gear, technique, inspiration...</label>
                 <p class="content is-small is-marginless pb-05">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus!
+                  <span
+                    class="isError"
+                    v-if="$v.story.inspiration.$error"
+                  >Must be at most 5000 Characters</span>
+                  <span
+                    v-else
+                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
                 </p>
                 <div class="control">
                   <textarea
                     class="textarea"
+                    :class="{ 'is-danger': $v.story.inspiration.$error }"
                     placeholder="A few worlds about you..."
                     v-model="story.inspiration"
+                    @keyup="$v.story.inspiration.$touch()"
+                    @keyup.22="$v.story.inspiration.$touch()"
                   ></textarea>
                 </div>
               </div>
@@ -370,8 +386,14 @@
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Add tags</label>
                 <p class="content is-small is-marginless pb-05">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus!
+                  <span
+                    class="isError"
+                    :class="{ 'is-danger': $v.tagsStr.$error }"
+                    v-if="$v.tagsStr.$error"
+                  >Comma separated list of words, max length 64 characters</span>
+                  <span
+                    v-else
+                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
                 </p>
                 <div class="control">
                   <input
@@ -380,6 +402,7 @@
                     placeholder="Tag1,Tag2,Tag3"
                     value
                     v-model="tagsStr"
+                    @blur="$v.tagsStr.$touch()"
                   />
                 </div>
               </div>
@@ -389,7 +412,10 @@
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Your story's location</label>
                 <p class="content is-small is-marginless pb-05">
-                  <span style="color:red;" v-if="false">Max length is 128 characters.</span>
+                  <span
+                    style="color:red;"
+                    v-if="$v.story.location.place_name.$error"
+                  >Max length is 128 characters.</span>
                   <span
                     v-else
                   >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
@@ -398,12 +424,15 @@
                   <input
                     autocomplete="off"
                     class="input"
+                    :class="{ 'is-danger': $v.story.location.place_name.$error }"
                     type="text"
                     v-model="story.location.place_name"
                     placeholder="Type on and select your location"
                     list="locations"
                     @input="searchLocation"
                     @change="setSelectedSelection"
+                    @keyup="$v.story.location.place_name.$touch()"
+                    @keyup.22="$v.story.location.place_name.$touch()"
                     @keydown.enter.prevent
                   />
                   <datalist id="locations">
@@ -457,18 +486,22 @@
                     class="button is-primary"
                     type="submit"
                     @click.prevent="saveAndGoToList"
-                    :disabled="is_saving_story"
+                    :disabled="submit_pending"
                   >Save</button>
                 </div>
                 <div class="control">
                   <button
                     class="button is-primary"
                     type="submit"
-                    :disabled="is_saving_story"
+                    :disabled="submit_pending"
                   >Save and continue editing</button>
                 </div>
                 <div class="control" v-if="!isPublished">
-                  <button class="button is-success" @click.prevent="saveAndPublish">Save and publish</button>
+                  <button
+                    class="button is-success"
+                    @click.prevent="saveAndPublish"
+                    :disabled="submit_pending"
+                  >Save and publish</button>
                 </div>
                 <div class="control">
                   <button class="button is-dark" @click.prevent="cancel">Cancel</button>
@@ -485,7 +518,7 @@
     <!-- DEBUG -->
     <div class="columns is-centered">
       <div v-if="is_debug" class="column is-three-quarters-desktop">
-        <!-- START PROFILE -->
+        <!-- START -->
         <div class="card" style="padding:20px;">
           <p>DEBUG</p>
           <!-- <p>{{ $v }}</p> -->
@@ -506,15 +539,12 @@
 </template>
 
 <script>
-// TODO SERVER SIDE TESTS AND POSTMAN VERIFS
-// TODO CLIENT SIDE AND SERVER SIDE VALIDATIONS, REVIEW AND INSURE PROPER ERRORS, ITS A MESS FOR NOW
-// TODO REMOVE SELECTED PIC
+// PUBLISH UNPUB BUTTON
 
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 
-// eslint-disable-next-line
 import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
@@ -522,11 +552,15 @@ import { categoriesList } from "../utils/categories";
 import { isHorizontal, isVertical } from "../utils/pics";
 
 const MAX_PICS = 12;
-// eslint-disable-next-line
 const MIN_PICS = 6;
 
 // custom validators
 const notZero = value => value !== "0";
+const isTagsList = value => {
+  if (value.trim().length)
+    return /^[a-zA-Z0-9 _-]+(,[a-zA-Z0-9 _-]+)*$/.test(value);
+  return true;
+};
 
 export default {
   name: "CreateUpdateStory",
@@ -544,6 +578,11 @@ export default {
       apiErrors: "",
       apiErrorType: "",
       // --=
+      // this form errors
+      is_form_error: false,
+      // form submitted
+      submit_pending: false,
+
       categoriesList,
       tagsStr: "",
       story: {
@@ -572,8 +611,6 @@ export default {
       // pics uploaded
       pics_uploaded: [],
       maxUploads: MAX_PICS,
-      // save
-      is_saving_story: false,
       // delete
       showDeletedNotif: false
     };
@@ -596,12 +633,21 @@ export default {
         : [];
       this.$store.commit("setCreateFormCache", this.story);
     },
-    // ERRORS OK
-    async onSubmit() {
+    async onSubmit(check_form = true) {
+      if (check_form) {
+        this.is_form_error = false;
+        this.submit_pending = true;
+        this.$v.$touch();
+        if (this.$v.$invalid) {
+          this.is_form_error = true;
+          this.submit_pending = false;
+          window.scrollTo(0, 0);
+          return;
+        }
+      }
       try {
         console.log("onSubmit");
         let response = null;
-        this.is_saving_story = true;
         this.resetApiErrors();
         // copy pics to story
         this.story.pics = [];
@@ -629,14 +675,12 @@ export default {
         this.story = Object.assign({}, data.story);
         this.pics_uploaded = this.story.pics;
         this.tagsStr = this.story.tags.join(", ");
-        this.is_saving_story = false;
         // this.$store.commit("setCreateFormCache", this.story);
       } catch (error) {
         // as we are here these are non blocking errors
         // is_api_error / apiErrors
         // or vuejs errors
         console.log("__ERROR_CAUGHT__");
-        this.is_saving_story = false;
         this.is_api_error = true;
         // at this point bother only for validation errors
         // all the rest goes as 500 whatever
@@ -660,13 +704,14 @@ export default {
         }
       } finally {
         window.scrollTo(0, 0);
+        this.submit_pending = false;
       }
     },
     // ERRORS OK
     async saveAndGoToList() {
       await this.onSubmit();
       // if no errors go to list
-      if (!this.is_error && !this.is_api_error) {
+      if (!this.is_error && !this.is_api_error && !this.is_form_error) {
         this.$router.push({
           name: "user-stories",
           params: { username: this.authenticatedUser.username }
@@ -684,8 +729,8 @@ export default {
       this.uploadModalActive = false;
     },
     picUploaded(pic) {
-      console.log("GOT IT");
-      console.log(pic);
+      // console.log("GOT IT");
+      // console.log(pic);
       this.pics_uploaded.push({ original: pic.original, thumb: pic.thumb });
     },
     setPicDescription(idx, event) {
@@ -695,6 +740,9 @@ export default {
     setPicCaption(idx, event) {
       console.log(event.target.value);
       this.pics_uploaded[idx].caption = event.target.value;
+    },
+    removePic(idx) {
+      this.pics_uploaded.splice(idx, 1);
     },
     selectLayout(layout) {
       console.log(`selectLayout(${layout}`);
@@ -796,17 +844,30 @@ export default {
     async saveAndPublish() {
       console.log("saveAndPublish");
       this.setStatus("published");
-      this.onSubmit();
+      // this.onSubmit();
     },
     async setStatus(status) {
       console.log(`selectLayout(${status}`);
-      this.story.status = status;
-      // save Server side only if already saved
-      if (this.story._key) {
-        this.onSubmit();
+      // reset all errors
+      this.is_error = false;
+      this.is_api_error = false;
+      this.is_form_error = false;
+
+      // check I'm valid
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        this.is_form_error = true;
+        this.submit_pending = false;
+        window.scrollTo(0, 0);
+        return;
+      }
+      // go and change status if im good
+      await this.onSubmit(false);
+      if (!this.is_error && !this.is_api_error) {
+        this.story.status = status;
       }
     },
-    // ERRORS OK
+
     // user cannot access story if its not his own or not found
     // properly handled server side, so it's fine
     async deleteStory() {
@@ -873,7 +934,7 @@ export default {
       this.uploadModalActive = false;
       // pics uploaded
       this.pics_uploaded = [];
-      this.is_saving_story = false;
+      this.submit_pending = false;
     },
     dismissDeletedNotif() {
       this.showDeletedNotif = false;
@@ -881,7 +942,6 @@ export default {
   },
   computed: {
     ...mapGetters([
-      "getProfile",
       "isAuthenticated",
       "authenticatedUser",
       "getCreateFormCache"
@@ -938,6 +998,15 @@ export default {
     }
     console.log(`Action -> ${this.action}`);
   },
+  // const PicSchema = Joi.object().keys({
+  //   original: Joi.object().required(),
+  //   thumb: Joi.object().required(),
+  //   caption: Joi.string().max(256).allow('').optional(),
+  //   description: Joi.string().max(64).allow('').optional(),
+  // })
+
+  // pics: Joi.array().min(6).max(12).items(PicSchema),
+
   validations: {
     story: {
       category: {
@@ -950,9 +1019,40 @@ export default {
         maxLen: maxLength(128)
       },
       pitch: {
-        maxLen: maxLength(500)
+        maxLen: maxLength(5000)
+      },
+      inspiration: {
+        maxLen: maxLength(5000)
+      },
+      location: {
+        place_name: {
+          maxLen: maxLength(128)
+        }
       }
-    }
+    },
+    tagsStr: {
+      maxLen: maxLength(64),
+      isTagsList
+    },
+    pics_uploaded: {
+      required,
+      minLength: minLength(MIN_PICS),
+      maxLength: maxLength(MAX_PICS),
+      $each: {
+        original: {
+          required
+        },
+        thumb: {
+          required
+        },
+        caption: {
+          maxLength: maxLength(256)
+        },
+        description: {
+          maxLength: maxLength(64)
+        }
+      }
+    } // TODO
   }
 };
 </script>
