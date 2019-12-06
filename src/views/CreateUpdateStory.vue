@@ -58,7 +58,10 @@
 
               <!-- SHOW STORY URL -->
               <div v-if="story.page_url" style="margin-bottom:-.8rem; line-height:150%;">
-                <p class="is-size-5 page-link-title">
+                <p
+                  class="is-size-5"
+                  :class="story.status === 'draft' ? 'page-link-title-draft' : 'page-link-title-published'"
+                >
                   <b>PAGE URL</b>
                 </p>
                 <p class="content">
@@ -67,7 +70,8 @@
                   <br />
                   <router-link
                     :to="{ name: 'view-story', params: { slug: story.slug }}"
-                    class="page-link-title is-size-5"
+                    class="is-size-5"
+                    :class="story.status === 'draft' ? 'page-link-title-draft' : 'page-link-title-published'"
                   >{{ story.page_url}}</router-link>
                 </p>
               </div>
@@ -137,7 +141,7 @@
 
                         <span
                           class="content has-text-success pub-unpub-story-txt"
-                          style="padding-left:.5rem; font-size: 110%;"
+                          style="padding-left:.3rem; font-size: 150%;"
                         >PUBLISHED</span>
                       </p>
                       <p>
@@ -167,7 +171,7 @@
 
                         <span
                           class="content has-text-warning pub-unpub-story-txt"
-                          style="padding-left:.5rem; font-size:125%;"
+                          style="padding-left:.3rem; font-size:140%;"
                         >DRAFT</span>
                       </p>
                       <p>
@@ -1252,10 +1256,16 @@ footer {
 }
 
 /************** misc ***********/
-.page-link-title {
+.page-link-title-draft {
   color: #f8aa0f;
 }
-a.page-link-title {
+a.page-link-title-draft {
   color: #f8aa0f;
+}
+.page-link-title-published {
+  color: #1ecf3c;
+}
+a.page-link-title-published {
+  color: #1ecf3c;
 }
 </style>
