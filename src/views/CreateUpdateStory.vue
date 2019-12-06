@@ -120,7 +120,10 @@
                           @click="selectLayout('carousel')"
                         />
                       </p>
-                      <p class="content selected-layout">{{ story.layout.toUpperCase() }}</p>
+                      <p
+                        class="content selected-layout"
+                        style="padding-top: .2rem"
+                      >{{ story.layout.toUpperCase() }}</p>
                     </div>
                   </article>
                 </div>
@@ -130,7 +133,10 @@
                     <div class="message-header">
                       <p>STATUS</p>
                     </div>
-                    <div class="message-body pub-unpub-story-layout-box">
+                    <div
+                      class="message-body pub-unpub-story-layout-box"
+                      style="padding:.75rem 1rem 1rem 1rem"
+                    >
                       <p
                         class="icon icon-hover has-text-success is-large"
                         style="padding:0;margin:0;"
@@ -141,7 +147,7 @@
 
                         <span
                           class="content has-text-success pub-unpub-story-txt"
-                          style="padding-left:.3rem; font-size: 150%;"
+                          style="padding-left:.3rem; font-size: 140%;"
                         >PUBLISHED</span>
                       </p>
                       <p>
@@ -160,7 +166,10 @@
                     <div class="message-header">
                       <p>STATUS</p>
                     </div>
-                    <div class="message-body pub-unpub-story-layout-box">
+                    <div
+                      class="message-body pub-unpub-story-layout-box"
+                      style="padding:.75rem 1rem 1rem 1rem"
+                    >
                       <p
                         class="icon icon-hover has-text-warning is-large"
                         style="padding:0;margin:0;"
@@ -171,7 +180,7 @@
 
                         <span
                           class="content has-text-warning pub-unpub-story-txt"
-                          style="padding-left:.3rem; font-size:140%;"
+                          style="padding-left:.3rem; font-size:130%;"
                         >DRAFT</span>
                       </p>
                       <p>
