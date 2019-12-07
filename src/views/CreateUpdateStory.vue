@@ -77,8 +77,12 @@
               </div>
               <!-- ENDS SHOW STORY URL -->
               <!-- TOP BOXES -->
-              <div class="top-boxes-grid" style="margin-top:40px;">
-                <div>
+              <div
+                class="columns is-variable is-2-mobile is-3-tablet is-8-desktop is-8-widescreen is-8-fullhd"
+                style="margin-top:40px;"
+              >
+                <!-- LAYOUT BOX -->
+                <div class="column is-two-fifths">
                   <article class="message is-small box-has-shadow">
                     <div class="message-header">
                       <p>LAYOUT</p>
@@ -127,8 +131,10 @@
                     </div>
                   </article>
                 </div>
+                <!-- ENDS LAYOUT BOX -->
+                <!-- STATUS BOX -->
                 <!-- STATUS PUBLISHED -->
-                <div v-if="story.status === 'published'">
+                <div v-if="story.status === 'published'" class="column is-two-fifths">
                   <article class="message is-success is-small box-has-shadow">
                     <div class="message-header">
                       <p>STATUS</p>
@@ -161,7 +167,7 @@
                   </article>
                 </div>
                 <!-- STATUS DRAFT -->
-                <div v-if="story.status === 'draft'">
+                <div v-if="story.status === 'draft'" class="column is-two-fifths">
                   <article class="message is-warning is-small box-has-shadow">
                     <div class="message-header">
                       <p>STATUS</p>
@@ -193,7 +199,9 @@
                     </div>
                   </article>
                 </div>
-                <div>
+                <!-- ENDS STATUS BOX -->
+                <!-- DELETE BOX -->
+                <div class="column">
                   <article class="message is-danger is-small box-has-shadow">
                     <div class="message-header">
                       <p>DELETE</p>
@@ -207,6 +215,7 @@
                 </div>
               </div>
               <!-- TOP BOXES -->
+              <!-- ENDS DELETE BOX -->
               <!-- CATEGORY -->
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Category</label>
@@ -1146,12 +1155,12 @@ footer {
 }
 
 /************** grids ***********/
-.top-boxes-grid {
+/* .top-boxes-grid {
   padding: 0 3px;
   display: grid;
   grid-template-columns: 3fr 3fr 1fr;
   grid-column-gap: 12%;
-}
+} */
 
 .add-story-layout-icons-box {
   display: grid;
