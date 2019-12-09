@@ -57,4 +57,18 @@ const categoriesList = [
 
 ]
 
-module.exports = { categoriesList }
+const categoriesDisplay = {
+    documentary: 'Documentary',
+    stillLife: 'Still life',
+    streetPhotography: 'Street photography',
+    wildLife: 'Nature and Wildlife',
+    wedding: 'Wedding',
+    travel: 'Travel',
+    dailyLife: 'Daily life',
+    fineArt: 'Fine art',
+    portrait: 'Portrait',
+    sport: 'Sport',
+    architecture: 'Architecture'
+}
+
+module.exports = { categoriesList, categoriesDisplay }

@@ -318,7 +318,8 @@ export default {
           /////////////////////////////////////////////
           await this.$emit("onPicUpload", {
             original: uploaded.data.original,
-            thumb: uploaded.data.thumb
+            thumb: uploaded.data.thumb,
+            display: uploaded.data.display
           });
           // --
           // Done close

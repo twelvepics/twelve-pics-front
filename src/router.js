@@ -22,7 +22,7 @@ export default new Router(
         path: '/:username/stories',
         name: 'user-stories',
         components: {
-          default: () => import(/* webpackChunkName: "create-story" */ './views/StoriesList.vue'),
+          default: () => import(/* webpackChunkName: "create-story" */ './views/UserStoriesList.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },

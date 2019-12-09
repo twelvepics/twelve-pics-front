@@ -269,7 +269,10 @@
               <div class="field m-30-0-15-0">
                 <label class="label is-marginless">Pitch your story</label>
                 <p class="content is-small is-marginless pb-05">
-                  <span class="isError" v-if="$v.story.pitch.$error">Must be at most 5000 Characters</span>
+                  <span
+                    class="isError"
+                    v-if="$v.story.pitch.$error"
+                  >Must be at least 300 and at most 5000 Characters</span>
                   <span
                     v-else
                   >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
@@ -753,7 +756,11 @@ export default {
     picUploaded(pic) {
       // console.log("GOT IT");
       // console.log(pic);
-      this.pics_uploaded.push({ original: pic.original, thumb: pic.thumb });
+      this.pics_uploaded.push({
+        original: pic.original,
+        thumb: pic.thumb,
+        display: pic.display
+      });
     },
     setPicDescription(idx, event) {
       console.log(event.target.value);
@@ -884,10 +891,12 @@ export default {
         return;
       }
       // go and change status if im good
+      this.story.status = status;
+      console.log("#############");
+      console.log(this.story.status);
+      console.log("#############");
+
       await this.onSubmit(false);
-      if (!this.is_error && !this.is_api_error) {
-        this.story.status = status;
-      }
     },
 
     // user cannot access story if its not his own or not found
@@ -1041,6 +1050,8 @@ export default {
         maxLen: maxLength(128)
       },
       pitch: {
+        required,
+        minLen: minLength(300),
         maxLen: maxLength(5000)
       },
       inspiration: {
@@ -1065,6 +1076,9 @@ export default {
           required
         },
         thumb: {
+          required
+        },
+        display: {
           required
         },
         caption: {

@@ -3,7 +3,7 @@ import Vue from 'vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
     faList, faSearch, faUser, faCog, faSignOutAlt, faEnvelope, faQuestion,
-    faBan, faTrashAlt, faAlignLeft, faEye, faUpload, faFileCode, faArrowDown,
+    faBan, faTrashAlt, faAlignLeft, faEye, faUpload, faFileCode, faArrowDown, faStar,
     faArrowUp, faCheckCircle, faArrowsAlt
 } from '@fortawesome/free-solid-svg-icons'
 import {
@@ -13,7 +13,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faList, faSearch, faUser, faCog, faEnvelope, faQuestion, faSignOutAlt,
-    faBan, faTrashAlt, faAlignLeft, faEye, faUpload, faArrowDown, faArrowUp, faCheckCircle,
+    faBan, faTrashAlt, faAlignLeft, faEye, faUpload, faArrowDown, faArrowUp, faCheckCircle, faStar,
     faFileCode, faArrowsAlt, faFlickr, faFacebookSquare, faTwitterSquare, faInstagram)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)

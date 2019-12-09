@@ -139,9 +139,7 @@ export default {
     // this.$store.state.storyMounted = true;
     // can pass only one arg to state, so make it an object
     this.setStoryComponentMounted({ storyId: this.storyId, other: "whatever" });
-    console.log(
-      `in mounted story-modal mounted -> ${this.isStoryComponentMounted}`
-    );
+    console.log(`in story-modal mount -> ${this.isStoryComponentMounted}`);
     console.log(`--------- ${this.storyId} ------------`);
   },
   // beforeUpdate() {
