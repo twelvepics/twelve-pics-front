@@ -43,8 +43,10 @@
                     <li v-for="(k, v, idx) in apiErrors" :key="idx">{{ k }}</li>
                   </ul>
                 </div>
-                <div v-else-if="is_form_error">PLEASE FIX THE FORM ERRORS.</div>
-                <div v-else>SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
+                <!-- <div v-else-if="is_form_error">PLEASE FIX THE FORM ERRORS.</div> -->
+                <div
+                  v-else-if="apiErrorType === 'SERVER ERROR'"
+                >SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
               </div>
               <!-- ENDS API ERRORS -->
               <p
@@ -658,17 +660,21 @@ export default {
         : [];
       this.$store.commit("setCreateFormCache", this.story);
     },
+    formIsValid() {
+      this.is_form_error = false;
+      this.submit_pending = true;
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        this.is_form_error = true;
+        this.submit_pending = false;
+        window.scrollTo(0, 0);
+        return false;
+      }
+      return true;
+    },
     async onSubmit(check_form = true) {
       if (check_form) {
-        this.is_form_error = false;
-        this.submit_pending = true;
-        this.$v.$touch();
-        if (this.$v.$invalid) {
-          this.is_form_error = true;
-          this.submit_pending = false;
-          window.scrollTo(0, 0);
-          return;
-        }
+        if (!this.formIsValid()) return;
       }
       try {
         console.log("onSubmit");
@@ -830,7 +836,6 @@ export default {
       this.apiErrors = "";
       this.apiErrorType = "";
     },
-    // ERRORS OK
     async fetchAndSetData() {
       // USE only for update story load initial data
       try {
@@ -881,21 +886,17 @@ export default {
       this.is_error = false;
       this.is_api_error = false;
       this.is_form_error = false;
-
       // check I'm valid
-      this.$v.$touch();
-      if (this.$v.$invalid) {
-        this.is_form_error = true;
-        this.submit_pending = false;
-        window.scrollTo(0, 0);
-        return;
-      }
+      if (!this.formIsValid()) return;
       // go and change status if im good
       this.story.status = status;
-      console.log("#############");
-      console.log(this.story.status);
-      console.log("#############");
-
+      // set action
+      if (this.story._key) {
+        this.action = "update";
+      } else {
+        this.action = "create";
+      }
+      // re-raise from onSubmit?
       await this.onSubmit(false);
     },
 

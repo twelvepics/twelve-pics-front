@@ -28,68 +28,9 @@
               Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis praesentium
               esse veritatis nemo!
             </p>
-
-            <!-- ONE STORY -->
-            <div class="notification is-warning" style="padding-right:1.5rem;">
-              <div class="columns" style="margin-bottom:0;">
-                <div class="column is-11">
-                  <p class="title is-5">
-                    [DRAFT] Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus,
-                    consequatur. Quae modi culpa enim tenetur.
-                  </p>
-                </div>
-                <div class="column" style="margin-bottom:0;">
-                  <p class="has-text-right">
-                    <router-link
-                      class="button is-primary"
-                      id="profile-edit-btn"
-                      to="/story/xoxoxixi/edit"
-                    >
-                      <strong>Edit</strong>
-                    </router-link>
-                  </p>
-                </div>
-              </div>
-
-              <p class="content">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio saepe error quidem facere
-                rerum numquam laborum nesciunt est quod autem, tempore modi aliquid sed. Molestias
-                reiciendis dolorum laboriosam earum quis facere libero! Consectetur, enim. Deleniti ab
-                doloremque velit consequuntur quia tenetur vel eaque. Dolor harum libero eligendi
-                consectetur voluptatem aut?
-              </p>
-            </div>
-            <!-- ONE STORY -->
-
-            <!-- ONE STORY -->
-            <div class="notification is-info" style="padding-right:1.5rem;">
-              <div class="columns" style="margin-bottom:0;">
-                <div class="column is-11">
-                  <p class="title is-5">
-                    [PUBLISHED] Lorem ipsum dolor sit amet consectetur adipisicing elit. In nobis
-                    tempore aliquam.
-                  </p>
-                </div>
-                <div class="column" style="margin-bottom:0;">
-                  <p class="has-text-right">
-                    <router-link
-                      class="button is-primary"
-                      id="profile-edit-btn"
-                      to="/story/xoxoxixi/edit"
-                    >
-                      <strong>Edit</strong>
-                    </router-link>
-                  </p>
-                </div>
-              </div>
-              <p class="content">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione ab non vitae
-                consequatur eveniet, itaque magni debitis ipsam ad minima! Doloribus veniam cum, enim
-                sit repellendus ea molestiae doloremque? Placeat ea aliquid sunt. Nulla, quod beatae
-                sapiente consequatur dignissimos labore nisi eos amet facilis, odio nesciunt explicabo
-                voluptatem minima voluptatum.
-              </p>
-            </div>
+            <!-- STORIES -->
+            <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
+            <!-- END STORIES -->
           </div>
         </div>
         <!-- ENDS STORIES -->
@@ -121,7 +62,12 @@
 </template>
 
 <script>
+import axiosBase from "../services/axiosBase";
+import UserStory from "../components/UserStory.vue";
 export default {
+  components: {
+    UserStory
+  },
   data() {
     return {
       is_debug: true,
@@ -138,7 +84,11 @@ export default {
         name: "edit-story",
         params: { key }
       });
-    }
+    },
+    async fetchData() {}
+  },
+  created() {
+    this.fetchData();
   }
 };
 </script>
