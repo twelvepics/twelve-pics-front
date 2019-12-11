@@ -50,6 +50,7 @@ import Story from "../components/Story";
 import StoryComments from "../components/StoryComments";
 
 export default {
+    name: "storyModal",
     components: {
         Story,
         StoryComments
@@ -70,8 +71,7 @@ export default {
         console.log("mounted");
         // this.$store.state.storyMounted = true;
         // can pass only one arg to state, so make it an object
-        this.setStoryComponentMounted({ storyId: this.storyId, other: "whatever" });
-        console.log(`in story-modal mount -> ${this.isStoryComponentMounted}`);
+        this.setStoryComponentMounted({ storyId: this.storyId });
         console.log(`--------- ${this.storyId} ------------`);
     },
     props: {
@@ -83,7 +83,6 @@ export default {
         // required: true } // TODO ADD ME LATA
     },
     methods: {
-        // ...mapMutations(["setStoryComponentMounted", "resetStoryComponentMounted"]),
         ...mapActions(["setStoryComponentMounted", "resetStoryComponentMounted"]),
         // showStory() {
         //   this.$store.commit("showStory");
@@ -91,11 +90,7 @@ export default {
         closeStory() {
             console.log("Closing story");
             this.resetStoryComponentMounted();
-            // destroy the vue listeners, etc
-            this.$destroy();
-            // remove the element from the DOM
-            this.$el.parentNode.removeChild(this.$el);
-            // window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
+            window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
         },
         async fetchData() {
             // try {
@@ -126,11 +121,7 @@ export default {
             // }
         }
     },
-    computed: {
-        // isStoryMounted() {
-        //   return this.$store.getters.isStoryMounted;
-        // }
-    },
+    computed: {},
     created() {
         this.fetchData();
     }

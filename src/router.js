@@ -72,7 +72,7 @@ export default new Router(
               // Rewrite components for `default`
               to.matched[0].components.default = from.matched[0].components.default
               // Rewrite components for `modal`
-              to.matched[0].components.modal = StoryModal;
+              to.matched[0].components.storyModal = StoryModal;
             }
           }
           next();

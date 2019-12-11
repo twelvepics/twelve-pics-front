@@ -5,12 +5,7 @@
             <div class="columns">
                 <div class="column auto">
                     <!-- STORIES -->
-                    <story-brief
-                        v-for="(story, idx) in stories"
-                        :key="idx"
-                        :story="story"
-                        @mountStoryModalComp="mountStoryModalComp"
-                    ></story-brief>
+                    <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
                     <!-- END STORIES -->
                 </div>
                 <div class="is-divider-vertical"></div>
@@ -22,8 +17,6 @@
                 </div>
             </div>
         </div>
-        <!-- <div ref="story-modal"></div> -->
-        <div v-if="showModalStory" ref="story-modal"></div>
     </main>
     <!-- END MAIN CONTENT -->
 </template>
@@ -42,36 +35,11 @@ export default {
     name: "home",
     data: function() {
         return {
-            stories: [],
-            showModalStory: false,
-            currentStory: null
+            stories: []
         };
     },
     methods: {
         ...mapActions(["resetStoryComponentMounted"]),
-        // showStory() {
-        mountStoryModalComp(story_slug) {
-            this.currentStory = story_slug;
-            console.log(`In Home, mountStoryModalComp ${story_slug}`);
-            this.showModalStory = true;
-            this.$nextTick(() => {
-                var ComponentClass = Vue.extend(StoryModal);
-                var instance = new ComponentClass({
-                    store: this.$store,
-                    parent: this,
-                    propsData: {
-                        story_slug
-                    }
-                });
-                // console.log(this);
-                instance.$mount(); // pass nothing
-                if (this.$refs["story-modal"].hasChildNodes()) {
-                    this.$refs["story-modal"].removeChild(this.$refs["story-modal"].childNodes[0]);
-                }
-                this.$refs["story-modal"].appendChild(instance.$el);
-                this.$router.push({ name: "view-story", params: { slug: story_slug } });
-            });
-        },
         async fetchStories() {
             try {
                 // await new Promise(resolve => setTimeout(resolve, 1000));
@@ -101,22 +69,16 @@ export default {
     created() {
         // get stories
         this.fetchStories();
+    },
+    watch: {
+        $route(to, from) {
+            // console.log(to);
+            // console.log(from);
+            if (from.name === "view-story") {
+                this.resetStoryComponentMounted();
+            }
+        }
     }
-    // watch: {
-    // $route(to, from) {
-    //     console.log(to);
-    //     console.log(from);
-    //     if (from.name === "view-story") {
-    //         console.log("close it");
-    //         this.showModalStory = false;
-    //         this.resetStoryComponentMounted();
-    //     }
-    //     if (to.name === "view-story") {
-    //         this.showModalStory = true;
-    //         this.mountStoryModalComp(this.currentStory);
-    //     }
-    // }
-    // }
 };
 </script>
 
