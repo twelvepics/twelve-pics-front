@@ -41,7 +41,7 @@ export default new Router(
         path: '/story/:slug',
         name: 'view-story',
         components: {
-          default: () => import(/* webpackChunkName: "story" */ './views/Story.vue'),
+          default: () => import(/* webpackChunkName: "story" */ './views/StoryStandalone.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         }
       },
