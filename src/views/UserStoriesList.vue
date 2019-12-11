@@ -11,7 +11,7 @@
           style="text-align:center;height:60px;padding-top:10px;margin-bottom:10px"
         >
           <div
-            v-if="!is_loading &&  is_error"
+            v-if="!is_loading && is_error"
             class="isError"
             style="margin-top:7px;"
           >{{ errorMessage }}</div>
@@ -20,16 +20,23 @@
         <!-- ENDS LOADER / SERVER ERRORS-->
 
         <!-- START STORIES -->
-        <div class="card">
+        <div v-else class="card">
           <!-- CARD CONTENT -->
           <div class="card-content">
-            <p class="title is-size-4">Alain's stories</p>
+            <p
+              class="title is-size-4"
+            >Stories posted by {{user_info.display_name || user_info.username}}</p>
             <p class="subtitle is-size-6">
               Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis praesentium
               esse veritatis nemo!
             </p>
             <!-- STORIES -->
-            <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
+            <user-story
+              v-for="(story, idx) in stories"
+              :key="idx"
+              :story="story"
+              :user_info="user_info"
+            ></user-story>
             <!-- END STORIES -->
           </div>
         </div>
@@ -62,10 +69,12 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import axiosBase from "../services/axiosBase";
 import UserStory from "../components/UserStory.vue";
 export default {
   components: {
+    // eslint-disable-next-line
     UserStory
   },
   data() {
@@ -73,19 +82,50 @@ export default {
       is_debug: true,
       is_loading: false,
       // fetch errors
-      is_error: false
+      is_error: false,
+      errorMessage: "",
+      //
+      stories: [],
+      user_info: {},
+      count: 0,
+      fullCount: 0
     };
   },
+  computed: {
+    ...mapGetters(["isAuthenticated", "authenticatedUser"]),
+    username: function() {
+      return this.$route.params.username;
+    }
+  },
   methods: {
-    // CLEAN  EDIT / CREATE STORY FORM BEFORE LOADING IT
-    async goToEditStory(key) {
-      await this.$store.dispatch("clearCreateFormCache");
-      this.$router.push({
-        name: "edit-story",
-        params: { key }
-      });
-    },
-    async fetchData() {}
+    async fetchData() {
+      try {
+        this.is_loading = true;
+        // await new Promise(resolve => setTimeout(resolve, 2000));
+        const response = await axiosBase.get(`/users/${this.username}/stories`);
+        console.log(response.data);
+        const { stories, count, fullCount, user_info } = response.data;
+        for (let story of stories) {
+          story.num_comments = Math.floor(Math.random() * 10);
+        }
+        this.stories = stories;
+        this.count = count;
+        this.fullCount = fullCount;
+        this.user_info = user_info;
+        this.is_loading = false;
+      } catch (e) {
+        this.is_loading = false;
+        this.is_error = true;
+        if (e.response) {
+          if (e.response.status === 404) {
+            this.errorMessage = "USER NOT FOUND";
+          } else {
+            // Most probably a 500
+            this.errorMessage = "SERVER ERROR";
+          }
+        }
+      }
+    }
   },
   created() {
     this.fetchData();
@@ -143,6 +183,11 @@ footer {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/************** type **************/
+.isError {
+  color: red;
 }
 </style>
 
