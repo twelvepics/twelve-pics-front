@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // Lazy load some
 import Home from './views/Home.vue'
+import StoryStandalone from './views/StoryStandalone.vue'
+import StoryModal from './components/StoryModal.vue'
 // import Footer from './views/Footer.vue'
 
 Vue.use(Router)
@@ -16,6 +18,9 @@ export default new Router(
         path: '/',
         name: 'home',
         component: Home,
+        meta: {
+          isModalView: true
+        }
       },
       // list my stories
       {
@@ -41,8 +46,36 @@ export default new Router(
         path: '/story/:slug',
         name: 'view-story',
         components: {
-          default: () => import(/* webpackChunkName: "story" */ './views/StoryStandalone.vue'),
+          // default: () => import(/* webpackChunkName: "story" */ './views/StoryStandalone.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
+        },
+        beforeEnter: (to, from, next) => {
+          const isModalView = from.matched.some(view => view.meta && view.meta.isModalView);
+          console.log('XOXO');
+          console.log(from.matched);
+          console.log(`isModalView => ${isModalView}`);
+          console.log('XOXO');
+          if (!isModalView) {
+            // For direct access
+            to.matched[0].components = {
+              default: StoryStandalone,
+              modal: false
+            }
+          }
+          if (isModalView) {
+            // For isModalView access
+            console.log('-X-X-X-');
+            console.log(to.matched[0].components);
+            console.log(from.matched.length)
+            console.log('-X-X-X-');
+            if (to.matched[0].components) {
+              // Rewrite components for `default`
+              to.matched[0].components.default = from.matched[0].components.default
+              // Rewrite components for `modal`
+              to.matched[0].components.modal = StoryModal;
+            }
+          }
+          next();
         }
       },
       {
@@ -140,6 +173,12 @@ export default new Router(
           default: () => import(/* webpackChunkName: "validate-email" */ './views/TestInit.vue'),
         }
       },
+      // TODO
+      // {
+      //   path: '*',
+      //   name: 'error',
+      //   component: Error
+      // }
 
       // TODO
       // error page? -> unauthorized, server error etc...

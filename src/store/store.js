@@ -13,7 +13,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   // TODO filter user data in api
   state: {
-    storyComponentMounted: false,
+    // storyComponentMounted: false,
     jwtToken: null, // localStorage.getItem('token'),
     user: null, // JSON.parse(localStorage.getItem('user')),
     categories: ['documentary', 'stillLife', 'wildLife', 'wedding', 'travel', 'dailyLife', 'fineArt', 'portrait', 'sport', 'architecture', 'streetPhotography'],
@@ -21,9 +21,9 @@ export default new Vuex.Store({
     createFormCache: {},
   },
   getters: {
-    isStoryComponentMounted: state => {
-      return state.storyComponentMounted;
-    },
+    // isStoryComponentMounted: state => {
+    //   return state.storyComponentMounted;
+    // },
     isAuthenticated: state => {
       return state.jwtToken != null;
     },
@@ -61,16 +61,16 @@ export default new Vuex.Store({
   },
   mutations: {
     // STORY
-    setStoryComponentMounted: (state, payload) => {
-      console.log('we can set the layout and show the story now');
-      console.log(`Mounting story: ${payload.storyId}`)
+    setStoryComponentMounted: () => {
+      // console.log('we can set the layout and show the story now');
+      // console.log(`Mounting story: ${payload.storyId}`)
       setHomeLayout();
-      state.storyComponentMounted = true;
+      // state.storyComponentMounted = true;
     },
-    resetStoryComponentMounted: state => {
-      console.log('Story unmounted, we must reset the layout to its initial state');
+    resetStoryComponentMounted: () => {
+      // console.log('Story unmounted, we must reset the layout to its initial state');
       resetHomeLayout();
-      state.storyComponentMounted = false;
+      // state.storyComponentMounted = false;
     },
     userToState: (state, userData) => {
       state.jwtToken = userData.token;

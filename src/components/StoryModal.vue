@@ -1,10 +1,6 @@
 <template>
     <!-- The Modal -->
-    <div
-        id="story-modal"
-        class="story-modal"
-        :style="[isStoryComponentMounted ? { display: 'block' } : { dislay: 'none' }]"
-    >
+    <div id="story-modal" class="story-modal" style="display: block">
         <!-- STICKY HEADER -->
         <div class="heady">
             <div class="columns">
@@ -99,6 +95,7 @@ export default {
             this.$destroy();
             // remove the element from the DOM
             this.$el.parentNode.removeChild(this.$el);
+            // window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
         },
         async fetchData() {
             // try {
@@ -130,7 +127,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(["isStoryComponentMounted"])
         // isStoryMounted() {
         //   return this.$store.getters.isStoryMounted;
         // }
