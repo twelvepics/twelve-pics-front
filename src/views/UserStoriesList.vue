@@ -129,6 +129,13 @@ export default {
   },
   created() {
     this.fetchData();
+  },
+  watch: {
+    // eslint-disable-next-line
+    $route(to, from) {
+      // react to route changes...
+      this.fetchData();
+    }
   }
 };
 </script>
