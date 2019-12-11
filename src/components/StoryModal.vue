@@ -1,6 +1,6 @@
 <template>
     <!-- The Modal -->
-    <div id="story-modal" class="story-modal" style="display: block">
+    <div id="story-modal" class="story-modal" style="display: block" v-on:click.stop.self="closeStory">
         <!-- STICKY HEADER -->
         <div class="heady">
             <div class="columns">
