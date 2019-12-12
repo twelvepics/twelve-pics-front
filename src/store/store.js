@@ -40,7 +40,7 @@ export default new Vuex.Store({
       // console.log("GET CATEGORIES STATE IS AUTH " + getters.isAuthenticated)
       // console.log("GET CATEGORIES GET AUTH USER " + getters.authenticatedUser)
       if (getters.isAuthenticated) {
-        console.log(`CATEGORIES ${state.user.categories}`);
+        // console.log(`CATEGORIES ${state.user.categories}`);
         return state.user.categories;
       } else {
         return state.categories;
@@ -137,7 +137,7 @@ export default new Vuex.Store({
     ///////////////////////////////////////////////////////////////////
     // SETS an userRefreshDone in data too
     ///////////////////////////////////////////////////////////////////
-    refreshUser: async ({ commit, getters }) => {
+    initUser: async ({ commit, getters }) => {
       //////////////////////////////////////////////////////////////
       // refetch user in case he was updated from smwhere else
       //////////////////////////////////////////////////////////////

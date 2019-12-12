@@ -24,10 +24,13 @@
 <script>
 // eslint-disable-next-line
 import Vue from "vue";
-import { mapActions } from "vuex";
+import { EventBus } from "../event-bus.js";
+import { mapActions, mapGetters } from "vuex";
+import store from "@/store/store.js";
 import axiosBase from "../services/axiosBase";
 import StoryModal from "../components/StoryModal.vue";
 import StoryBrief from "../components/StoryBrief.vue";
+
 ///////////////////////////////////////
 // @ is an alias to /src
 ///////////////////////////////////////
@@ -37,6 +40,9 @@ export default {
         return {
             stories: []
         };
+    },
+    computed: {
+        ...mapGetters(["isAuthenticated", "authenticatedUser", "isUserInited"])
     },
     methods: {
         ...mapActions(["resetStoryComponentMounted"]),
@@ -61,14 +67,26 @@ export default {
                     this.errorMessage = "SERVER ERROR";
                 }
             }
+        },
+        async onCategoriesChanged() {
+            console.log("Categories changed, refresh page");
+            this.fetchStories();
         }
     },
     components: {
         StoryBrief
     },
     created() {
-        // get stories
-        this.fetchStories();
+        console.log(`User inited -> ${this.isUserInited}`);
+        // get stories if no auth or user inited
+        if (!this.isAuthenticated || this.isUserInited) {
+            this.fetchStories();
+        }
+    },
+    mounted() {
+        EventBus.$on("categoriesChanged", () => {
+            this.onCategoriesChanged();
+        });
     },
     watch: {
         $route(to, from) {
@@ -77,6 +95,11 @@ export default {
             if (from.name === "view-story") {
                 this.resetStoryComponentMounted();
             }
+        },
+        // app user refresh/initialisation
+        isUserInited(newVal, oldVal) {
+            console.log(`User inited watcher: ${oldVal} to ${newVal}`);
+            this.fetchStories();
         }
     }
 };

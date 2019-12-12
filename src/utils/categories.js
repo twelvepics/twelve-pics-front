@@ -61,7 +61,7 @@ const categoriesDisplay = {
     documentary: 'Documentary',
     stillLife: 'Still life',
     streetPhotography: 'Street photography',
-    wildLife: 'Nature and Wildlife',
+    wildLife: 'Nature and wildlife',
     wedding: 'Wedding',
     travel: 'Travel',
     dailyLife: 'Daily life',
