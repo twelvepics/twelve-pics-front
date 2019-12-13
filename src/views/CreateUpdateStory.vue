@@ -704,6 +704,8 @@ export default {
         this.pics_uploaded = this.story.pics;
         this.tagsStr = this.story.tags.join(", ");
         // this.$store.commit("setCreateFormCache", this.story);
+        // I have been succesfully submitted, now I will be an update
+        this.action = "update";
       } catch (error) {
         // as we are here these are non blocking errors
         // is_api_error / apiErrors
