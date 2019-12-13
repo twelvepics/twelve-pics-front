@@ -17,7 +17,7 @@ const categoriesList = [
     {
         key: 'wildLife',
         id: 4,
-        display: 'Nature and Wildlife'
+        display: 'Nature and wildlife'
     },
     {
         key: 'wedding',
@@ -54,21 +54,16 @@ const categoriesList = [
         id: 11,
         display: 'Architecture'
     },
-
 ]
 
-const categoriesDisplay = {
-    documentary: 'Documentary',
-    stillLife: 'Still life',
-    streetPhotography: 'Street photography',
-    wildLife: 'Nature and wildlife',
-    wedding: 'Wedding',
-    travel: 'Travel',
-    dailyLife: 'Daily life',
-    fineArt: 'Fine art',
-    portrait: 'Portrait',
-    sport: 'Sport',
-    architecture: 'Architecture'
-}
+const categoriesDisplay = categoriesList.reduce((acc, item) => {
+    acc[item.key] = item.display;
+    return acc;
+}, {});
 
-module.exports = { categoriesList, categoriesDisplay }
+const categoriesToIds = categoriesList.reduce((acc, item) => {
+    acc[item.key] = item.id;
+    return acc;
+}, {});
+
+module.exports = { categoriesList, categoriesDisplay, categoriesToIds }

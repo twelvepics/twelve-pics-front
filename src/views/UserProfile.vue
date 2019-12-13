@@ -12,10 +12,9 @@
               @click.prevent="sendConfirmEmail"
             >Resend confirmation email</a>
           </span>
-          <span v-else>
-            An email has been sent to you. Please click on the link in it to confirm your email
-            address.
-          </span>
+          <span
+            v-else
+          >An email has been sent to you. Please click on the link in it to confirm your email address.</span>
           <br />
         </div>
         <div v-else-if="userCannotReceiveMessage && !is_loading" class="notification is-warning">
@@ -24,18 +23,9 @@
         </div>
         <!-- END EMAIL NOT CONFIRMED WARNINGS -->
         <!-- START PROFILE -->
-        <div
-          class="card"
-          v-if="is_loading || is_error"
-          style="text-align:center;height:60px;padding-top:10px;margin-bottom:10px"
-        >
-          <div
-            v-if="is_error && !is_loading"
-            class="isError"
-            style="margin-top:7px;"
-          >{{ errorMessage }}</div>
-          <div v-if="is_loading" class="loader" style="margin:auto;"></div>
-        </div>
+        <page-loader v-if="is_loading"></page-loader>
+        <page-error v-if="is_error" :errorMessage="errorMessage"></page-error>
+
         <div class="card" v-if="!!user && !is_loading">
           <!-- CARD CONTENT -->
           <div class="card-content">
@@ -97,11 +87,9 @@
               <div class="field m-30-0-15-0" v-if="user.profile.location.place_name">
                 <h5 class="has-text-weight-semibold is-2">
                   Location:
-                  <span class="is-size-6 has-text-weight-normal">
-                    {{
-                    user.profile.location.place_name
-                    }}
-                  </span>
+                  <span
+                    class="is-size-6 has-text-weight-normal"
+                  >{{ user.profile.location.place_name }}</span>
                 </h5>
               </div>
               <!-- LOCATION -->
@@ -198,9 +186,16 @@ import axiosBase from "../services/axiosBase";
 import { mapGetters } from "vuex";
 // Private messaging
 import MessageComposerModal from "../components/MessageComposerModal.vue";
+import PageLoader from "../components/PageLoader.vue";
+import PageError from "../components/PageError.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 
 export default {
+  components: {
+    MessageComposerModal,
+    PageLoader,
+    PageError
+  },
   data() {
     return {
       user: null,
@@ -213,9 +208,6 @@ export default {
       //-- warnings --
       confirmEmailSent: false
     };
-  },
-  components: {
-    MessageComposerModal
   },
   methods: {
     openMessageModal() {
@@ -286,15 +278,11 @@ export default {
     },
     showEditButton: function() {
       return (
-        // this.$store.getters.isAuthenticated &&
-        // this.user._key === this.$store.getters.authenticatedUser._key
         this.isAuthenticated && this.user._key === this.authenticatedUser._key
       );
     },
     showMessageButton: function() {
       return (
-        // this.$store.getters.isAuthenticated &&
-        // this.user._key === this.$store.getters.authenticatedUser._key
         this.isAuthenticated && this.user._key != this.authenticatedUser._key
       );
     },
@@ -323,45 +311,9 @@ export default {
       );
     }
   },
-  /*
-    https://forum.vuejs.org/t/cant-get-created-hook-to-work-when-its-async/28604/4
-    Yes, created is exectued synchonously, but it can still contain asynchonous code
-    Vue just won’t wait for it to finish, wether or not w use async-await, Promises or something else.
-    But if you want to use await inside of created, then adding the async keyword is required and will work fine.
-  */
-  // tested with timeout ok but ugly - refactor
   created() {
     this.fetchData();
   },
-  ////////////////////////////////////////////////////////////
-  // Almost idem below but fucks up on 404
-  // Watch updates url in nav bar, beforeRouteUpdate doesn't
-  ////////////////////////////////////////////////////////////
-  // async beforeRouteUpdate(to, from, next) {
-  //   // react to route changes...
-  //   // don't forget to call next()
-  //   // because it is same component lifecycle events are not called
-  //   console.log("#--- BEFORE ROUTE UPDATE --#");
-  //   console.log(to.params.username);
-  //   try {
-  //     const response = await axiosBase.get(`/users/${to.params.username}`);
-  //     // console.log(response);
-  //     this.user = response.data.user;
-  //     this.is_loading = false;
-  //     this.is_error = false;
-  //     next();
-  //   } catch (e) {
-  //     this.is_loading = false;
-  //     this.is_error = true;
-  //     this.user = null;
-  //     if (e.response.status === 404) {
-  //       this.errorMessage = "USER NOT FOUND";
-  //     } else {
-  //       // Most probably a 500
-  //       this.errorMessage = "SERVER ERROR";
-  //     }
-  //   }
-  // }
   watch: {
     // eslint-disable-next-line
     $route(to, from) {
@@ -432,28 +384,6 @@ footer {
   margin-bottom: 0.5rem;
 }
 
-/*************** errors  *************/
-.isError {
-  color: red;
-}
-/************** spinner **************/
-.loader {
-  border: 6px solid #f3f3f3; /* Light grey */
-  border-top: 6px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
 /***************** warnings **************/
 
 /****************** v-html ***********/

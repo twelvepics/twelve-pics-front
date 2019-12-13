@@ -60,4 +60,9 @@ main {
 .message-header {
     font-weight: 400 !important;
 }
+
+/*************** errors  *************/
+.isError {
+    color: red;
+}
 </style>

@@ -4,18 +4,8 @@
       <!-- CENTER COLUMNN -->
       <div class="column is-four-fifths-desktop">
         <!-- START LOADER / SERVER ERRORS-->
-        <div
-          class="card"
-          v-if="is_loading || is_error"
-          style="text-align:center;height:60px;padding-top:10px;margin-bottom:10px"
-        >
-          <div
-            v-if="!is_loading && is_error"
-            class="isError"
-            style="margin-top:7px;"
-          >{{ errorMessage }}</div>
-          <div v-if="is_loading" class="loader" style="margin:auto;"></div>
-        </div>
+        <page-loader v-if="is_loading"></page-loader>
+        <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
         <!-- ENDS LOADER / SERVER ERRORS-->
         <div v-else>
           <!-- START STORY -->
@@ -33,11 +23,15 @@
 <script>
 import Story from "../components/Story";
 import StoryComments from "../components/StoryComments";
+import PageLoader from "../components/PageLoader.vue";
+import PageError from "../components/PageError.vue";
 
 export default {
   components: {
     Story,
-    StoryComments
+    StoryComments,
+    PageLoader,
+    PageError
   },
   data() {
     return {
@@ -90,25 +84,6 @@ main {
 
 footer {
   margin-top: 30px;
-}
-
-/************** spinner **************/
-.loader {
-  border: 6px solid #f3f3f3; /* Light grey */
-  border-top: 6px solid #3498db; /* Blue */
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 /************** spacing ***********/

@@ -4,10 +4,7 @@
             <!-- CENTER COLUMNN -->
             <div class="column is-three-quarters-desktop">
                 <!-- ERRORS AND AUTH -->
-                <div class="card" v-if="is_loading || is_error" style="text-align:center;height:60px;padding-top:10px;">
-                    <div v-if="is_error" class="isError" style="margin-top:7px;">{{ errorMessage }}</div>
-                </div>
-
+                <page-error v-if="is_error" :errorMessage="errorMessage"></page-error>
                 <!-- START FORM -->
                 <div class="card" v-else>
                     <!-- CARD CONTENT -->
@@ -442,8 +439,12 @@ const UPLOAD_STATUS_INITIAL = 0,
     UPLOAD_STATUS_FAILED = 3;
 const AVATARS_BASE_URL = "http://localhost/images/avatars";
 import { maxLength } from "vuelidate/lib/validators";
+import PageError from "../components/PageError.vue";
 
 export default {
+    components: {
+        PageError
+    },
     data() {
         return {
             is_debug: true,
@@ -455,7 +456,7 @@ export default {
             is_api_error: false,
             apiErrors: "",
             apiErrorType: "",
-            // 
+            //
             is_saving: false,
             /* file up */
             uploadedFile: null,
@@ -801,10 +802,6 @@ footer {
 }
 
 /************** spacing ***********/
-/*************** errors  *************/
-.isError {
-    color: red;
-}
 
 /************ File upload box *************/
 .dropbox {

@@ -164,25 +164,10 @@ export default new Router(
         }
       },
       {
-        path: '/test-init',
-        name: 'testInit',
-        // route level code-splitting
-        // this generates a separate chunk (validate-email.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        components: {
-          default: () => import(/* webpackChunkName: "validate-email" */ './views/TestInit.vue'),
-        }
-      },
-      // TODO
-      // {
-      //   path: '*',
-      //   name: 'error',
-      //   component: Error
-      // }
-
-      // TODO
-      // error page? -> unauthorized, server error etc...
-      // generic slotted page?
+        path: '*',
+        name: 'error',
+        component: Error
+      }
 
     ],
     // eslint-disable-next-line

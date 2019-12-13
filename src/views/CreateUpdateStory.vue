@@ -14,13 +14,8 @@
         </div>
         <!-- END DELETED NOTIF -->
         <!-- SERVER SIDE ERRORS AND AUTH -->
-        <div
-          class="card"
-          v-if="is_loading || is_error || (story && !story.is_in)"
-          style="text-align:center;height:60px;padding-top:10px;"
-        >
-          <div v-if="is_error" class="isError" style="margin-top:7px;">{{ errorMessage }}</div>
-        </div>
+        <page-loader v-if="is_loading"></page-loader>
+        <page-error v-else-if="is_error  || (story && !story.is_in)" :errorMessage="errorMessage"></page-error>
         <!-- ENDS SERVER ERRORS AND AUTH -->
         <!-- START FORM -->
         <div class="card" v-else>
@@ -566,8 +561,8 @@
 </template>
 
 <script>
-// PUBLISH UNPUB BUTTON
-
+import PageLoader from "../components/PageLoader.vue";
+import PageError from "../components/PageError.vue";
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
@@ -591,6 +586,12 @@ const isTagsList = value => {
 
 export default {
   name: "CreateUpdateStory",
+  components: {
+    PicsUploadModal,
+    Draggable,
+    PageLoader,
+    PageError
+  },
   data() {
     return {
       is_debug: true,
@@ -641,10 +642,6 @@ export default {
       // delete
       showDeletedNotif: false
     };
-  },
-  components: {
-    PicsUploadModal,
-    Draggable
   },
   methods: {
     persistStory() {
@@ -1281,11 +1278,6 @@ footer {
 }
 .handle {
   cursor: move;
-}
-
-/*************** errors  *************/
-.isError {
-  color: red;
 }
 
 /************** misc ***********/
