@@ -709,14 +709,7 @@ export default {
         this.story = Object.assign({}, data.story);
         this.pics_uploaded = this.story.pics;
         this.tagsStr = this.story.tags.join(", ");
-        // this.$store.commit("setCreateFormCache", this.story);
-        // I have been succesfully submitted, now I will be an update
-        // Should not be required but ...
-        // this.action = "update";
       } catch (error) {
-        // as we are here these are non blocking errors
-        // is_api_error / apiErrors
-        // or vuejs errors
         console.log("__ERROR_CAUGHT__");
         this.is_api_error = true;
         // at this point bother only for validation errors
@@ -744,7 +737,6 @@ export default {
         this.submit_pending = false;
       }
     },
-    // ERRORS OK
     async saveAndGoToList() {
       await this.onSubmit();
       // if no errors go to list
@@ -884,7 +876,6 @@ export default {
     async saveAndPublish() {
       console.log("saveAndPublish");
       this.setStatus("published");
-      // this.onSubmit();
     },
     async setStatus(status) {
       console.log(`selectLayout(${status}`);
@@ -896,14 +887,6 @@ export default {
       if (!this.formIsValid()) return;
       // go and change status if im good
       this.story.status = status;
-      // set action
-      // changed place put in on submit before submit
-      // if (this.story._key) {
-      //   this.action = "update";
-      // } else {
-      //   this.action = "create";
-      // }
-      // re-raise from onSubmit?
       await this.onSubmit(false);
     },
 
@@ -997,7 +980,6 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      console.log("BEFORE ROUTE ENTER");
       if (!vm.isAuthenticated) {
         vm.is_error = true;
         vm.errorMessage = "PLEASE AUTHENTICATE";
@@ -1006,45 +988,22 @@ export default {
     });
   },
   beforeRouteLeave(to, from, next) {
-    console.log("before route leave");
     this.persistStory();
     next();
   },
   created() {
-    console.log("CREATED");
     const cache = this.$store.getters.getCreateFormCache;
     console.log(cache);
-    if (this.$route.name === "create-story") {
-      if (!cache.story) {
-        this.action = "create";
-      } else if (cache.story && !cache.story._key) {
-        this.action = "create";
-      } else if (cache.story && cache.story._key) {
-        this.action = "update";
-      }
-    } else if (this.$route.name === "edit-story") {
-      this.action = "update";
-      if (!cache.story) {
-        // just landinglanding
-        this.is_loading = true;
-        return this.fetchAndSetData();
-      }
+    if (this.$route.name === "edit-story" && !cache.story) {
+      this.is_loading = true;
+      return this.fetchAndSetData();
     }
     if (cache.story) {
       this.story = cache.story;
       this.pics_uploaded = cache.story.pics;
       this.tagsStr = cache.story.tags.join(", ");
     }
-    console.log(`Action -> ${this.action}`);
   },
-  // const PicSchema = Joi.object().keys({
-  //   original: Joi.object().required(),
-  //   thumb: Joi.object().required(),
-  //   caption: Joi.string().max(256).allow('').optional(),
-  //   description: Joi.string().max(64).allow('').optional(),
-  // })
-
-  // pics: Joi.array().min(6).max(12).items(PicSchema),
 
   validations: {
     story: {
