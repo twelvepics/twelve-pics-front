@@ -596,7 +596,7 @@ export default {
     return {
       is_debug: true,
       is_loading: false,
-      action: "",
+      // action: "",
       // fetch auth / not found errors, hide the rest of the page
       is_error: false,
       errorMessage: "",
@@ -675,6 +675,12 @@ export default {
       }
       try {
         console.log("onSubmit");
+        let action;
+        if (this.story._key) {
+          action = "update";
+        } else {
+          action = "create";
+        }
         let response = null;
         this.resetApiErrors();
         // copy pics to story
@@ -686,7 +692,7 @@ export default {
         this.story.tags = this.tagsStr.trim().length
           ? this.tagsStr.split(",").map(x => x.trim())
           : [];
-        if (this.action === "update") {
+        if (action === "update") {
           console.log("I am an update");
           response = await axiosBase.put(`/stories/${this.story._key}`, {
             story: this.story
@@ -705,7 +711,8 @@ export default {
         this.tagsStr = this.story.tags.join(", ");
         // this.$store.commit("setCreateFormCache", this.story);
         // I have been succesfully submitted, now I will be an update
-        this.action = "update";
+        // Should not be required but ...
+        // this.action = "update";
       } catch (error) {
         // as we are here these are non blocking errors
         // is_api_error / apiErrors
@@ -890,11 +897,12 @@ export default {
       // go and change status if im good
       this.story.status = status;
       // set action
-      if (this.story._key) {
-        this.action = "update";
-      } else {
-        this.action = "create";
-      }
+      // changed place put in on submit before submit
+      // if (this.story._key) {
+      //   this.action = "update";
+      // } else {
+      //   this.action = "create";
+      // }
       // re-raise from onSubmit?
       await this.onSubmit(false);
     },
