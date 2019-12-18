@@ -120,7 +120,7 @@ export default {
       // console.log(message);
       try {
         await axiosBase.post(
-          `/users/${this.authenticatedUser._key}/send-message`,
+          `/users/${this.authenticatedUser._key}/send-private-message`,
           {
             type: message.type,
             payload: message.payload

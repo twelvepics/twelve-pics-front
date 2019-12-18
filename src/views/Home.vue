@@ -115,7 +115,7 @@ export default {
     });
   },
   beforeDestroy() {
-    console.log("beforeDEstroyed");
+    console.log("beforeDestroyed");
     EventBus.$off("categoriesChanged");
   },
   destroyed() {

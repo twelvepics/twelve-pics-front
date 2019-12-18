@@ -3,16 +3,17 @@
     <div class="columns is-centered">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
-        <!-- DELETED NOTIF -->
-        <div
-          class="notification is-danger"
-          v-if="!is_loading && showDeletedNotif"
-          style="padding:.5rem .8rem"
-        >
-          <button class="delete" @click="dismissDeletedNotif"></button>
-          The story has been deleted
-        </div>
-        <!-- END DELETED NOTIF -->
+        <!-- TOAST USED FOR form errors and deleted -->
+        <transition name="fade">
+          <toast
+            v-show="show_toast"
+            :duration="toast_duration"
+            :type="toast_type"
+            :show="show_toast"
+            :closeToast="closeToast"
+          >{{ toast_message }}</toast>
+        </transition>
+        <!-- END TOAST -->
         <!-- SERVER SIDE ERRORS AND AUTH -->
         <page-loader v-if="is_loading"></page-loader>
         <page-error v-else-if="is_error  || (story && !story.is_in)" :errorMessage="errorMessage"></page-error>
@@ -254,7 +255,7 @@
                     placeholder="Title"
                     v-model="story.title"
                     :class="{ 'is-danger': $v.story.title.$error }"
-                    @blur="{$v.story.title.$touch(); $v.story.category.$touch()}"
+                    @blur="{$v.story.title.$touch()}"
                     @input="resetApiErrors()"
                     @keydown.enter.prevent
                   />
@@ -280,7 +281,7 @@
                     :class="{ 'is-danger': $v.story.pitch.$error }"
                     placeholder="Pitch your story"
                     v-model="story.pitch"
-                    @keyup="{$v.story.pitch.$touch(); $v.story.category.$touch()}"
+                    @blur="{$v.story.pitch.$touch()}"
                     @keyup.22="$v.story.pitch.$touch()"
                   ></textarea>
                 </div>
@@ -289,7 +290,7 @@
 
               <!-- UPOLAD PICS -->
               <div class="field m-30-0-15-0">
-                <p class="content is-marginless">
+                <p class="content is-marginless" :class="{isError: $v.pics_uploaded.$error}">
                   <b>Upload your images</b>
                 </p>
                 <p class="content is-small is-marginless pb-05">
@@ -563,6 +564,7 @@
 <script>
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
+import Toast from "../components/Toast.vue";
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
@@ -590,7 +592,8 @@ export default {
     PicsUploadModal,
     Draggable,
     PageLoader,
-    PageError
+    PageError,
+    Toast
   },
   data() {
     return {
@@ -639,8 +642,11 @@ export default {
       // pics uploaded
       pics_uploaded: [],
       maxUploads: MAX_PICS,
-      // delete
-      showDeletedNotif: false
+      // toast
+      toast_message: "",
+      toast_type: "",
+      toast_duration: 4000,
+      show_toast: false
     };
   },
   methods: {
@@ -665,6 +671,7 @@ export default {
         this.is_form_error = true;
         this.submit_pending = false;
         window.scrollTo(0, 0);
+        this.toastFormErrors();
         return false;
       }
       return true;
@@ -899,7 +906,6 @@ export default {
       if (resp) {
         window.scrollTo(0, 0);
         this.is_loading = true;
-        this.showDeletedNotif = true;
         this.$store.commit("clearCreateFormCache");
         // delete Server side only if already saved
         if (this.story._key) {
@@ -914,6 +920,7 @@ export default {
           }
         }
         this.resetAll();
+        this.toastStoryDeleted();
       }
     },
     cancel() {
@@ -960,7 +967,32 @@ export default {
     },
     dismissDeletedNotif() {
       this.showDeletedNotif = false;
+    },
+    //////////////////////////////////
+    // Toaster
+    //////////////////////////////////
+    closeToast() {
+      console.log("F I was called");
+      this.show_toast = false;
+      this.toast_message = "";
+      this.toast_type = "";
+    },
+    toastSaveSuccess() {
+      this.show_toast = true;
+      this.toast_message = "The story has been saved";
+      this.toast_type = "is-success";
+    },
+    toastFormErrors() {
+      this.show_toast = true;
+      this.toast_message = "Please fix the form errors";
+      this.toast_type = "is-danger";
+    },
+    toastStoryDeleted() {
+      this.show_toast = true;
+      this.toast_message = "This Story has been deleted";
+      this.toast_type = "is-warning";
     }
+    ///////////////////////////
   },
   computed: {
     ...mapGetters([

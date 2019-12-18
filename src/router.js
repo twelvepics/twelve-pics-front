@@ -141,8 +141,8 @@ export default new Router(
       },
       // recover password
       {
-        path: '/auth/recoverPassword/:reset_id',
-        name: 'recoverPassword',
+        path: '/auth/reset-password/:reset_id',
+        name: 'resetPassword',
         // route level code-splitting
         // this generates a separate chunk (recover-password.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
@@ -153,7 +153,7 @@ export default new Router(
       },
       // validate email feedback
       {
-        path: '/validate-email/:validate_id',
+        path: '/users/validate-email/:validate_id',
         name: 'validateEmail',
         // route level code-splitting
         // this generates a separate chunk (validate-email.[hash].js) for this route
@@ -161,6 +161,14 @@ export default new Router(
         components: {
           default: () => import(/* webpackChunkName: "validate-email" */ './views/ValidateEmail.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
+        }
+      },
+      // validate email feedback
+      {
+        path: '/test',
+        name: 'test',
+        components: {
+          default: () => import(/* webpackChunkName: "validate-email" */ './views/Test.vue'),
         }
       },
       {

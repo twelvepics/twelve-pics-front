@@ -14,7 +14,7 @@
           </span>
           <span
             v-else
-          >An email has been sent to you. Please click on the link in it to confirm your email address.</span>
+          >We have sent you a confirmation request email. Please click on the link in it to confirm your email address.</span>
           <br />
         </div>
         <div v-else-if="userCannotReceiveMessage && !is_loading" class="notification is-warning">

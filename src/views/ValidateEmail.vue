@@ -51,12 +51,10 @@ export default {
   },
   methods: {
     async checkRequest() {
+      console.log("Checking...");
       this.isLoading = true;
       try {
-        // eslint-disable-next-line
-        const response = await axiosBase.post(
-          `/users/validate-email/${this.validate_id}`
-        );
+        await axiosBase.post(`/users/validate-email/${this.validate_id}`);
         this.isLoading = false;
         this.emailConfirmed = true;
         this.isError = false;
@@ -69,13 +67,18 @@ export default {
         this.isLoading = false;
         this.emailConfirmed = false;
         this.isError = true;
-        this.errorStatus = e.response.status;
-        // console.log(e.response);
-        if (this.errorStatus === 404) {
-          this.errorMessage = "Could not find this email confirmation request";
+        if (e.response) {
+          this.errorStatus = e.response.status;
+          // console.log(e.response);
+          if (this.errorStatus === 404) {
+            this.errorMessage =
+              "Could not find this email confirmation request";
+          } else {
+            this.errorMessage =
+              "Server error, working on it. Please try again later";
+          }
         } else {
-          this.errorMessage =
-            "Server error, working on it. Please try again later";
+          console.log(e);
         }
       }
     },

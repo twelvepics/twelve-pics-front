@@ -1,68 +1,85 @@
 <template>
-    <div id="app">
-        <app-header></app-header>
-        <router-view />
-        <router-view name="footer"></router-view>
-        <router-view name="storyModal"></router-view>
-    </div>
+  <div id="app">
+    <app-header></app-header>
+    <router-view />
+    <router-view name="footer"></router-view>
+    <router-view name="storyModal"></router-view>
+  </div>
 </template>
 
 <script>
 import Header from "./components/Header.vue";
 export default {
-    components: {
-        appHeader: Header
-    }
+  components: {
+    appHeader: Header
+  }
 };
 </script>
 
 <style lang="scss">
 /**** layout ****/
 main {
-    margin-top: 100px;
+  margin-top: 100px;
 }
 
 /**** spacing  ****/
 .fa-icon-pr4 {
-    padding-right: 4px;
+  padding-right: 4px;
 }
 .fa-icon-pr7 {
-    padding-right: 7px;
+  padding-right: 7px;
 }
 
 .mr15 {
-    margin-right: 15px;
+  margin-right: 15px;
 }
 
 .ml10 {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .pb5 {
-    padding-bottom: 5px;
+  padding-bottom: 5px;
 }
 
 .m-30-0-15-0 {
-    margin: 30px 0 15px 0;
+  margin: 30px 0 15px 0;
 }
 
 .pb-05 {
-    padding-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .pb-03 {
-    padding-bottom: 0.3rem;
+  padding-bottom: 0.3rem;
 }
 
 .pt-0 {
-    padding-top: 0;
+  padding-top: 0;
 }
 .message-header {
-    font-weight: 400 !important;
+  font-weight: 400 !important;
+}
+
+/*********** Toast  *********/
+.fade-enter-active,
+.fade-leave-active {
+  transition-property: opacity;
+  transition-duration: 0.3s;
+}
+.fade-leave-active {
+  transition-duration: 0s;
+}
+/* .fade-enter-active {
+  transition-delay: 0.25s;
+} */
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
 }
 
 /*************** errors  *************/
 .isError {
-    color: red;
+  color: red;
 }
 </style>
