@@ -75,9 +75,6 @@ export default {
         });
         // console.log(response.data.stories);
         const stories = response.data.stories;
-        for (let story of stories) {
-          story.num_comments = Math.floor(Math.random() * 10);
-        }
         this.stories = stories;
         this.is_loading = false;
         scrollTo(this.$refs["stories-container"], 0, 0);
