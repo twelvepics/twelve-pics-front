@@ -15,7 +15,12 @@
     <p class="pitch">{{ story.pitch }}</p>
     <div class="is-divider story-divider"></div>
     <p class="bottom-line">
-      <span class="icon is-left star" :class="{upvoted}" @click="starMe">
+      <span
+        class="icon is-left star"
+        :class="{upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
+        data-tooltip="Please authenticate to upvote"
+        @click="starMe"
+      >
         <font-awesome-icon icon="star"></font-awesome-icon>
       </span>
       <span class="cat">[{{ category_display }}]</span>
@@ -46,7 +51,12 @@
     </p>
     <div class="is-divider story-divider"></div>
     <p class="bottom-line">
-      <span class="icon is-left star" :class="{upvoted}" @click="starMe">
+      <span
+        class="icon is-left star"
+        :class="{upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
+        data-tooltip="Please authenticate to upvote"
+        @click="starMe"
+      >
         <font-awesome-icon icon="star"></font-awesome-icon>
       </span>
       <span class="cat">[{{ category_display }}]</span>
