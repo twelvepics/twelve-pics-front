@@ -25,6 +25,7 @@ import Story from "../components/Story";
 import StoryComments from "../components/StoryComments";
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
+import axiosBase from "../services/axiosBase";
 
 export default {
   components: {
@@ -36,7 +37,7 @@ export default {
   data() {
     return {
       is_debug: true,
-      is_loading: false,
+      is_loading: true,
       // fetch errors
       is_error: false,
       errorMessage: "",
@@ -45,11 +46,36 @@ export default {
       comments: []
     };
   },
-  props: {
-    picsLayout: {
-      default: "layout-tiles",
-      type: String
+  props: {},
+  methods: {
+    async fetchData() {
+      try {
+        this.is_loading = true;
+        // GET STORY
+        const slug = this.$route.params.slug;
+        console.log(slug);
+        // await new Promise(resolve => setTimeout(resolve, 2000));
+        const response = await axiosBase.get(`/stories/${slug}`);
+        this.story = response.data.story;
+        // GET COMMENTS
+        this.is_loading = false;
+      } catch (e) {
+        this.is_loading = false;
+        this.is_error = true;
+        if (e.response) {
+          if (e.response.status === 404) {
+            this.errorMessage = "STORY NOT FOUND";
+          } else {
+            // Most probably a 500
+            this.errorMessage = "SERVER ERROR";
+          }
+        }
+      }
     }
+  },
+  created() {
+    console.log("StoryStandalone created");
+    this.fetchData();
   }
 };
 </script>

@@ -10,7 +10,14 @@
       >{{ story.title }}</router-link>
     </p>
     <p class="pic">
-      <img :src="story_thumb.web_path" :alt="story_thumb.description" width="200" height="auto" />
+      <router-link
+        v-bind:to="{
+                    name: 'view-story',
+                    params: { slug: story.slug }
+                }"
+      >
+        <img :src="story_thumb.web_path" :alt="story_thumb.description" width="200" height="auto" />
+      </router-link>
     </p>
     <p class="pitch">{{ story.pitch }}</p>
     <div class="is-divider story-divider"></div>
@@ -47,7 +54,14 @@
       <p class="pitch">{{ story.pitch }}</p>
     </div>
     <p class="pic" style="padding-top:.3rem;">
-      <img :src="story_thumb.web_path" :alt="story_thumb.description" width="120" height="auto" />
+      <router-link
+        v-bind:to="{
+                    name: 'view-story',
+                    params: { slug: story.slug }
+                }"
+      >
+        <img :src="story_thumb.web_path" :alt="story_thumb.description" width="120" height="auto" />
+      </router-link>
     </p>
     <div class="is-divider story-divider"></div>
     <p class="bottom-line">

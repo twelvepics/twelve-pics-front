@@ -1,5 +1,5 @@
 <template>
-  <div class="card comments" style="margin-top:50px;">
+  <div class="card comments" style="margin-top:25px;">
     <!-- CARD CONTENT -->
     <div class="card-content">
       <p class="title is-size-4">Comments</p>
@@ -23,29 +23,26 @@
       <!-- ADD COMMENT FORM -->
       <!-- START COMMENT ITEMS -->
       <div class="is-divider is-comment-divider"></div>
-      <p class="content comment">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo, tempora odio. Nulla eligendi
-        aperiam facere aliquam, debitis nemo soluta ut sapiente. Possimus eaque distinctio natus.
-      </p>
+      <div class="content comment">
+        <p class="comment-info">
+          <a>Author from comment</a> - 124 Days ago
+        </p>
+        <p class="comment">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo, tempora odio. Nulla eligendi
+          aperiam facere aliquam, debitis nemo soluta ut sapiente. Possimus eaque distinctio natus.
+        </p>
+      </div>
       <p class="is-divider is-comment-divider"></p>
-      <p class="content comment">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo esse perspiciatis iure quod
-        doloribus maxime laboriosam ullam alias veritatis sunt optio, incidunt hic vero earum atque
-        laborum consequatur sequi numquam recusandae accusamus, animi sed ratione vel. Ratione
-        veritatis
-        accusantium eum!
-      </p>
+      <div class="content">
+        <p class="comment-info">
+          <a>Author from comment</a> - 124 Days ago
+        </p>
+        <p class="comment">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo, tempora odio. Nulla eligendi
+          aperiam facere aliquam, debitis nemo soluta ut sapiente. Possimus eaque distinctio natus.
+        </p>
+      </div>
       <p class="is-divider is-comment-divider"></p>
-      <p class="content comment">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo, tempora odio. Nulla eligendi
-        aperiam facere aliquam, debitis nemo soluta ut sapiente. Possimus eaque distinctio natus.
-      </p>
-      <div class="is-divider is-comment-divider"></div>
-      <p class="content comment">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo, tempora odio. Nulla eligendi
-        aperiam facere aliquam, debitis nemo soluta ut sapiente. Possimus eaque distinctio natus.
-      </p>
-      <div class="is-divider is-comment-divider"></div>
       <!-- END COMMENT ITEMS -->
     </div>
   </div>
@@ -63,5 +60,11 @@ export default {
 }
 .is-divider.is-comment-divider {
   margin: 12px 0 12px 0;
+  border-top: 1px solid #dbdbdb;
+}
+.comment-info {
+  color: #aaa;
+  font-size: 90%;
+  margin-bottom: 0.2rem !important;
 }
 </style>
