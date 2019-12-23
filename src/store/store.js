@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import axiosBase from '../services/axiosBase'
 ////////////////////////////////////////////////////////////
 
-import { setHomeLayout, resetHomeLayout } from '../utils/utils'
+import { setHomeLayout, resetHomeLayout, resetGenericLayout } from '../utils/utils'
 
 ////////////////////////////////////////////////////////////
 // modularize and namespace later when it's too messy
@@ -67,9 +67,14 @@ export default new Vuex.Store({
       setHomeLayout();
       state.storyComponentMounted = true;
     },
-    resetStoryComponentMounted: (state) => {
+    resetStoryComponentHomeLayout: (state) => {
       // console.log('Story unmounted, we must reset the layout to its initial state');
       resetHomeLayout();
+      state.storyComponentMounted = false;
+    },
+    resetStoryComponentGenericLayout: (state) => {
+      // console.log('Story unmounted, we must reset the layout to its initial state');
+      resetGenericLayout();
       state.storyComponentMounted = false;
     },
     userToState: (state, userData) => {
@@ -155,8 +160,11 @@ export default new Vuex.Store({
     setStoryComponentMounted: ({ commit }, payload) => {
       commit('setStoryComponentMounted', payload);
     },
-    resetStoryComponentMounted: ({ commit }) => {
-      commit('resetStoryComponentMounted');
+    resetStoryComponentHomeLayout: ({ commit }) => {
+      commit('resetStoryComponentHomeLayout');
+    },
+    resetStoryComponentGenericLayout: ({ commit }) => {
+      commit('resetStoryComponentGenericLayout');
     },
     // SIGNUP
     // eslint-disable-next-line

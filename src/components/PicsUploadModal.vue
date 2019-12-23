@@ -389,11 +389,11 @@ export default {
     }
   },
   created() {
-    console.log("created");
+    console.log("Pics Upload created");
     this.init();
   },
   mounted() {
-    console.log("mounted");
+    console.log("Pics Upload mounted");
     this.init();
   }
 };

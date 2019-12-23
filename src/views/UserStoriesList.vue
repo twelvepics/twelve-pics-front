@@ -81,14 +81,12 @@ export default {
       stories: [],
       user_info: {},
       count: 0,
-      fullCount: 0
+      fullCount: 0,
+      username: this.$route.params.username
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "authenticatedUser"]),
-    username: function() {
-      return this.$route.params.username;
-    }
+    ...mapGetters(["isAuthenticated", "authenticatedUser"])
   },
   methods: {
     async fetchData() {
@@ -126,6 +124,8 @@ export default {
   watch: {
     // eslint-disable-next-line
     $route(to, from) {
+      // console.log(to);
+      // console.log(from);
       // react to route changes...
       this.fetchData();
     }

@@ -15,9 +15,9 @@
         >Lorem, ipsum dolor sit amet consectetur adipisicing elit. Corrupti, ab.</div>
         <div class="column has-text-right" style="padding-right:35px;">
           <span style="font-weight:medium;padding-right:3px;">
-            <a href="#" @click.prevent="closeStory()">CLOSE</a>
+            <a @click.prevent="closeStory()">CLOSE</a>
           </span>
-          <button class="delete" style="margin-top:2px;" @click="closeStory()"></button>
+          <button class="delete" style="margin-top:2px;" @click.prevent="closeStory()"></button>
         </div>
       </div>
     </div>
@@ -34,7 +34,7 @@
           <story :story="story"></story>
           <!-- END STORY -->
           <!-- START COMMENTS -->
-          <story-comments :comments="comments"></story-comments>
+          <story-comments :story_key="story._key"></story-comments>
           <!-- END COMMENTS -->
           <div style="margin-top:50px"></div>
         </div>
@@ -72,17 +72,21 @@ export default {
     };
   },
   mounted() {
-    console.log("mounted");
+    console.log("StoryModal mounted");
     // this.$store.state.storyMounted = true;
     // can pass only one arg to state, so make it an object
     this.setStoryComponentMounted();
   },
   methods: {
-    ...mapActions(["setStoryComponentMounted", "resetStoryComponentMounted"]),
+    ...mapActions([
+      "setStoryComponentMounted",
+      "resetStoryComponentHomeLayout",
+      "resetStoryComponentGenericLayout"
+    ]),
 
     closeStory() {
       console.log("Closing story");
-      this.resetStoryComponentMounted();
+      // this.resetStoryComponentHomeLayout();
       window.history.length > 1 ? this.$router.go(-1) : this.$router.push("/");
     },
     async fetchData() {
@@ -112,6 +116,14 @@ export default {
   computed: {},
   created() {
     this.fetchData();
+  },
+  beforeDestroy() {
+    console.log("StoryModal beforeDestroy");
+    this.resetStoryComponentGenericLayout();
+  },
+  destroy() {
+    // reset scrollbar
+    console.log("StoryModal destroy");
   }
 };
 </script>
@@ -123,7 +135,7 @@ export default {
   /* Hidden by default */
   position: fixed;
   /* Stay in place */
-  z-index: 100;
+  z-index: 10;
   /* Sit on top */
   left: 0;
   top: 56px;

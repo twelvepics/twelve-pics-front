@@ -59,7 +59,7 @@ export default {
     ...mapGetters(["isAuthenticated", "authenticatedUser", "isUserInited"])
   },
   methods: {
-    ...mapActions(["resetStoryComponentMounted"]),
+    ...mapActions(["resetStoryComponentHomeLayout"]),
     async fetchStories() {
       try {
         // await new Promise(resolve => setTimeout(resolve, 1000));
@@ -106,24 +106,24 @@ export default {
     }
   },
   mounted() {
-    console.log("mounted");
+    console.log("Home mounted");
     EventBus.$on("categoriesChanged", () => {
       this.onCategoriesChanged();
     });
   },
   beforeDestroy() {
-    console.log("beforeDestroyed");
+    console.log("Home beforeDestroyed");
     EventBus.$off("categoriesChanged");
   },
   destroyed() {
-    console.log("destroyed");
+    console.log("Home destroyed");
   },
   watch: {
     $route(to, from) {
       // console.log(to);
       // console.log(from);
       if (from.name === "view-story") {
-        this.resetStoryComponentMounted();
+        this.resetStoryComponentHomeLayout();
       }
     },
     // app user refresh/initialisation

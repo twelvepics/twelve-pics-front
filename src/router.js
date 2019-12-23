@@ -24,22 +24,28 @@ export default new Router(
       },
       // list my stories
       {
-        path: '/:username/stories',
+        path: '/user/:username/stories',
         name: 'user-stories',
         components: {
           default: () => import(/* webpackChunkName: "create-story" */ './views/UserStoriesList.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
+        },
+        meta: {
+          isModalView: true
         }
       },
       // create a story
       {
         path: '/story/create',
         name: 'create-story',
+        // don't post from view story
+        // meta: {
+        //   isModalView: true
+        // },
         components: {
           default: () => import(/* webpackChunkName: "create-story" */ './views/CreateUpdateStory.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         },
-
       },
       // view a story
       {
@@ -50,9 +56,14 @@ export default new Router(
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         },
         beforeEnter: (to, from, next) => {
+          console.log("---------- from.matched -----------")
+          console.log(from)
+          console.log(from.matched)
+          console.log("---------------------------")
+
           const isModalView = from.matched.some(view => view.meta && view.meta.isModalView);
           console.log('XOXO');
-          console.log(from.matched);
+          // console.log(from.matched);
           console.log(`isModalView => ${isModalView}`);
           console.log('XOXO');
           if (!isModalView) {
@@ -76,7 +87,7 @@ export default new Router(
             }
           }
           next();
-        }
+        },
       },
       {
         path: '/story/:key/edit',
@@ -91,6 +102,9 @@ export default new Router(
       {
         path: '/user/:username',
         name: 'user',
+        meta: {
+          isModalView: true
+        },
         components: {
           default: () => import(/* webpackChunkName: "user" */ './views/UserProfile.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),

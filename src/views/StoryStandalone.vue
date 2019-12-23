@@ -12,7 +12,7 @@
           <story :story="story"></story>
           <!-- END STORY -->
           <!-- START COMMENTS -->
-          <story-comments :comments="comments"></story-comments>
+          <story-comments :story_key="story._key"></story-comments>
           <!-- END COMMENTS -->
         </div>
       </div>

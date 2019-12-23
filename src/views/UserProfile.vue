@@ -317,30 +317,33 @@ export default {
   watch: {
     // eslint-disable-next-line
     $route(to, from) {
-      // react to route changes...
-      console.log("#--- BEFORE ROUTE UPDATE --#");
-      console.log(to.params.username);
-      this.is_loading = true;
-      this.confirmEmailSent = false;
-      axiosBase
-        .get(`/users/${to.params.username}`)
-        .then(response => {
-          // window.scrollTo(0, 0);
-          this.user = response.data.user;
-          this.is_loading = false;
-          this.is_error = false;
-        })
-        .catch(e => {
-          this.is_loading = false;
-          this.is_error = true;
-          this.user = null;
-          if (e.response.status === 404) {
-            this.errorMessage = "USER NOT FOUND";
-          } else {
-            // Most probably a 500
-            this.errorMessage = "SERVER ERROR";
-          }
-        });
+      if (to.name === "user") {
+        // react to route changes...
+        console.log("#--- BEFORE ROUTE UPDATE --#");
+        console.log(to);
+        console.log(to.params.username);
+        this.is_loading = true;
+        this.confirmEmailSent = false;
+        axiosBase
+          .get(`/users/${to.params.username}`)
+          .then(response => {
+            // window.scrollTo(0, 0);
+            this.user = response.data.user;
+            this.is_loading = false;
+            this.is_error = false;
+          })
+          .catch(e => {
+            this.is_loading = false;
+            this.is_error = true;
+            this.user = null;
+            if (e.response.status === 404) {
+              this.errorMessage = "USER NOT FOUND";
+            } else {
+              // Most probably a 500
+              this.errorMessage = "SERVER ERROR";
+            }
+          });
+      }
     }
   }
 };
