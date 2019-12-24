@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    TODO
+    SHOW COMMENTS SERVER ERRORS SOMEWHERE HERE
+  -->
   <div class="card comments" style="margin-top:25px;">
     <!-- CARD CONTENT -->
     <div class="card-content">
@@ -53,7 +57,7 @@
             @click.prevent="updateComment($event, comment._key, idx)"
           >Save</button>
           <button
-            class="button is-light is-small mt10p20"
+            class="button is-light is-small mt10p20 ml10"
             @click.prevent="cancelUpdateComment()"
           >Cancel</button>
         </div>
@@ -229,5 +233,8 @@ export default {
   color: #aaa;
   font-size: 90%;
   margin-bottom: 0.2rem !important;
+}
+.ml10 {
+  margin-left: 0.5rem;
 }
 </style>
