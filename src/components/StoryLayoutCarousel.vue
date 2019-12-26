@@ -4,7 +4,7 @@
         <div class="slideshow-pic-container">
             <div class="slideshow-pic">
                 <img :src="pics[0].display.web_path" style="max-height:650px;" ref="top_pic" alt />
-                <p class="caption" style="width:800px;text-align:left;" ref="top_caption">
+                <p class="caption" style="max-width:800px;text-align:left;" ref="top_caption">
                     {{ pics[0].caption }}
                 </p>
             </div>
@@ -106,10 +106,10 @@ export default {
             slidesPerView: "auto",
             spaceBetween: 15,
             grabCursor: true,
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev"
-            },
+            // navigation: {
+            //     nextEl: ".swiper-button-next",
+            //     prevEl: ".swiper-button-prev"
+            // },
             on: {
                 click: function(e) {
                     /* do something */
