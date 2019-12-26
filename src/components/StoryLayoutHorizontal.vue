@@ -10,7 +10,7 @@
                     class="swiper-slide"
                     :style="{
                         width: `${getPicSize(pic.display).width}px`,
-                        height: `${getPicSize(pic.display).height + 80}px`
+                        'padding-bottom': '15px'
                     }"
                 >
                     <img
@@ -26,8 +26,8 @@
             </div>
             <!-- END Additional required wrapper -->
             <!-- If we need navigation buttons -->
-            <div class="swiper-button-prev" style="color:red"></div>
-            <div class="swiper-button-next" style="color:red"></div>
+            <div class="swiper-button-prev" v-show="$mq !== 'mobile'" style="color:red"></div>
+            <div class="swiper-button-next" v-show="$mq !== 'mobile'" style="color:red"></div>
         </div>
         <!-- End Slider main container -->
     </div>
@@ -47,17 +47,35 @@ export default {
             return pic.width >= pic.height ? "horizontal" : "vertical";
         },
         getPicSize(pic) {
+            console.log("->", this.$mq);
             const _h = pic.height;
             const _w = pic.width;
             let width, height, divider;
-            if (_w >= _h) {
-                // horizontal, make it 530 high
-                divider = _h / 530;
+            if (this.$mq === "mobile") {
+                if (_w >= _h) {
+                    // horizontal, make it 530 high
+                    divider = _h / 300;
+                } else {
+                    // vertical, make it 647 high
+                    divider = _h / 370;
+                }
+            } else if (this.$mq === "tablet") {
+                if (_w >= _h) {
+                    // horizontal, make it 530 high
+                    divider = _h / 480;
+                } else {
+                    // vertical, make it 647 high
+                    divider = _h / 550;
+                }
             } else {
-                // vertical, make it 647 high
-                divider = _h / 647;
+                if (_w >= _h) {
+                    // horizontal, make it 530 high
+                    divider = _h / 530;
+                } else {
+                    // vertical, make it 647 high
+                    divider = _h / 647;
+                }
             }
-
             width = Math.floor(_w / divider);
             height = Math.floor(_h / divider);
             return { width, height };
@@ -86,6 +104,10 @@ export default {
 }
 .caption {
     font-size: 0.85rem;
+}
+.swiper-button-prev,
+.swiper-button-next {
+    top: 37%;
 }
 /* media queries */
 @media only screen and (min-width: 1024px) {
