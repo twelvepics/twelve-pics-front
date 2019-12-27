@@ -1,26 +1,7 @@
 <template>
     <div class="content" style="border: 1px solid #ccc;  margin:30px 0 30px; 0;padding:0 25px 25px 25px">
-        <!-- top selected image -->
-        <div class="slideshow-pic-container">
-            <div class="slideshow-pic">
-                <img :src="pics[0].display.web_path" style="max-height:650px;" ref="top_pic" alt />
-                <p class="caption" style="max-width:800px;text-align:left;" ref="top_caption">
-                    {{ pics[0].caption }}
-                </p>
-            </div>
-        </div>
-        <!-- top selected image -->
-        <!-- Start Carousel -->
-        <!-- :style="{width: picOrientation(pic.display) === 'horizontal' ? '210px' : '150px'}" -->
-        <!--
-          style="margin:0; padding:0;border: 1px solid blue;"
-          :style="{
-              'max-width': picOrientation(pic.display) === 'horizontal' ? '210px' : '150px',
-              'max-height': picOrientation(pic.display) === 'horizontal' ? '150px' : '190px'
-          }"
-        -->
         <!-- Slider main container -->
-        <div class="swiper-container" ref="swiper-container">
+        <div class="swiper-container" ref="swiper-container" style="padding-bottom:25px;">
             <!-- Additional required wrapper -->
             <div class="swiper-wrapper">
                 <div
@@ -52,6 +33,22 @@
             <div class="swiper-button-next" style="color:red"></div> -->
         </div>
         <!-- End Slider main container -->
+
+        <!-- bottom selected image -->
+        <div class="slideshow-pic-container">
+            <div class="slideshow-pic">
+                <img :src="pics[0].display.web_path" style="max-height:650px;" ref="top_pic" alt />
+                <p
+                    class="caption"
+                    :style="{ 'max-width': `${getCaptionWidth()}px` }"
+                    style="text-align:left;"
+                    ref="top_caption"
+                >
+                    {{ pics[0].caption }}
+                </p>
+            </div>
+        </div>
+        <!-- ends bottom selected image -->
     </div>
 </template>
 
@@ -62,7 +59,8 @@ export default {
     props: ["pics"],
     data() {
         return {
-            carousel: null
+            carousel: null,
+            selectedPicId: 0
         };
     },
 
@@ -94,8 +92,18 @@ export default {
             console.log(top_pic.src);
             //
             const i = item.getAttribute("data-idx");
+            this.selectedPicId = i;
             top_pic.src = this.pics[i].display.web_path;
             this.$refs.top_caption.textContent = this.pics[i].caption;
+        },
+        getCaptionWidth(maxHeight = 650) {
+            const pic = this.pics[this.selectedPicId].display;
+            const _h = pic.height;
+            const _w = pic.width;
+            let width, divider;
+            divider = _h / maxHeight;
+            width = Math.floor(_w / divider);
+            return width;
         }
     },
     mounted() {
@@ -149,7 +157,9 @@ export default {
 }
 
 .slideshow-pic-container {
-    margin: 15px auto 35px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
 }
 

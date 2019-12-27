@@ -3,6 +3,7 @@
         <!-- Slider main container -->
         <div class="swiper-container" ref="swiper-container">
             <!-- Additional required wrapper -->
+            <!-- // height: `${getPicSize(pic.display).height + 80}px` -->
             <div class="swiper-wrapper">
                 <div
                     v-for="(pic, index) in pics"
