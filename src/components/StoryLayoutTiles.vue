@@ -1,15 +1,36 @@
 <template>
   <div class="content" style="margin:30px 0 30px 0;line-height:1.3rem;">
-    <div class="tiles-layout">
+    <div class="tiles-layout" v-show="!isImageSelected">
       <div v-for="(row, rowIdx) in tiles" :key="rowIdx" :style="getRowStyle(rowIdx)">
         <div v-for="(pic, picIdx) in row" :key="picIdx">
           <!-- 
           --- {{rowIdx}}/{{picIdx}} ---
           -->
           <div class="pic">
-            <img :src="tiles[rowIdx][picIdx].web_path" />
+            <img :src="tiles[rowIdx][picIdx].web_path" @click="imageClicked(rowIdx, picIdx)" />
           </div>
         </div>
+      </div>
+    </div>
+    <div class="content" v-show="isImageSelected" style="width:100%;text-align: center;">
+      <div
+        :style="{
+                    'max-width': picOrientation(pics[imageSelected].display) === 'horizontal' ? '900px' : '450px',
+                    display: 'inline-block',
+                    position: 'relative'
+                }"
+      >
+        <a
+          class="delete is-medium"
+          style="position:absolute;right:5px;top:5px;"
+          @click="closeImage"
+        ></a>
+        <img
+          :src="pics[imageSelected].display.web_path"
+          ref="imageSelected"
+          :width="picOrientation(pics[imageSelected].display) === 'horizontal' ? '900px' : '450px'"
+        />
+        <div class="caption" style="text-align:left;">{{ pics[imageSelected].caption }}</div>
       </div>
     </div>
   </div>
@@ -23,12 +44,13 @@
 //     widescreen: 1407,
 //     fullhd: Infinity,
 //   }
-
 export default {
   props: ["pics", "tiles"],
   data() {
     return {
-      debug: false
+      debug: false,
+      isImageSelected: false,
+      imageSelected: 0
     };
   },
   methods: {
@@ -55,6 +77,27 @@ export default {
         "grid-template-columns": colStr,
         "grid-column-gap": "5px"
       };
+    },
+    imageClicked(rowIdx, picIdx) {
+      console.log(`Image clicked ${rowIdx}/${picIdx}`);
+      this.isImageSelected = true;
+      // get id of image
+      let idx = 0;
+      for (let i = 0; i < rowIdx; i++) {
+        idx += this.tiles[i].length;
+      }
+      idx += picIdx;
+      console.log(this.pics[idx].display.web_path);
+      console.log(this.$refs);
+      this.imageSelected = idx;
+      this.$refs.imageSelected.src = this.pics[idx].display.web_path;
+    },
+    closeImage() {
+      this.isImageSelected = false;
+      this.imageSelected = 0;
+    },
+    picOrientation(pic) {
+      return pic.width >= pic.height ? "horizontal" : "vertical";
     }
   },
   mounted() {
@@ -69,6 +112,12 @@ export default {
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
+}
+.pic img {
+  cursor: pointer;
+}
+.caption {
+  font-size: 0.85rem;
 }
 /* media queries */
 @media only screen and (min-width: 1024px) {
