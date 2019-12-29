@@ -20,7 +20,7 @@
         </div>
       </div>
       <p class="content">{{ story.pitch}}</p>
-      <component :is="storyLayout" :pics="story.pics"></component>
+      <component :is="storyLayout" :pics="story.pics" :tiles="story.pics_tiles_layout"></component>
       <p class="content">{{story.inspiration}}</p>
     </div>
     <!-- END CONTENT -->

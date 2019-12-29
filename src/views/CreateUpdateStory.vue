@@ -630,7 +630,8 @@ export default {
         allow_comments: true,
         author_key: "",
         author_info: {},
-        use_white_borders: false
+        pics_tiles_layout: [],
+        use_white_borders: false,
       },
       // location
       mapboxOptions: [],
@@ -952,6 +953,7 @@ export default {
         allow_comments: true,
         author_key: "",
         author_info: {},
+        pics_tiles_layout: [],
         use_white_borders: false
       };
       // location

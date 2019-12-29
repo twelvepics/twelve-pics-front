@@ -23,6 +23,14 @@ main {
 }
 
 /**** spacing  ****/
+
+.mt20 {
+  margin-top: 20px;
+}
+.mt10p20 {
+  margin-top: 10px;
+  padding-bottom: 20px;
+}
 .fa-icon-pr4 {
   padding-right: 4px;
 }

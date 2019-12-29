@@ -30,12 +30,12 @@ exports.resetHomeLayout = function () {
     body.style.position = '';
     body.style.top = '';
     window.scrollTo(0, parseInt(scrollY || '0') * -1);
-    // if (isWebkit()) {
-    //     body.classList.remove('no-scrollbar-webkit');
-    // } else {
-    //     const h = document.getElementsByTagName('html')[0];
-    //     h.classList.remove("frf-hide-sb");
-    // }
+    if (isWebkit()) {
+        body.classList.remove('no-scrollbar-webkit');
+    } else {
+        const h = document.getElementsByTagName('html')[0];
+        h.classList.remove("frf-hide-sb");
+    }
 }
 
 exports.resetGenericLayout = function () {

@@ -66,9 +66,13 @@ export default {
         let params = { start: 0, limit: 10 };
         // not authenticated user, need to send categories as a qs
         const categories = store.getters.getCategories;
+        console.log("***");
+        console.log(categories);
         const categories_by_ids = categories
           .map(c => categoriesToIds[c])
+          .sort((a, b) => a - b)
           .join("-");
+        console.log(categories_by_ids);
         params.categories = categories_by_ids;
         const response = await axiosBase.get(`/stories`, {
           params
@@ -119,13 +123,13 @@ export default {
     console.log("Home destroyed");
   },
   watch: {
-    $route(to, from) {
-      // console.log(to);
-      // console.log(from);
-      if (from.name === "view-story") {
-        this.resetStoryComponentHomeLayout();
-      }
-    },
+    // $route(to, from) {
+    //   // console.log(to);
+    //   // console.log(from);
+    //   if (from.name === "view-story") {
+    //     this.resetStoryComponentHomeLayout();
+    //   }
+    // },
     // app user refresh/initialisation
     isUserInited(newVal, oldVal) {
       console.log(`User inited watcher: ${oldVal} to ${newVal}`);

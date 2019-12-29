@@ -173,7 +173,6 @@
           <br />
           <router-link :to="{ name: 'user', params: { username: 'emptou' } }">Emptou</router-link>
           <br />
-          <router-link :to="{ name: 'testInit' }">Test init page</router-link>
         </div>
       </div>
     </div>

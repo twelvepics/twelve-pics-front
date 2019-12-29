@@ -1,26 +1,28 @@
 <template>
-    <main>
-        <div class="columns is-centered">
-            <!-- CENTER COLUMNN -->
-            <!-- <div
+  <main>
+    <div class="columns is-centered">
+      <!-- CENTER COLUMNN -->
+      <!-- <div
                 class="column is-full-mobile is-full-tablet  is-four-fifths-desktop is-four-fifths-widescreen is-two-thirds-fullhd"
-            > -->
-            <div class="column is-full-tablet is-four-fifths-desktop is-four-fifths-widescreen is-four-fifths-fullhd">
-                <!-- START LOADER / SERVER ERRORS-->
-                <page-loader v-if="is_loading"></page-loader>
-                <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
-                <!-- ENDS LOADER / SERVER ERRORS-->
-                <div v-else>
-                    <!-- START STORY -->
-                    <story :story="story"></story>
-                    <!-- END STORY -->
-                    <!-- START COMMENTS -->
-                    <story-comments :story_key="story._key"></story-comments>
-                    <!-- END COMMENTS -->
-                </div>
-            </div>
+      >-->
+      <div
+        class="column is-full-tablet is-four-fifths-desktop is-four-fifths-widescreen is-four-fifths-fullhd"
+      >
+        <!-- START LOADER / SERVER ERRORS-->
+        <page-loader v-if="is_loading"></page-loader>
+        <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
+        <!-- ENDS LOADER / SERVER ERRORS-->
+        <div v-else>
+          <!-- START STORY -->
+          <story :story="story"></story>
+          <!-- END STORY -->
+          <!-- START COMMENTS -->
+          <story-comments :story_key="story._key"></story-comments>
+          <!-- END COMMENTS -->
         </div>
-    </main>
+      </div>
+    </div>
+  </main>
 </template>
 
 <script>
@@ -31,93 +33,89 @@ import PageError from "../components/PageError.vue";
 import axiosBase from "../services/axiosBase";
 
 export default {
-    components: {
-        Story,
-        StoryComments,
-        PageLoader,
-        PageError
-    },
-    data() {
-        return {
-            is_debug: true,
-            is_loading: true,
-            // fetch errors
-            is_error: false,
-            errorMessage: "",
-            //
-            story: null,
-            comments: []
-        };
-    },
-    props: {},
-    methods: {
-        async fetchData() {
-            try {
-                this.is_loading = true;
-                // GET STORY
-                const slug = this.$route.params.slug;
-                console.log(slug);
-                // await new Promise(resolve => setTimeout(resolve, 2000));
-                const response = await axiosBase.get(`/stories/${slug}`);
-                this.story = response.data.story;
-                // GET COMMENTS
-                this.is_loading = false;
-            } catch (e) {
-                this.is_loading = false;
-                this.is_error = true;
-                if (e.response) {
-                    if (e.response.status === 404) {
-                        this.errorMessage = "STORY NOT FOUND";
-                    } else {
-                        // Most probably a 500
-                        this.errorMessage = "SERVER ERROR";
-                    }
-                }
-            }
+  components: {
+    Story,
+    StoryComments,
+    PageLoader,
+    PageError
+  },
+  data() {
+    return {
+      is_debug: true,
+      is_loading: true,
+      // fetch errors
+      is_error: false,
+      errorMessage: "",
+      //
+      story: null,
+      comments: []
+    };
+  },
+  props: {},
+  methods: {
+    async fetchData() {
+      try {
+        this.is_loading = true;
+        // GET STORY
+        const slug = this.$route.params.slug;
+        console.log(slug);
+        // await new Promise(resolve => setTimeout(resolve, 2000));
+        const response = await axiosBase.get(`/stories/${slug}`);
+        this.story = response.data.story;
+        // GET COMMENTS
+        this.is_loading = false;
+      } catch (e) {
+        this.is_loading = false;
+        this.is_error = true;
+        if (e.response) {
+          if (e.response.status === 404) {
+            this.errorMessage = "STORY NOT FOUND";
+          } else {
+            // Most probably a 500
+            this.errorMessage = "SERVER ERROR";
+          }
         }
-    },
-    created() {
-        console.log("StoryStandalone created");
-        this.fetchData();
+      }
     }
+  },
+  created() {
+    console.log("StoryStandalone created");
+    this.fetchData();
+  }
 };
 </script>
 <style>
 /************** layout ***********/
 html,
 body {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 #app {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 main {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 navbar,
 main,
 footer {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 main {
-    margin-top: 90px;
+  margin-top: 90px;
 }
 
 footer {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 /************** spacing ***********/
-.mt10p20 {
-    margin-top: 10px;
-    padding-bottom: 20px;
-}
 </style>

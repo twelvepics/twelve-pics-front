@@ -1,43 +1,43 @@
 <template>
-    <!-- CATEGORIES MODAL -->
-    <div class="modal" id="categories-modal" :class="{ 'is-active': isActive }">
-        <div class="modal-background"></div>
-        <div class="modal-content">
-            <form class="message" @submit.prevent="onSubmit">
-                <div class="message-header">
-                    <p class="is-1" style="font-style:normal;">Select the themes you are interested in.</p>
-                    <button
-                        class="delete is-medium"
-                        id="categories-close"
-                        @click.prevent="closeCategoriesModal"
-                    ></button>
-                </div>
-                <div class="message-body">
-                    <ul class="categories-grid">
-                        <li v-for="category in categoriesList" :key="category.id" class="field">
-                            <input :id="category.key" type="checkbox" :value="category.key" v-model="categories" />
-                            <label :for="category.key">{{ category.display }}</label>
-                        </li>
-                    </ul>
-                    <div class="is-divider"></div>
-                    <div class="field is-grouped submit-buttons">
-                        <div class="control">
-                            <button type="submit" class="button is-primary">Save</button>
-                        </div>
-                        <div class="control">
-                            <button class="button is-dark" @click.prevent="closeCategoriesModal">Cancel</button>
-                        </div>
-                    </div>
-                    <div>
-                        <!-- <ul>
+  <!-- CATEGORIES MODAL -->
+  <div class="modal" id="categories-modal" :class="{ 'is-active': isActive }">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+      <form class="message" @submit.prevent="onSubmit">
+        <div class="message-header">
+          <p class="is-1" style="font-style:normal;">Select the themes you are interested in.</p>
+          <button
+            class="delete is-medium"
+            id="categories-close"
+            @click.prevent="closeCategoriesModal"
+          ></button>
+        </div>
+        <div class="message-body">
+          <ul class="categories-grid">
+            <li v-for="category in categoriesList" :key="category.id" class="field">
+              <input :id="category.key" type="checkbox" :value="category.key" v-model="categories" />
+              <label :for="category.key">{{ category.display }}</label>
+            </li>
+          </ul>
+          <div class="is-divider"></div>
+          <div class="field is-grouped submit-buttons">
+            <div class="control">
+              <button type="submit" class="button is-primary">Save</button>
+            </div>
+            <div class="control">
+              <button class="button is-dark" @click.prevent="closeCategoriesModal">Cancel</button>
+            </div>
+          </div>
+          <div>
+            <!-- <ul>
               <li v-for="category in categoriesList" :key="category.id">{{ category.display }}</li>
             </ul>-->
-                    </div>
-                </div>
-            </form>
+          </div>
         </div>
+      </form>
     </div>
-    <!-- END CATEGORIES MODAL -->
+  </div>
+  <!-- END CATEGORIES MODAL -->
 </template>
 
 <script>
@@ -46,61 +46,62 @@ import { categoriesList } from "../utils/categories";
 import { EventBus } from "../event-bus.js";
 
 export default {
-    //////////////////////////////////////////////
-    // TODO REFACTOR: MAKE A DICT AND LOOP!!!!!
-    //////////////////////////////////////////////
-    data() {
-        return {
-            // categories: [],
-            loading: false,
-            categoriesList,
-            categories: this.$store.getters.getCategories
-        };
+  //////////////////////////////////////////////
+  // TODO REFACTOR: MAKE A DICT AND LOOP!!!!!
+  //////////////////////////////////////////////
+  data() {
+    return {
+      // categories: [],
+      loading: false,
+      categoriesList,
+      categories: this.$store.getters.getCategories
+    };
+  },
+  props: ["isActive"],
+  methods: {
+    closeCategoriesModal() {
+      // console.log(this.categories);
+      this.categories = this.$store.getters.getCategories;
+      this.$emit("categoriesModalClosed", this.isActive);
     },
-    props: ["isActive"],
-    methods: {
-        closeCategoriesModal() {
-            // console.log(this.categories);
-            this.categories = this.$store.getters.getCategories;
-            this.$emit("categoriesModalClosed", this.isActive);
-        },
-        async onSubmit() {
-            console.log("onSubmit");
-            await this.$store.dispatch("save_categories", this.categories);
-            EventBus.$emit("categoriesChanged");
-            this.closeCategoriesModal();
-        }
-    },
-    // computed: {
-    //     // ...mapGetters(["getCategories"]),
-    //     categories: {
-    //         get() {
-    //             return this.$store.getters.getCategories;
-    //         },
-    //         set(value) {
-    //             // this.$store.commit("setCategories", value);
-    //             // don't commit to store plz
-    //         }
-    //     }
-    // },
-    created() {
-        console.log("categories created");
-        console.log(this.categories);
+    async onSubmit() {
+      console.log("onSubmit");
+      // console.log(this.categories);
+      await this.$store.dispatch("save_categories", this.categories);
+      EventBus.$emit("categoriesChanged");
+      this.closeCategoriesModal();
     }
+  },
+  // computed: {
+  //     // ...mapGetters(["getCategories"]),
+  //     categories: {
+  //         get() {
+  //             return this.$store.getters.getCategories;
+  //         },
+  //         set(value) {
+  //             // this.$store.commit("setCategories", value);
+  //             // don't commit to store plz
+  //         }
+  //     }
+  // },
+  created() {
+    console.log("categories created");
+    console.log(this.categories);
+  }
 };
 </script>
 
 <style scoped>
 .categories-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .submit-buttons {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 input[type="checkbox"] {
-    margin-right: 6px;
+  margin-right: 6px;
 }
 </style>
