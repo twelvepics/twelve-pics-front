@@ -4,10 +4,14 @@
     <div class="container is-fluid" ref="stories-container">
       <div class="columns">
         <div class="column auto">
-          <page-loader v-if="is_loading"></page-loader>
-          <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
+          <!-- <page-loader v-if="is_loading"></page-loader>
+          <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>-->
           <!-- STORIES -->
-          <story-brief v-else v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
+          <div>
+            <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
+            <infinite-loading @infinite="infiniteHandler" :identifier="infiniteId"></infinite-loading>
+          </div>
+
           <!-- END STORIES -->
         </div>
         <div class="is-divider-vertical"></div>
@@ -26,6 +30,7 @@
 <script>
 // eslint-disable-next-line
 import Vue from "vue";
+import InfiniteLoading from "vue-infinite-loading";
 import { EventBus } from "../event-bus.js";
 import { mapActions, mapGetters } from "vuex";
 import store from "@/store/store.js";
@@ -33,8 +38,8 @@ import { categoriesToIds } from "@/utils/categories.js";
 import axiosBase from "../services/axiosBase";
 // import StoryModal from "../components/StoryModal.vue";
 import StoryBrief from "../components/StoryBrief.vue";
-import PageLoader from "../components/PageLoader.vue";
-import PageError from "../components/PageError.vue";
+// import PageLoader from "../components/PageLoader.vue";
+// import PageError from "../components/PageError.vue";
 
 ///////////////////////////////////////
 // @ is an alias to /src
@@ -42,14 +47,17 @@ import PageError from "../components/PageError.vue";
 export default {
   name: "home",
   components: {
-    StoryBrief,
-    PageLoader,
-    PageError
+    InfiniteLoading,
+    StoryBrief
+    // PageLoader,
+    // PageError
   },
   data: function() {
     return {
+      page: 1,
       stories: [],
-      is_loading: true,
+      infiniteId: +new Date(),
+      is_loading: false,
       is_error: false,
       errorMessage: "",
       is_debug: true
@@ -60,28 +68,38 @@ export default {
   },
   methods: {
     ...mapActions(["resetStoryComponentHomeLayout"]),
-    async fetchStories() {
+    async fetchStories($state) {
       try {
+        console.log("infiniteHandler called");
+        console.log(`Fetching page ${this.page}`);
         // await new Promise(resolve => setTimeout(resolve, 1000));
-        let params = { start: 0, limit: 10 };
+        let params = {};
         // not authenticated user, need to send categories as a qs
         const categories = store.getters.getCategories;
         console.log("***");
-        console.log(categories);
+        // console.log(categories);
         const categories_by_ids = categories
           .map(c => categoriesToIds[c])
           .sort((a, b) => a - b)
           .join("-");
         console.log(categories_by_ids);
         params.categories = categories_by_ids;
+        params.page = this.page;
         const response = await axiosBase.get(`/stories`, {
           params
         });
         // console.log(response.data.stories);
         const stories = response.data.stories;
-        this.stories = stories;
+        if (stories.length) {
+          this.page += 1;
+          this.stories.push(...stories);
+          $state.loaded();
+        } else {
+          $state.complete();
+        }
+        // this.stories = stories;
         this.is_loading = false;
-        scrollTo(this.$refs["stories-container"], 0, 0);
+        // scrollTo(this.$refs["stories-container"], 0, 0);
       } catch (e) {
         this.is_loading = false;
         this.is_error = true;
@@ -99,15 +117,26 @@ export default {
     },
     async onCategoriesChanged() {
       console.log("Categories changed, refresh page");
-      this.fetchStories();
+      this.changeFilter();
+    },
+    async infiniteHandler($state) {
+      await this.fetchStories($state);
+    },
+    changeFilter() {
+      console.log("Change filter");
+      console.log(`InfiniteId = > ${this.infiniteId}`);
+      this.page = 1;
+      this.stories = [];
+      this.infiniteId += 1;
     }
   },
   created() {
     console.log(`User inited -> ${this.isUserInited}`);
     // get stories if no auth or user inited
-    if (!this.isAuthenticated || this.isUserInited) {
-      this.fetchStories();
-    }
+    // if (!this.isAuthenticated || this.isUserInited) {
+    // XOXO PUT BACK
+    // this.fetchStories();
+    // }
   },
   mounted() {
     console.log("Home mounted");
@@ -121,21 +150,16 @@ export default {
   },
   destroyed() {
     console.log("Home destroyed");
-  },
-  watch: {
-    // $route(to, from) {
-    //   // console.log(to);
-    //   // console.log(from);
-    //   if (from.name === "view-story") {
-    //     this.resetStoryComponentHomeLayout();
-    //   }
-    // },
-    // app user refresh/initialisation
-    isUserInited(newVal, oldVal) {
-      console.log(`User inited watcher: ${oldVal} to ${newVal}`);
-      this.fetchStories();
-    }
   }
+  //   watch: {
+  //     // XOXO PUT BACK
+  //     // ----------------------------------------------------------------------
+  //     isUserInited(newVal, oldVal) {
+  //       console.log(`User inited watcher: ${oldVal} to ${newVal}`);
+  //       // this.fetchStories();
+  //     }
+  // ----------------------------------------------------------------------
+  //   }
 };
 </script>
 
