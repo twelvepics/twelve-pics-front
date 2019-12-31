@@ -5,11 +5,9 @@
       <div class="columns">
         <div class="column auto">
           <page-loader v-if="this.isAuthenticated && !this.isUserInited"></page-loader>
-          <!-- <page-error v-if="is_error" :errorMessage="errorMessage"></page-error> -->
           <!-- STORIES -->
           <div>
             <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
-            <!-- <page-error v-if="is_error" :errorMessage="errorMessage"></page-error> -->
             <infinite-loading
               v-if="!this.isAuthenticated || this.isUserInited"
               @infinite="infiniteHandler"
@@ -169,13 +167,19 @@ export default {
     console.log("Home destroyed");
   },
   watch: {
-    //     // XOXO PUT BACK
-    //     // ----------------------------------------------------------------------
+    // ----------------------------------------------------------------------
     isUserInited(newVal, oldVal) {
       console.log(`User inited watcher: ${oldVal} to ${newVal}`);
       // this.fetchStories();
-    }
+    },
     // ----------------------------------------------------------------------
+    $route(to, from) {
+      // TODO UPDATE NUM COMMENTS IF ROUTE FROM == view-story
+      console.log("# --- Watch route --- #");
+      console.log(to);
+      console.log(from);
+      console.log("# -------------- #");
+    }
   }
 };
 </script>
