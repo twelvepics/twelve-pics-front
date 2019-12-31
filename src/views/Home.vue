@@ -4,12 +4,30 @@
     <div class="container is-fluid" ref="stories-container">
       <div class="columns">
         <div class="column auto">
-          <!-- <page-loader v-if="is_loading"></page-loader>
-          <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>-->
+          <page-loader v-if="this.isAuthenticated && !this.isUserInited"></page-loader>
+          <!-- <page-error v-if="is_error" :errorMessage="errorMessage"></page-error> -->
           <!-- STORIES -->
           <div>
             <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
-            <infinite-loading @infinite="infiniteHandler" :identifier="infiniteId"></infinite-loading>
+            <!-- <page-error v-if="is_error" :errorMessage="errorMessage"></page-error> -->
+            <infinite-loading
+              v-if="!this.isAuthenticated || this.isUserInited"
+              @infinite="infiniteHandler"
+              :identifier="infiniteId"
+            >
+              <div slot="spinner">
+                <page-loader></page-loader>
+              </div>
+              <div slot="no-more">
+                <page-error errorMessage="No more stories :("></page-error>
+              </div>
+              <div slot="no-results">
+                <page-error errorMessage="No result :("></page-error>
+              </div>
+              <div slot="error">
+                <page-error errorMessage="Ooops, something went wrong :("></page-error>
+              </div>
+            </infinite-loading>
           </div>
 
           <!-- END STORIES -->
@@ -38,8 +56,8 @@ import { categoriesToIds } from "@/utils/categories.js";
 import axiosBase from "../services/axiosBase";
 // import StoryModal from "../components/StoryModal.vue";
 import StoryBrief from "../components/StoryBrief.vue";
-// import PageLoader from "../components/PageLoader.vue";
-// import PageError from "../components/PageError.vue";
+import PageLoader from "../components/PageLoader.vue";
+import PageError from "../components/PageError.vue";
 
 ///////////////////////////////////////
 // @ is an alias to /src
@@ -48,16 +66,15 @@ export default {
   name: "home",
   components: {
     InfiniteLoading,
-    StoryBrief
-    // PageLoader,
-    // PageError
+    StoryBrief,
+    PageLoader,
+    PageError
   },
   data: function() {
     return {
       page: 1,
       stories: [],
       infiniteId: +new Date(),
-      is_loading: false,
       is_error: false,
       errorMessage: "",
       is_debug: true
@@ -97,22 +114,22 @@ export default {
         } else {
           $state.complete();
         }
-        // this.stories = stories;
-        this.is_loading = false;
-        // scrollTo(this.$refs["stories-container"], 0, 0);
       } catch (e) {
-        this.is_loading = false;
-        this.is_error = true;
-        if (e.response) {
-          if (e.response.status === 404) {
-            this.errorMessage = "USER NOT FOUND";
-          } else {
-            // Most probably a 500
-            this.errorMessage = "SERVER ERROR";
-          }
-        } else {
-          console.log(e);
-        }
+        console.log(e);
+        $state.error();
+        //     this.is_loading = false;
+        //     this.is_error = true;
+        //     if (e.response) {
+        //       if (e.response.status === 404) {
+        //         this.errorMessage = "NOT FOUND";
+        //       } else {
+        //         // Most probably a 500
+        //         this.errorMessage = "SERVER ERROR";
+        //       }
+        //     } else {
+        //       console.log(e);
+        //       // throw e;
+        //     }
       }
     },
     async onCategoriesChanged() {
@@ -150,16 +167,16 @@ export default {
   },
   destroyed() {
     console.log("Home destroyed");
+  },
+  watch: {
+    //     // XOXO PUT BACK
+    //     // ----------------------------------------------------------------------
+    isUserInited(newVal, oldVal) {
+      console.log(`User inited watcher: ${oldVal} to ${newVal}`);
+      // this.fetchStories();
+    }
+    // ----------------------------------------------------------------------
   }
-  //   watch: {
-  //     // XOXO PUT BACK
-  //     // ----------------------------------------------------------------------
-  //     isUserInited(newVal, oldVal) {
-  //       console.log(`User inited watcher: ${oldVal} to ${newVal}`);
-  //       // this.fetchStories();
-  //     }
-  // ----------------------------------------------------------------------
-  //   }
 };
 </script>
 
