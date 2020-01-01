@@ -143,6 +143,13 @@ export default {
       this.page = 1;
       this.stories = [];
       this.infiniteId += 1;
+    },
+    updateStory(story) {
+      console.log("updating story");
+      // console.log(story);
+      const [story_to_update] = this.stories.filter(s => s._key === story._key);
+      // console.log(story_to_update);
+      story_to_update.comments_count = story.comments_count;
     }
   },
   created() {
@@ -176,9 +183,28 @@ export default {
     $route(to, from) {
       // TODO UPDATE NUM COMMENTS IF ROUTE FROM == view-story
       console.log("# --- Watch route --- #");
-      console.log(to);
-      console.log(from);
+      // console.log(to);
+      // console.log(from);
       console.log("# -------------- #");
+      if (from.name === "view-story") {
+        const from_slug = from.params.slug;
+        // console.log(from_slug);
+        axiosBase
+          .get(`/stories/${from_slug}`)
+          .then(response => {
+            // console.log(response.status);
+            if (response && response.status === 200) {
+              // update comments_count for this story
+              // console.log(response.data.story.comments_count);
+              // const comments_count = response.data.story.comments_count;
+              this.updateStory(response.data.story);
+            }
+          })
+          .catch(e => {
+            // just log me
+            console.error(e);
+          });
+      }
     }
   }
 };
