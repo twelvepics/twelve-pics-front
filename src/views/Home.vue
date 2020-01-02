@@ -134,6 +134,10 @@ export default {
       console.log("Categories changed, refresh page");
       this.changeFilter();
     },
+    async onSearchTriggered(searchStr) {
+      console.log(`Search for "${searchStr}"`);
+      // this.changeFilter();
+    },
     async infiniteHandler($state) {
       await this.fetchStories($state);
     },
@@ -165,6 +169,9 @@ export default {
     EventBus.$on("categoriesChanged", () => {
       this.onCategoriesChanged();
     });
+    EventBus.$on("searchTriggered", searchStr => {
+      this.onSearchTriggered(searchStr);
+    });
   },
   beforeDestroy() {
     console.log("Home beforeDestroyed");
@@ -177,26 +184,19 @@ export default {
     // ----------------------------------------------------------------------
     isUserInited(newVal, oldVal) {
       console.log(`User inited watcher: ${oldVal} to ${newVal}`);
-      // this.fetchStories();
     },
     // ----------------------------------------------------------------------
     $route(to, from) {
-      // TODO UPDATE NUM COMMENTS IF ROUTE FROM == view-story
+      // UPDATE NUM COMMENTS IF ROUTE FROM == view-story
       console.log("# --- Watch route --- #");
-      // console.log(to);
-      // console.log(from);
+
       console.log("# -------------- #");
       if (from.name === "view-story") {
         const from_slug = from.params.slug;
-        // console.log(from_slug);
         axiosBase
           .get(`/stories/${from_slug}`)
           .then(response => {
-            // console.log(response.status);
             if (response && response.status === 200) {
-              // update comments_count for this story
-              // console.log(response.data.story.comments_count);
-              // const comments_count = response.data.story.comments_count;
               this.updateStory(response.data.story);
             }
           })

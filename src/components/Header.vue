@@ -56,7 +56,7 @@
           </div>
         </div>
         <div class="navbar-item" style="flex-grow:2;">
-          <div class="field-body">
+          <!-- <div class="field-body">
             <div class="field">
               <p class="control has-icons-left">
                 <input
@@ -70,7 +70,28 @@
                 </span>
               </p>
             </div>
+          </div>-->
+          <!-- -->
+          <div class="field has-addons">
+            <div class="control">
+              <input
+                class="input"
+                type="text"
+                placeholder="Search stories"
+                style="flex-grow: 1;min-width:300px;max-width:350px;"
+                @keydown.enter.prevent="searchSubmit"
+                v-model="searchStories"
+              />
+            </div>
+            <div class="control">
+              <a class="button is-primary" @click="searchSubmit">
+                <span class="icon is-small is-left">
+                  <font-awesome-icon icon="search"></font-awesome-icon>
+                </span>
+              </a>
+            </div>
           </div>
+          <!-- -->
         </div>
       </div>
       <div class="navbar-end">
@@ -248,6 +269,7 @@
 // import { CommonBands } from "vue-media-queries";
 // const bulmaBands = CommonBands.Bulma;
 import { mapGetters } from "vuex";
+import { EventBus } from "../event-bus.js";
 
 import Toast from "../components/Toast.vue";
 
@@ -274,6 +296,7 @@ export default {
   },
   data: function() {
     return {
+      searchStories: "",
       dropdownVisible: false,
       showBurgerDropdown: false,
       currentModal: null,
@@ -333,6 +356,14 @@ export default {
       this.$router.push({
         name: "create-story"
       });
+    },
+    async searchSubmit() {
+      // this.searchStories = "";
+      if (this.searchStories.trim().length) {
+        // console.log("searchSubmit");
+        // console.log(this.searchStories);
+        EventBus.$emit("searchTriggered", this.searchStories);
+      }
     },
     //////////////////////////////////
     // Toaster
