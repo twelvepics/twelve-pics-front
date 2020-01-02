@@ -160,6 +160,7 @@ export default {
     },
     created() {
         console.log(`User inited -> ${this.isUserInited}`);
+        console.log(`Env: ${process.env.NODE_ENV}`);
         // get stories if no auth or user inited
         // if (!this.isAuthenticated || this.isUserInited) {
         // XOXO PUT BACK
