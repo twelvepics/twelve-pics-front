@@ -4,15 +4,10 @@
         <div class="container is-fluid" ref="stories-container">
             <div class="columns">
                 <div class="column auto">
-                    <page-loader v-if="this.isAuthenticated && !this.isUserInited"></page-loader>
                     <!-- STORIES -->
                     <div>
                         <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
-                        <infinite-loading
-                            v-if="!this.isAuthenticated || this.isUserInited"
-                            @infinite="infiniteHandler"
-                            :identifier="infiniteId"
-                        >
+                        <infinite-loading @infinite="infiniteHandler" :identifier="infiniteId">
                             <div slot="spinner">
                                 <page-loader></page-loader>
                             </div>
@@ -49,8 +44,6 @@ import Vue from "vue";
 import InfiniteLoading from "vue-infinite-loading";
 import { EventBus } from "../event-bus.js";
 import { mapActions, mapGetters } from "vuex";
-import store from "@/store/store.js";
-import { categoriesToIds } from "@/utils/categories.js";
 import axiosBase from "../services/axiosBase";
 // import StoryModal from "../components/StoryModal.vue";
 import StoryBrief from "../components/StoryBrief.vue";
@@ -61,7 +54,7 @@ import PageError from "../components/PageError.vue";
 // @ is an alias to /src
 ///////////////////////////////////////
 export default {
-    name: "home",
+    name: "search",
     components: {
         InfiniteLoading,
         StoryBrief,
@@ -79,7 +72,10 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(["isAuthenticated", "authenticatedUser", "isUserInited"])
+        ...mapGetters(["isAuthenticated", "authenticatedUser"]),
+        searchStr: function() {
+            return this.$route.query.q;
+        }
     },
     methods: {
         ...mapActions(["resetStoryComponentHomeLayout"]),
@@ -89,21 +85,14 @@ export default {
                 console.log(`Fetching page ${this.page}`);
                 // await new Promise(resolve => setTimeout(resolve, 1000));
                 let params = {};
-                // not authenticated user, need to send categories as a qs
-                const categories = store.getters.getCategories;
-                console.log("***");
-                // console.log(categories);
-                const categories_by_ids = categories
-                    .map(c => categoriesToIds[c])
-                    .sort((a, b) => a - b)
-                    .join("-");
-                console.log(categories_by_ids);
-                params.categories = categories_by_ids;
-                params.page = this.page;
-                const response = await axiosBase.get(`/stories`, {
+                if (this.page > 1) {
+                    params.page = this.page;
+                }
+                params.q = this.searchStr;
+                const response = await axiosBase.get(`/stories/search`, {
                     params
                 });
-                // console.log(response.data.stories);
+                console.log(response.data.stories);
                 const stories = response.data.stories;
                 if (stories.length) {
                     this.page += 1;
@@ -115,29 +104,11 @@ export default {
             } catch (e) {
                 console.log(e);
                 $state.error();
-                //     this.is_loading = false;
-                //     this.is_error = true;
-                //     if (e.response) {
-                //       if (e.response.status === 404) {
-                //         this.errorMessage = "NOT FOUND";
-                //       } else {
-                //         // Most probably a 500
-                //         this.errorMessage = "SERVER ERROR";
-                //       }
-                //     } else {
-                //       console.log(e);
-                //       // throw e;
-                //     }
             }
-        },
-        async onCategoriesChanged() {
-            console.log("Categories changed, refresh page");
-            this.changeFilter();
         },
         async onSearchTriggered(searchStr) {
             console.log(`Search for "${searchStr}"`);
-            // go to search page pass searchstr as qs
-            // hide cats in header
+            this.changeFilter();
             this.$router.push({ name: "search", query: { q: searchStr } });
         },
         async infiniteHandler($state) {
@@ -158,36 +129,23 @@ export default {
             story_to_update.comments_count = story.comments_count;
         }
     },
-    created() {
-        console.log(`User inited -> ${this.isUserInited}`);
-        // get stories if no auth or user inited
-        // if (!this.isAuthenticated || this.isUserInited) {
-        // XOXO PUT BACK
-        // this.fetchStories();
-        // }
-    },
     mounted() {
-        console.log("Home mounted");
-        EventBus.$on("categoriesChanged", () => {
-            this.onCategoriesChanged();
-        });
+        console.log("Search mounted");
         EventBus.$on("searchTriggered", searchStr => {
             this.onSearchTriggered(searchStr);
         });
     },
+    created() {
+        // this.searchStr = this.$route.query.q;
+    },
     beforeDestroy() {
-        console.log("Home beforeDestroyed");
-        EventBus.$off("categoriesChanged");
+        console.log("Search beforeDestroyed");
         EventBus.$off("searchTriggered");
     },
     destroyed() {
-        console.log("Home destroyed");
+        console.log("Search destroyed");
     },
     watch: {
-        // ----------------------------------------------------------------------
-        isUserInited(newVal, oldVal) {
-            console.log(`User inited watcher: ${oldVal} to ${newVal}`);
-        },
         // ----------------------------------------------------------------------
         $route(to, from) {
             // UPDATE NUM COMMENTS IF ROUTE FROM == view-story
@@ -207,6 +165,8 @@ export default {
                         // just log me
                         console.error(e);
                     });
+            } else if (from.name === "search") {
+                console.log("Watcher: search");
             }
         }
     }

@@ -22,6 +22,16 @@ export default new Router(
           isModalView: true
         }
       },
+      {
+        path: '/search',
+        name: 'search',
+        components: {
+          default: () => import(/* webpackChunkName: "search-stories" */ './views/Search.vue'),
+        },
+        meta: {
+          isModalView: true
+        }
+      },
       // list my stories
       {
         path: '/user/:username/stories',
