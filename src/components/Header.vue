@@ -52,21 +52,23 @@
                     </div>
                 </div>
                 <div class="navbar-item" style="flex-grow:2;">
-                    <!-- <div class="field-body">
-            <div class="field">
-              <p class="control has-icons-left">
-                <input
-                  class="input"
-                  type="text"
-                  placeholder="Search"
-                  style="flex-grow: 1;max-width:350px;"
-                />
-                <span class="icon is-small is-left">
-                  <font-awesome-icon icon="search" color="#666"></font-awesome-icon>
-                </span>
-              </p>
-            </div>
-          </div>-->
+                    <!-- 
+                    <div class="field-body">
+                        <div class="field">
+                        <p class="control has-icons-left">
+                            <input
+                            class="input"
+                            type="text"
+                            placeholder="Search"
+                            style="flex-grow: 1;max-width:350px;"
+                            />
+                            <span class="icon is-small is-left">
+                            <font-awesome-icon icon="search" color="#666"></font-awesome-icon>
+                            </span>
+                        </p>
+                        </div>
+                    </div>
+                    -->
                     <!-- -->
                     <div class="field has-addons">
                         <div class="control">
@@ -94,13 +96,15 @@
                 <!-- BUTTONS-->
                 <div class="navbar-item">
                     <div class="buttons">
-                        <!-- <router-link
-              class="button is-primary"
-              id="post-story-btn"
-              to="/story/create"
-              v-if="isAuthenticated"
-              @click.native="resetCreateForm"
-            ></router-link>-->
+                        <!-- 
+                        <router-link
+                            class="button is-primary"
+                            id="post-story-btn"
+                            to="/story/create"
+                            v-if="isAuthenticated"
+                            @click.native="resetCreateForm"
+                        ></router-link>
+                        -->
                         <button
                             class="button is-primary"
                             id="post-story-btn"
@@ -110,15 +114,16 @@
                         >
                             <strong>Post a story</strong>
                         </button>
-                        <!-- <a
-              class="button is-primary"
-              id="post-story-btn"
-              @click="goToCreateStory"
-              v-if="isAuthenticated"
-              :disabled="isCreateStoryForm || isEditStoryForm"
-            >
-              <strong>Post a story</strong>
-            </a>-->
+                        <!-- 
+                            <a class="button is-primary"
+                                id="post-story-btn"
+                                @click="goToCreateStory"
+                                v-if="isAuthenticated"
+                                :disabled="isCreateStoryForm || isEditStoryForm"
+                            >
+                            <strong>Post a story</strong>
+                            </a>
+                        -->
                         <a
                             class="button is-primary"
                             id="signup-btn"
@@ -172,19 +177,21 @@
                             <span>My stories</span>
                         </router-link>
                         <!-- SETTINGS LATER -->
-                        <!-- <router-link
-                v-if="isAuthenticated"
-                class="navbar-item"
-                :to="`/user/${authenticatedUser.username}/settings`"
-                active-class="is-active"
-                exact
-                @click.native="hideDropdown()"
-                >
-                <span class="fa-icon-pr7">
-                    <font-awesome-icon icon="cog"></font-awesome-icon>
-                </span>
-                <span>Settings</span>
-            </router-link>-->
+                        <!-- 
+                            <router-link
+                                v-if="isAuthenticated"
+                                class="navbar-item"
+                                :to="`/user/${authenticatedUser.username}/settings`"
+                                active-class="is-active"
+                                exact
+                                @click.native="hideDropdown()"
+                                >
+                                <span class="fa-icon-pr7">
+                                    <font-awesome-icon icon="cog"></font-awesome-icon>
+                                </span>
+                                <span>Settings</span>
+                            </router-link>
+                        -->
                         <!-- SETTINGS LATER -->
                         <a v-if="isAuthenticated" class="navbar-item" @click.prevent="logout()">
                             <span class="fa-icon-pr7">
@@ -276,6 +283,8 @@ import CategoriesModal from "./CategoriesModal.vue";
 
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 
+import * as Sentry from "@sentry/browser";
+
 const SIGNUP_MESSAGE_L1 = "Thank you for registering! Please confirm your email address. ";
 const SIGNUP_MESSAGE_L2 = "We have sent you a confirmation request email. Check your inbox.";
 export default {
@@ -338,7 +347,8 @@ export default {
                 })
                 .catch(err => {
                     if (err.name != "NavigationDuplicated") {
-                        throw err;
+                        console.log(err);
+                        Sentry.captureException(err);
                     }
                 });
         },
@@ -354,18 +364,13 @@ export default {
         async searchSubmit() {
             // this.searchStories = "";
             if (this.searchStories.trim().length) {
-                // console.log("searchSubmit");
-                // console.log(this.searchStories);
                 EventBus.$emit("searchTriggered", this.searchStories);
-                // this.searchStories = this.$route.query.q;
-                // this.searchStories = "";
             }
         },
         //////////////////////////////////
         // Toaster
         //////////////////////////////////
         closeToast() {
-            console.log("F I was called");
             this.show_toast = false;
             this.toast_message_l1 = "";
             this.toast_message_l2 = "";
@@ -392,8 +397,6 @@ export default {
     watch: {
         // eslint-disable-next-line
         $route(to, from) {
-            console.log("HEADER XOXO");
-            console.log(to);
             if (to.name === "home") {
                 this.searchStories = "";
             }

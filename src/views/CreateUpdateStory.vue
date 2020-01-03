@@ -568,7 +568,7 @@ import Toast from "../components/Toast.vue";
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
-
+import * as Sentry from "@sentry/browser";
 import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
@@ -712,19 +712,16 @@ export default {
           });
         }
         const data = response.data;
-        console.log(data);
+        // console.log(data);
         // this.story.page_url = data.story.page_url
         this.story = Object.assign({}, data.story);
         this.pics_uploaded = this.story.pics;
         this.tagsStr = this.story.tags.join(", ");
       } catch (error) {
-        console.log("__ERROR_CAUGHT__");
         this.is_api_error = true;
         // at this point bother only for validation errors
         // all the rest goes as 500 whatever
         if (error.response) {
-          console.log(error.response.status);
-          console.log(error.response.data);
           if (
             [
               "INVALID_CREATE_STORY_ERROR",
@@ -739,6 +736,7 @@ export default {
         } else {
           // vue error
           console.log(error);
+          Sentry.captureException(error);
         }
       } finally {
         window.scrollTo(0, 0);
@@ -766,7 +764,6 @@ export default {
       this.uploadModalActive = false;
     },
     picUploaded(pic) {
-      // console.log("GOT IT");
       // console.log(pic);
       this.pics_uploaded.push({
         original: pic.original,
@@ -775,18 +772,18 @@ export default {
       });
     },
     setPicDescription(idx, event) {
-      console.log(event.target.value);
+      // console.log(event.target.value);
       this.pics_uploaded[idx].description = event.target.value;
     },
     setPicCaption(idx, event) {
-      console.log(event.target.value);
+      // console.log(event.target.value);
       this.pics_uploaded[idx].caption = event.target.value;
     },
     removePic(idx) {
       this.pics_uploaded.splice(idx, 1);
     },
     selectLayout(layout) {
-      console.log(`selectLayout(${layout}`);
+      // console.log(`selectLayout(${layout}`);
       this.story.layout = layout;
     },
     // ERRORS TODO
@@ -794,23 +791,22 @@ export default {
       // this.resetApiErrors();
       try {
         if (e.target.value.length > 1 && e.inputType === "insertText") {
-          // console.log("@@@");
           const foundLocations = await axiosBase.get(
             `/stories/${
               this.authenticatedUser._key
             }/locate?location=${encodeURIComponent(e.target.value)}`
           );
-          // console.log("@@@");
-          // console.log(foundLocations);
           this.mapboxOptions = foundLocations.data.found;
           this.deepMapboxOptions = foundLocations.data.found;
         } else {
           this.mapboxOptions = [];
         }
       } catch (err) {
-        // DO SOMETHING/WHAT?
-        console.log("++++");
-        console.log(err.response);
+        if(err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+        Sentry.captureException(err);
       }
     },
     async setSelectedSelection(e) {
@@ -831,10 +827,11 @@ export default {
         this.mapboxOptions = [];
       } catch (e) {
         console.log(e);
+        Sentry.captureException(e);
       }
     },
     setAllowComments(e) {
-      console.log(e.target.checked);
+      // console.log(e.target.checked);
       this.story.allow_comments = e.target.checked;
     },
     resetApiErrors() {
@@ -848,7 +845,7 @@ export default {
         this.is_loading = true;
         const key = this.$route.params.key;
         const response = await axiosBase.get(`/stories/${key}`);
-        console.log("fetched");
+        // console.log("fetched");
         const data = response.data;
         // get story is unchecked server side, must validate auth here
         const author_key = data.story.author_key;
@@ -876,6 +873,7 @@ export default {
           }
         } else {
           console.log(e);
+          Sentry.captureException(e);
         }
       } finally {
         this.is_loading = false;
@@ -886,7 +884,7 @@ export default {
       this.setStatus("published");
     },
     async setStatus(status) {
-      console.log(`selectLayout(${status}`);
+      // console.log(`selectLayout(${status}`);
       // reset all errors
       this.is_error = false;
       this.is_api_error = false;
@@ -903,7 +901,7 @@ export default {
     async deleteStory() {
       console.log("deleteStory()");
       const resp = window.confirm("Really, delete?");
-      console.log(resp);
+      // console.log(resp);
       if (resp) {
         window.scrollTo(0, 0);
         this.is_loading = true;
@@ -918,6 +916,7 @@ export default {
             // 401 403 404 500 handled server side
             this.is_error = true;
             console.log(err);
+            Sentry.captureException(err);
           }
         }
         this.resetAll();
@@ -974,7 +973,6 @@ export default {
     // Toaster
     //////////////////////////////////
     closeToast() {
-      console.log("F I was called");
       this.show_toast = false;
       this.toast_message = "";
       this.toast_type = "";
@@ -1027,7 +1025,7 @@ export default {
   },
   created() {
     const cache = this.$store.getters.getCreateFormCache;
-    console.log(cache);
+    // console.log(cache);
     if (this.$route.name === "edit-story" && !cache.story) {
       this.is_loading = true;
       return this.fetchAndSetData();
@@ -1038,7 +1036,6 @@ export default {
       this.tagsStr = cache.story.tags.join(", ");
     }
   },
-
   validations: {
     story: {
       category: {
@@ -1100,37 +1097,30 @@ body {
   width: 100%;
   height: 100%;
 }
-
 #app {
   min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
-
 main {
   flex-grow: 1;
 }
-
 navbar,
 main,
 footer {
   flex-shrink: 0;
 }
-
 main {
   margin-top: 90px;
 }
-
 footer {
   margin-top: 30px;
 }
-
 /************** spacing ***********/
 .m-40-0-15-0 {
   margin: 40px 0 15px 0;
 }
-
 .p8 {
   padding: 9px;
 }
@@ -1139,44 +1129,29 @@ footer {
   border: 2px dashed gray;
   box-shadow: none;
 }
-
 .text-has-shadow {
   text-shadow: 2px 2px 8px #333;
 }
-
 .box-has-shadow {
   box-shadow: 2px 2px 8px #aaa;
 }
-
 /************** images ***********/
-
 .image-h {
   width: 201px;
   height: 134px;
 }
-
 .image-v {
   width: 134px;
   height: 201px;
 }
-
 .image-s {
   width: 170px;
   height: 170px;
 }
-
 .icon-hover {
   cursor: pointer;
 }
-
 /************** grids ***********/
-/* .top-boxes-grid {
-  padding: 0 3px;
-  display: grid;
-  grid-template-columns: 3fr 3fr 1fr;
-  grid-column-gap: 12%;
-} */
-
 .add-story-layout-icons-box {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1184,48 +1159,28 @@ footer {
   justify-items: center;
   align-items: start;
 }
-
 .selected-layout {
   grid-column: 1 / span 4;
   justify-self: center;
   color: yellow;
   font-weight: bold;
 }
-
-/* .pub-unpub-story-layout-box {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: center;
-}
-
-.pub-unpub-story-txt {
-  grid-column: 2 / span 4;
-  justify-self: start;
-  font-weight: bold;
-  font-size: 110%;
-} */
-
 .pub-unpub-story-layout-box {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   justify-items: center;
   align-items: center;
-  /* grid-template-columns: repeat(3, 1fr);
-  align-items: center; */
 }
-
 .pub-unpub-story-txt {
   /* grid-column: 2 / span 4; */
   /* justify-self: start; */
   font-weight: bold;
 }
-
 .delete-story {
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
 }
-
 /***** Uploaded images ******/
 .uploadedImageBox {
   margin: 12px 0 0 0;
@@ -1252,7 +1207,6 @@ footer {
     margin-bottom: 0;
   }
 }
-
 .picInfo label {
   margin: 0 !important;
   padding: 0 !important;
@@ -1272,7 +1226,6 @@ footer {
   filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.2));
   /* Similar syntax to box-shadow */
 }
-
 /*************** draggable ******************/
 .moving-card {
   opacity: 0.7;
@@ -1282,7 +1235,6 @@ footer {
 .handle {
   cursor: move;
 }
-
 /************** misc ***********/
 .page-link-title-draft {
   color: #f8aa0f;

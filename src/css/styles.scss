@@ -1,8 +1,5 @@
 @charset "utf-8";
 
-// Import a Google Font
-// @import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
-
 $myprimary: rgb(10, 97, 197);
 $beige-light: #d0d1cd;
 $beige-lighter: #eff0eb;
@@ -11,8 +8,6 @@ $my-darker-grey: #bbb;
 $mywarning: #ffc610;
 
 // Update Bulma's global variables
-// TODO include Nunito font don't fetch it
-// $family-sans-serif: "Nunito", sans-serif;
 $family-sans-serif: "Trebuchet MS", Helvetica, sans-serif;
 $warning: $mywarning;
 $link: $myprimary;
@@ -39,11 +34,8 @@ $input-placeholder-color: $my-darker-grey;
 @import "./node_modules/bulma/sass/layout/section.sass";
 @import "./node_modules/bulma-extensions/bulma-divider/dist/css/bulma-divider.sass";
 // extensions
-// @import "./node_modules/bulma-extensions/bulma-checkradio/dist/css/bulma-checkradio.sass";
 @import "./node_modules/bulma-extensions/bulma-divider/dist/css/bulma-divider.sass";
 @import "./node_modules/bulma-extensions/bulma-switch/src/sass/index.sass";
-// @import "./node_modules/bulma-extensions/bulma-tagsinput/src/sass/index.sass";
-// @import "./node_modules/bulma-extensions/bulma-carousel/src/sass/index.sass";
 @import "./node_modules/bulma-extensions/bulma-tooltip/src/sass/index.sass";
 @import "./node_modules/swiper/swiper.scss";
 

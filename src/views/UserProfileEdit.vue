@@ -416,8 +416,8 @@
             </div>
         </div>
         <!-- DEBUG -->
-        <div class="columns is-centered">
-            <div v-if="is_debug" class="column is-three-quarters-desktop">
+        <div v-if="is_debug" class="columns is-centered">
+            <div class="column is-three-quarters-desktop">
                 <!-- START PROFILE -->
                 <div class="card" style="padding:20px;">
                     <p>DEBUG</p>
@@ -431,6 +431,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import * as Sentry from "@sentry/browser";
 import axiosUpload from "../services/axiosUpload";
 import axiosBase from "../services/axiosBase";
 const UPLOAD_STATUS_INITIAL = 0,
@@ -447,7 +448,7 @@ export default {
     },
     data() {
         return {
-            is_debug: true,
+            is_debug: false,
             is_loading: true,
             // fetch errors
             is_error: false,
@@ -499,17 +500,19 @@ export default {
                     params: { username: this.authenticatedUser.username }
                 });
             } catch (error) {
-                console.log("__ERROR_CAUGHT__");
-                console.log(error.response.status);
-                console.log(error.response.data);
                 this.is_saving = false;
                 this.is_api_error = true;
-                if (error.response.data.error_type === "INVALID_UPDATE_ERROR") {
-                    this.apiErrors = error.response.data.errors;
-                    // this.apiErrorMessage = error.response.data.errors;
-                    this.apiErrorType = "UPDATE ERROR";
+                if (error.response) {
+                    if (error.response.data.error_type === "INVALID_UPDATE_ERROR") {
+                        this.apiErrors = error.response.data.errors;
+                        // this.apiErrorMessage = error.response.data.errors;
+                        this.apiErrorType = "UPDATE ERROR";
+                    } else {
+                        this.apiErrorType = "SERVER ERROR";
+                    }
                 } else {
-                    this.apiErrorType = "SERVER ERROR";
+                    console.log(error);
+                    Sentry.captureException(error);
                 }
                 window.scrollTo(0, 0);
             }
@@ -541,28 +544,28 @@ export default {
                 this.uploadCurrentStatus = UPLOAD_STATUS_SUCCESS;
                 // TODO SAVE AVATAR TO DB
                 await this.$store.dispatch("save_avatar", this.profile.avatar_path);
-                console.log(uploaded);
             } catch (err) {
-                //////////////////////////////////////////////////////
-                // TODO client side verif size and type too
-                // Don't end up downloading 500 Megs files for nothing
-                //////////////////////////////////////////////////////
-                console.log(JSON.stringify(err));
-                this.uploadError = err.response;
-                // console.log(this.uploadError);
-                // console.log(this.uploadError.data);
-                console.log(this.uploadError.status === 400);
-                console.log(this.uploadError.data.error);
-                if (this.uploadError.status === 400) {
-                    this.uploadErrorMessage = this.uploadError.data.error;
-                } else if ([401, 403].includes(this.uploadError.status)) {
-                    // auth error
-                    this.uploadErrorMessage = "AUTHENTICATION ERROR";
+                if (err.response) {
+                    //////////////////////////////////////////////////////
+                    // TODO client side verif size and type too
+                    // Don't end up downloading 500 Megs files for nothing
+                    //////////////////////////////////////////////////////
+                    // console.log(JSON.stringify(err));
+                    this.uploadError = err.response;
+                    if (this.uploadError.status === 400) {
+                        this.uploadErrorMessage = this.uploadError.data.error;
+                    } else if ([401, 403].includes(this.uploadError.status)) {
+                        // auth error
+                        this.uploadErrorMessage = "AUTHENTICATION ERROR";
+                    } else {
+                        // Most probably 500
+                        this.uploadErrorMessage = "SERVOR ERROR";
+                    }
+                    this.uploadCurrentStatus = UPLOAD_STATUS_FAILED;
                 } else {
-                    // Most probably 500
-                    this.uploadErrorMessage = "SERVOR ERROR";
+                    console.log(err);
+                    Sentry.captureException(err);
                 }
-                this.uploadCurrentStatus = UPLOAD_STATUS_FAILED;
             }
         },
         fileChange(fieldName, file) {
@@ -589,48 +592,28 @@ export default {
             // TODO SAVE TO DB AVATAR DELETED
         },
         async searchLocation(e) {
-            // console.log(e);
-            // // console.log(e instanceof InputEvent);
-            // console.log(e.target.value);
-            // console.log(e.target.value.length);
-            // this.mapboxOptions = [];
             this.resetApiErrors();
             try {
                 if (e.target.value.length > 1 && e.inputType === "insertText") {
-                    console.log("@@@");
                     const foundLocations = await axiosBase.get(
                         `/users/${this.authenticatedUser._key}/locate?location=${encodeURIComponent(e.target.value)}`
                     );
-                    console.log("@@@");
-                    // console.log(foundLocations);
                     this.mapboxOptions = foundLocations.data.found;
                     this.deepMapboxOptions = foundLocations.data.found;
                 } else {
                     this.mapboxOptions = [];
                 }
             } catch (err) {
-                // DO SOMETHING/WHAT? LOG IT
-                console.log("++++");
-                console.log(err.response);
-                console.log(err.response.status);
-                console.log(err.response.statusText);
-                console.log(err.response.data.errorType);
-                console.log(err.response.data.error);
-                // console.log("++++");
+                console.log(err);
+                Sentry.captureException(err);
             }
         },
         async setSelectedSelection(e) {
             try {
-                // console.log(e);
                 this.selectedLocationPlace = e.target.value;
                 this.selectedLocationObj = await this.deepMapboxOptions.filter(l => {
                     return l.place_name == this.selectedLocationPlace;
                 });
-                // console.log("# -- loc selected --#");
-                // console.log(this.deepMapboxOptions);
-                // console.log(this.selectedLocationPlace);
-                // console.log(this.selectedLocationObj);
-                // console.log("# -- end loc selected --#");
                 if (this.selectedLocationObj.length > 0) {
                     this.profile.location = this.selectedLocationObj[0];
                 } else {
@@ -640,10 +623,10 @@ export default {
                         longitude: null
                     };
                 }
-                // console.log(this.profile.location);
                 this.mapboxOptions = [];
             } catch (e) {
                 console.log(e);
+                Sentry.captureException(e);
             }
         },
         resetApiErrors() {
@@ -676,11 +659,6 @@ export default {
     beforeRouteEnter(to, from, next) {
         next(vm => {
             console.log("BEFORE ROUTE ENTER");
-            // access to component instance via `vm`
-            // console.log(vm);
-            // console.log(vm.isAuthenticated);
-            // console.log(vm.authenticatedUser._key);
-            // console.log(vm.$route.params.user_key);
             if (!vm.isAuthenticated) {
                 vm.is_error = true;
                 vm.errorMessage = "PLEASE AUTHENTICATE";
@@ -775,32 +753,26 @@ body {
     width: 100%;
     height: 100%;
 }
-
 #app {
     min-height: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
 }
-
 main {
     flex-grow: 1;
 }
-
 navbar,
 main,
 footer {
     flex-shrink: 0;
 }
-
 main {
     margin-top: 80px;
 }
-
 footer {
     margin-top: 30px;
 }
-
 /************** spacing ***********/
 
 /************ File upload box *************/
@@ -815,7 +787,6 @@ footer {
     position: relative;
     cursor: pointer;
 }
-
 .input-file {
     opacity: 0; /* invisible but it's there! */
     width: 100%;
@@ -823,17 +794,14 @@ footer {
     position: absolute;
     cursor: pointer;
 }
-
 .dropbox:hover {
     background: lightblue; /* when mouse over to the drop zone, change color */
 }
-
 .dropbox p {
     font-size: 1em;
     text-align: center;
     padding: 50px 0;
 }
-
 /***** website and socials *********/
 .socials .field-label {
     /* background-color: pink; */

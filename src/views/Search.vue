@@ -41,6 +41,7 @@
 <script>
 // eslint-disable-next-line
 import Vue from "vue";
+import * as Sentry from "@sentry/browser";
 import InfiniteLoading from "vue-infinite-loading";
 import { EventBus } from "../event-bus.js";
 import { mapActions, mapGetters } from "vuex";
@@ -102,6 +103,7 @@ export default {
                     $state.complete();
                 }
             } catch (e) {
+                Sentry.captureException(e);
                 console.log(e);
                 $state.error();
             }
@@ -116,7 +118,7 @@ export default {
         },
         changeFilter() {
             console.log("Change filter");
-            console.log(`InfiniteId = > ${this.infiniteId}`);
+            // console.log(`InfiniteId = > ${this.infiniteId}`);
             this.page = 1;
             this.stories = [];
             this.infiniteId += 1;
@@ -149,7 +151,7 @@ export default {
         // ----------------------------------------------------------------------
         $route(to, from) {
             // UPDATE NUM COMMENTS IF ROUTE FROM == view-story
-            console.log("# --- Watch route --- #");
+            console.log("# --- Search: watch route --- #");
 
             console.log("# -------------- #");
             if (from.name === "view-story") {
@@ -163,7 +165,8 @@ export default {
                     })
                     .catch(e => {
                         // just log me
-                        console.error(e);
+                        console.log(e);
+                        Sentry.captureException(e);
                     });
             } else if (from.name === "search") {
                 console.log("Watcher: search");

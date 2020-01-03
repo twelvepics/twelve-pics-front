@@ -2,22 +2,15 @@ import axios from 'axios'
 import store from '../store/store';
 
 const instance = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.VUE_APP_API_URL,
     headers: {
         'Content-Type': 'multipart/form-data',
         'Accept': 'application/json'
     },
-    // headers: {
-    //     'Content-Type': 'application/x-www-form-urlencoded',
-    //     'Accept': 'application/json'
-    // },
 })
 
 instance.interceptors.request.use(
     config => {
-        // const token = store.getters.token;
-        // console.log('In interceptor')
-        // console.log(store)
         const token = store.getters.getToken
         // console.log('------------------------------')
         // console.log(token);

@@ -84,7 +84,7 @@ export default {
     },
     mounted() {
         console.log("#--- pics horizontal mounted ---#");
-        console.log(this.pics);
+        // console.log(this.pics);
         this.carousel = new Swiper(this.$refs["swiper-container"], {
             slidesPerView: "auto",
             spaceBetween: 20,

@@ -37,18 +37,15 @@ export default new Vuex.Store({
       return state.jwtToken;
     },
     getCategories: (state, getters) => {
-      // console.log("GET CATEGORIES STATE IS AUTH " + getters.isAuthenticated)
-      // console.log("GET CATEGORIES GET AUTH USER " + getters.authenticatedUser)
       if (getters.isAuthenticated) {
-        // console.log(`CATEGORIES ${state.user.categories}`);
         return state.user.categories;
       } else {
         return state.categories;
       }
     },
     getProfile: (state, getters) => {
-      console.log("GET PROFILE STATE IS AUTH " + getters.isAuthenticated)
-      console.log("GET PROFILE GET AUTH USER " + getters.authenticatedUser)
+      // console.log("GET PROFILE STATE IS AUTH " + getters.isAuthenticated)
+      // console.log("GET PROFILE GET AUTH USER " + getters.authenticatedUser)
       if (getters.isAuthenticated) {
         return state.user.profile;
       } else {
@@ -190,13 +187,13 @@ export default new Vuex.Store({
       const data = response.data;
       localStorage.setItem('jwtToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      console.log("USER LOGIN")
+      // console.log("USER LOGIN")
       commit('userToState', { token: data.token, user: data.user });
     },
     logout: async ({ commit }) => {
       // delete token server side
-      const deleted = await axiosBase.post('auth/logout')
-      console.log(deleted);
+      await axiosBase.post('auth/logout')
+      // console.log(deleted);
       await commit('clearCreateFormCache');
       await commit('clearAuthData');
     },
@@ -206,7 +203,7 @@ export default new Vuex.Store({
       await commit('setCategories', categories);
       // if user is authenticated update categories in db
       if (getters.isAuthenticated) {
-        console.log('User is authenticated, saving categories')
+        // console.log('User is authenticated, saving categories')
         // eslint-disable-next-line
         const update = await axiosBase.put(`users/${getters.authenticatedUser._key}`, {
           categories
@@ -217,18 +214,12 @@ export default new Vuex.Store({
     save_profile: async ({ commit, getters }, profile) => {
       // if user is authenticated update categories in db
       if (getters.isAuthenticated) {
-        console.log('User is authenticated, saving profile')
-        // eslint-disable-next-line
+        // console.log('User is authenticated, saving profile')
         const updated = await axiosBase.put(`users/${getters.authenticatedUser._key}`, {
           profile
         })
         const newProfile = updated.data.user.profile
-        // console.log(update)
-        // refetch user with sanitized profile
-        // update local user
-        // console.log('---');
-        console.log(newProfile);
-        // console.log('---');
+        // console.log(newProfile);
         await commit('setProfile', newProfile);
       }
     },
@@ -236,12 +227,12 @@ export default new Vuex.Store({
       await commit('setAvatar', avatar_path);
       // if user is authenticated update categories in db
       if (getters.isAuthenticated) {
-        console.log('User is authenticated, saving avatar')
+        // console.log('User is authenticated, saving avatar')
         // eslint-disable-next-line
         const update = await axiosBase.put(`users/${getters.authenticatedUser._key}/avatar`, {
           avatar_path
         })
-        console.log(update)
+        // console.log(update)
       }
     },
     clearCreateFormCache: async ({ commit }) => {

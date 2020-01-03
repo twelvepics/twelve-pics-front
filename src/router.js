@@ -4,7 +4,6 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import StoryStandalone from './views/StoryStandalone.vue'
 import StoryModal from './components/StoryModal.vue'
-// import Footer from './views/Footer.vue'
 
 Vue.use(Router)
 
@@ -37,7 +36,7 @@ export default new Router(
         path: '/user/:username/stories',
         name: 'user-stories',
         components: {
-          default: () => import(/* webpackChunkName: "create-story" */ './views/UserStoriesList.vue'),
+          default: () => import(/* webpackChunkName: "user-stories" */ './views/UserStoriesList.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         },
         meta: {
@@ -48,10 +47,6 @@ export default new Router(
       {
         path: '/story/create',
         name: 'create-story',
-        // don't post from view story
-        // meta: {
-        //   isModalView: true
-        // },
         components: {
           default: () => import(/* webpackChunkName: "create-story" */ './views/CreateUpdateStory.vue'),
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
@@ -66,16 +61,8 @@ export default new Router(
           footer: () => import(/* webpackChunkName: "footer" */ './views/Footer.vue'),
         },
         beforeEnter: (to, from, next) => {
-          console.log("---------- from.matched -----------")
-          console.log(from)
-          console.log(from.matched)
-          console.log("---------------------------")
-
           const isModalView = from.matched.some(view => view.meta && view.meta.isModalView);
-          console.log('XOXO');
           // console.log(from.matched);
-          console.log(`isModalView => ${isModalView}`);
-          console.log('XOXO');
           if (!isModalView) {
             // For direct access
             to.matched[0].components = {
@@ -85,10 +72,6 @@ export default new Router(
           }
           if (isModalView) {
             // For isModalView access
-            console.log('-X-X-X-');
-            console.log(to.matched[0].components);
-            console.log(from.matched.length)
-            console.log('-X-X-X-');
             if (to.matched[0].components) {
               // Rewrite components for `default`
               to.matched[0].components.default = from.matched[0].components.default

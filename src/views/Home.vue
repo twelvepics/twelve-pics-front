@@ -44,18 +44,17 @@
 </template>
 
 <script>
-// eslint-disable-next-line
-import Vue from "vue";
 import InfiniteLoading from "vue-infinite-loading";
 import { EventBus } from "../event-bus.js";
 import { mapActions, mapGetters } from "vuex";
 import store from "@/store/store.js";
 import { categoriesToIds } from "@/utils/categories.js";
 import axiosBase from "../services/axiosBase";
-// import StoryModal from "../components/StoryModal.vue";
 import StoryBrief from "../components/StoryBrief.vue";
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
+
+import * as Sentry from "@sentry/browser";
 
 ///////////////////////////////////////
 // @ is an alias to /src
@@ -85,25 +84,21 @@ export default {
         ...mapActions(["resetStoryComponentHomeLayout"]),
         async fetchStories($state) {
             try {
-                console.log("infiniteHandler called");
-                console.log(`Fetching page ${this.page}`);
+                console.log("# --- infiniteHandler called --- #");
+                console.log(`# --- Fetching page ${this.page} --- #`);
                 // await new Promise(resolve => setTimeout(resolve, 1000));
                 let params = {};
                 // not authenticated user, need to send categories as a qs
                 const categories = store.getters.getCategories;
-                console.log("***");
-                // console.log(categories);
                 const categories_by_ids = categories
                     .map(c => categoriesToIds[c])
                     .sort((a, b) => a - b)
                     .join("-");
-                console.log(categories_by_ids);
                 params.categories = categories_by_ids;
                 params.page = this.page;
                 const response = await axiosBase.get(`/stories`, {
                     params
                 });
-                // console.log(response.data.stories);
                 const stories = response.data.stories;
                 if (stories.length) {
                     this.page += 1;
@@ -114,28 +109,14 @@ export default {
                 }
             } catch (e) {
                 console.log(e);
+                Sentry.captureException(e);
                 $state.error();
-                //     this.is_loading = false;
-                //     this.is_error = true;
-                //     if (e.response) {
-                //       if (e.response.status === 404) {
-                //         this.errorMessage = "NOT FOUND";
-                //       } else {
-                //         // Most probably a 500
-                //         this.errorMessage = "SERVER ERROR";
-                //       }
-                //     } else {
-                //       console.log(e);
-                //       // throw e;
-                //     }
             }
         },
         async onCategoriesChanged() {
-            console.log("Categories changed, refresh page");
             this.changeFilter();
         },
         async onSearchTriggered(searchStr) {
-            console.log(`Search for "${searchStr}"`);
             // go to search page pass searchstr as qs
             // hide cats in header
             this.$router.push({ name: "search", query: { q: searchStr } });
@@ -144,28 +125,19 @@ export default {
             await this.fetchStories($state);
         },
         changeFilter() {
-            console.log("Change filter");
-            console.log(`InfiniteId = > ${this.infiniteId}`);
             this.page = 1;
             this.stories = [];
             this.infiniteId += 1;
         },
         updateStory(story) {
-            console.log("updating story");
-            // console.log(story);
             const [story_to_update] = this.stories.filter(s => s._key === story._key);
-            // console.log(story_to_update);
             story_to_update.comments_count = story.comments_count;
         }
     },
     created() {
         console.log(`User inited -> ${this.isUserInited}`);
         console.log(`Env: ${process.env.NODE_ENV}`);
-        // get stories if no auth or user inited
-        // if (!this.isAuthenticated || this.isUserInited) {
-        // XOXO PUT BACK
-        // this.fetchStories();
-        // }
+        console.log(`Env base url: ${process.env.BASE_URL}`);
     },
     mounted() {
         console.log("Home mounted");
@@ -193,8 +165,6 @@ export default {
         $route(to, from) {
             // UPDATE NUM COMMENTS IF ROUTE FROM == view-story
             console.log("# --- Watch route --- #");
-
-            console.log("# -------------- #");
             if (from.name === "view-story") {
                 const from_slug = from.params.slug;
                 axiosBase
@@ -207,6 +177,7 @@ export default {
                     .catch(e => {
                         // just log me
                         console.error(e);
+                        Sentry.captureException(e);
                     });
             }
         }
