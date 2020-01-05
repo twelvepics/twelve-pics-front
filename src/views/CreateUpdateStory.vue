@@ -339,8 +339,8 @@
                     </div>
                     <div class="pic column is-narrow handle">
                       <img
-                        :src="pic.thumb.web_path"
-                        :width="isHorizontal(pic.thumb) ? 270 : 160"
+                        :src="pic.small.web_path"
+                        :width="isHorizontal(pic.small) ? 270 : 160"
                         height="auto"
                       />
                     </div>
@@ -767,8 +767,9 @@ export default {
       // console.log(pic);
       this.pics_uploaded.push({
         original: pic.original,
-        thumb: pic.thumb,
-        display: pic.display
+        small: pic.small,
+        medium: pic.medium,
+        large: pic.large
       });
     },
     setPicDescription(idx, event) {
@@ -1073,10 +1074,13 @@ export default {
         original: {
           required
         },
-        thumb: {
+        small: {
           required
         },
-        display: {
+        medium: {
+          required
+        },
+        large: {
           required
         },
         caption: {

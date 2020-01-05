@@ -136,7 +136,7 @@ export default {
             return this.isAuthenticated && this.story.author_key === this.authenticatedUser._key;
         },
         story_thumb() {
-            return this.story.pics[0].thumb;
+            return this.story.pics[0].small;
         },
         is_thumb_horizontal() {
             return this.story_thumb.width >= this.story_thumb.height;

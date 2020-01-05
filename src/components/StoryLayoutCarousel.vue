@@ -13,17 +13,17 @@
                     :key="index"
                     class="swiper-slide"
                     :style="{
-                        width: `${getThumbSize(pic.thumb).width}px`,
-                        height: `${getThumbSize(pic.thumb).height}px`
+                        width: `${getThumbSize(pic.small).width}px`,
+                        height: `${getThumbSize(pic.small).height}px`
                     }"
                 >
                     <!-- Slide Content -->
                     <img
-                        :src="pic.thumb.web_path"
+                        :src="pic.small.web_path"
                         style="cursor:pointer;"
                         :style="{
-                            'max-width': `${getThumbSize(pic.thumb).width}px`,
-                            'max-height': `${getThumbSize(pic.thumb).height}px`,
+                            'max-width': `${getThumbSize(pic.small).width}px`,
+                            'max-height': `${getThumbSize(pic.small).height}px`,
                             border: '1px solid #777'
                         }"
                         @click.self="imageClicked(index)"
@@ -42,12 +42,7 @@
         <!-- bottom selected image -->
         <div class="slideshow-pic-container">
             <div class="slideshow-pic">
-                <img
-                    :src="pics[0].display.web_path"
-                    style="max-height:650px;border:1px solid #aaa;"
-                    ref="top_pic"
-                    alt
-                />
+                <img :src="pics[0].large.web_path" style="max-height:650px;border:1px solid #aaa;" ref="top_pic" alt />
                 <p
                     class="caption"
                     :style="{ 'max-width': `${getCaptionWidth()}px` }"
@@ -98,11 +93,11 @@ export default {
             // console.log(top_pic);
             // console.log(top_pic.src);
             this.selectedPicId = idx;
-            top_pic.src = this.pics[idx].display.web_path;
+            top_pic.src = this.pics[idx].large.web_path;
             this.$refs.top_caption.textContent = this.pics[idx].caption;
         },
         getCaptionWidth(maxHeight = 650) {
-            const pic = this.pics[this.selectedPicId].display;
+            const pic = this.pics[this.selectedPicId].large;
             const _h = pic.height;
             const _w = pic.width;
             let width, divider;

@@ -15,16 +15,16 @@
         <div class="content" v-show="isImageSelected" style="width:100%;text-align: center;">
             <div
                 :style="{
-                    'max-width': picOrientation(pics[imageSelected].display) === 'horizontal' ? '900px' : '450px',
+                    'max-width': picOrientation(pics[imageSelected].large) === 'horizontal' ? '900px' : '450px',
                     display: 'inline-block',
                     position: 'relative'
                 }"
             >
                 <a class="delete is-medium" style="position:absolute;right:5px;top:5px;" @click="closeImage"></a>
                 <img
-                    :src="pics[imageSelected].display.web_path"
+                    :src="pics[imageSelected].large.web_path"
                     ref="imageSelected"
-                    :width="picOrientation(pics[imageSelected].display) === 'horizontal' ? '900px' : '450px'"
+                    :width="picOrientation(pics[imageSelected].large) === 'horizontal' ? '900px' : '450px'"
                 />
                 <div class="caption" style="text-align:left;">{{ pics[imageSelected].caption }}</div>
             </div>
@@ -83,10 +83,10 @@ export default {
                 idx += this.tiles[i].length;
             }
             idx += picIdx;
-            // console.log(this.pics[idx].display.web_path);
+            // console.log(this.pics[idx].large.web_path);
             // console.log(this.$refs);
             this.imageSelected = idx;
-            this.$refs.imageSelected.src = this.pics[idx].display.web_path;
+            this.$refs.imageSelected.src = this.pics[idx].large.web_path;
         },
         closeImage() {
             this.isImageSelected = false;

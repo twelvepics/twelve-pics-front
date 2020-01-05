@@ -4,13 +4,13 @@
             <div
                 class="pic"
                 :style="{
-                    'max-width': picOrientation(pic.display) === 'horizontal' ? '850px' : '450px',
+                    'max-width': picOrientation(pic.large) === 'horizontal' ? '850px' : '450px',
                     display: 'inline-block'
                 }"
             >
                 <img
-                    :src="pic.display.web_path"
-                    :width="picOrientation(pic.display) === 'horizontal' ? '850px' : '450px'"
+                    :src="pic.large.web_path"
+                    :width="picOrientation(pic.large) === 'horizontal' ? '850px' : '450px'"
                     height="auto"
                     alt
                 />

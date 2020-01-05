@@ -3,22 +3,21 @@
         <!-- Slider main container -->
         <div class="swiper-container" ref="swiper-container">
             <!-- Additional required wrapper -->
-            <!-- // height: `${getPicSize(pic.display).height + 80}px` -->
             <div class="swiper-wrapper">
                 <div
                     v-for="(pic, index) in pics"
                     :key="index"
                     class="swiper-slide"
                     :style="{
-                        width: `${getPicSize(pic.display).width}px`,
+                        width: `${getPicSize(pic.large).width}px`,
                         'padding-bottom': '15px'
                     }"
                 >
                     <img
-                        :src="pic.display.web_path"
+                        :src="pic.large.web_path"
                         :style="{
-                            'max-width': `${getPicSize(pic.thumb).width}px`,
-                            'max-height': `${getPicSize(pic.thumb).height}px`,
+                            'max-width': `${getPicSize(pic.small).width}px`,
+                            'max-height': `${getPicSize(pic.small).height}px`,
                             border: '1px solid #777'
                         }"
                     />

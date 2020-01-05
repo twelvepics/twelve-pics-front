@@ -137,7 +137,7 @@ export default {
         ...mapGetters(["isAuthenticated", "authenticatedUser"]),
 
         story_thumb() {
-            return this.story.pics[0].thumb;
+            return this.story.pics[0].small;
         },
         is_thumb_horizontal() {
             return this.story_thumb.width >= this.story_thumb.height;
@@ -219,29 +219,6 @@ export default {
     color: orange;
 }
 
-/* .pitch {
-  --lh: 1.4rem;
-  line-height: var(--lh);
-  --max-lines: 6;
-  position: relative;
-  max-height: calc(var(--lh) * var(--max-lines));
-  overflow: hidden;
-  padding-right: 1rem;
-}
-.pitch::before {
-  position: absolute;
-  content: "";
-  inset-block-end: 0;
-  inset-inline-end: 0;
-}
-.pitch::after {
-  content: "";
-  position: absolute;
-  inset-inline-end: 0;
-  width: 1rem;
-  height: 1rem;
-  background: white;
-} */
 .pitch {
     --lh: 1.4rem;
     line-height: var(--lh);

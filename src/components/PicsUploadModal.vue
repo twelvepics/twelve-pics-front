@@ -299,8 +299,9 @@ export default {
                     /////////////////////////////////////////////
                     await this.$emit("onPicUpload", {
                         original: uploaded.data.original,
-                        thumb: uploaded.data.thumb,
-                        display: uploaded.data.display
+                        small: uploaded.data.small,
+                        medium: uploaded.data.medium,
+                        large: uploaded.data.large
                     });
                     // --
                     // Done close
