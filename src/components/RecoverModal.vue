@@ -35,7 +35,7 @@
                     </div>
                     <div v-if="found" class="field is-grouped submit-buttons">
                         <div class="control">
-                            <button class="button is-primary" @click.prevent="closeRecoverModal">Dismiss</button>
+                            <button class="button is-primary" @click.prevent="closeRecoverModal">Close</button>
                         </div>
                     </div>
                     <div v-else class="field is-grouped submit-buttons">

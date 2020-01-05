@@ -109,7 +109,7 @@
                             <div class="field is-grouped submit-buttons">
                                 <div class="control">
                                     <button class="button is-primary" :disabled="done || is_sending || $v.$invalid">
-                                        Save
+                                        Send
                                     </button>
                                 </div>
                                 <div class="control">
