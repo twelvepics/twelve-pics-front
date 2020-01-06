@@ -28,9 +28,16 @@
                 <div class="card" v-if="!!user && !is_loading">
                     <!-- CARD CONTENT -->
                     <div class="card-content">
-                        <div class="columns is-mobile" style="margin-bottom:0;">
+                        <div
+                            class="columns is-mobile"
+                            style="margin-bottom:1.5rem;border-bottom:1px solid #bbb;padding-bottom:.5rem"
+                        >
                             <div class="column is-half">
-                                <p class="title is-size-4">{{ user.profile.display_name || user.username }}</p>
+                                <p class="title is-size-4">
+                                    <router-link :to="{ name: 'user-stories', params: { username: user.username } }">{{
+                                        user.profile.display_name || user.username
+                                    }}</router-link>
+                                </p>
                             </div>
                             <div v-if="showEditButton" class="column is-half" style="margin:0;padding:0;">
                                 <p class="has-text-right" style="padding:3px 5px 0 0">
@@ -62,7 +69,9 @@
                         </div>
                         <div v-else>
                             <!-- START PROFILE ITEMS -->
-                            <p class="subtitle is-size-6" v-if="user.profile.intro">{{ user.profile.intro }}</p>
+                            <p class="subtitle is-size-5" style="color: #555;" v-if="user.profile.intro">
+                                {{ user.profile.intro }}
+                            </p>
 
                             <!-- PIC -->
                             <div style="margin:30px 0 15px 0;" v-if="!!user.profile.avatar_path">
@@ -207,7 +216,7 @@ export default {
             is_loading: true,
             is_error: false,
             errorMessage: "",
-            is_debug: true,
+            is_debug: false,
             //-- messaging --
             messageModalActive: false,
             //-- warnings --

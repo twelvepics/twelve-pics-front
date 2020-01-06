@@ -47,7 +47,7 @@ export default {
             return pic.width >= pic.height ? "horizontal" : "vertical";
         },
         getPicSize(pic) {
-            console.log("->", this.$mq);
+            // console.log("->", this.$mq);
             const _h = pic.height;
             const _w = pic.width;
             let width, height, divider;

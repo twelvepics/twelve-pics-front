@@ -33,25 +33,6 @@
             </div>
         </div>
         <!-- ENDS STORIES COLUMN -->
-        <!-- DEBUG -->
-        <div class="columns is-centered">
-            <div v-if="is_debug" class="column is-three-quarters-desktop">
-                <!-- START PROFILE -->
-                <div class="card" style="padding:20px;">
-                    <p>DEBUG</p>
-                    <p>
-                        <a @click="goToEditStory('e4d7e328-613e-41a1-b072-60d45ef3bc59')">Edit story</a>
-                        <br />
-                        <a @click="goToEditStory('45c744fe-e1e3-45c2-8df6-46a40fcfb27b')">Edit another story</a>
-                        <br />
-                        <a @click="goToEditStory('d17f6137-6765-48ea-a7b8-522561119ffa')">Edit not authorized story</a>
-                        <br />
-                        <a @click="goToEditStory('056ca2a2-b2bd-41e9-9742-04319f9f1a')">Edit not found story</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <!-- END DEBUG -->
     </main>
 </template>
 
@@ -90,6 +71,7 @@ export default {
     methods: {
         async fetchData() {
             try {
+                console.log("fetch data");
                 this.is_loading = true;
                 // await new Promise(resolve => setTimeout(resolve, 2000));
                 const response = await axiosBase.get(`/users/${this.username}/stories`);
@@ -126,6 +108,8 @@ export default {
     watch: {
         // eslint-disable-next-line
         $route(to, from) {
+            console.log("route changed");
+            this.username = this.$route.params.username;
             // react to route changes...
             this.fetchData();
         }

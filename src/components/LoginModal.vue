@@ -85,6 +85,7 @@
     <!-- END LOGIN MODAL -->
 </template>
 <script>
+import { EventBus } from "../event-bus.js";
 import { required } from "vuelidate/lib/validators";
 import * as Sentry from "@sentry/browser";
 
@@ -135,6 +136,11 @@ export default {
             try {
                 await this.$store.dispatch("login", userData);
                 this.closeLoginModal();
+                if (this.$router.currentRoute.name === "home") {
+                    EventBus.$emit("login");
+                } else {
+                    this.$router.push({ name: "home" });
+                }
             } catch (e) {
                 // this.apiError = e;
                 if (e.response) {

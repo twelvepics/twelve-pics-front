@@ -27,8 +27,8 @@
                             <fieldset :disabled="done">
                                 <p class="title is-size-4">Contact us</p>
                                 <p class="subtitle is-size-6">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis
-                                    praesentium esse veritatis nemo!
+                                    Any question, suggestion? You want to give us your feedback about the site? Do not
+                                    hesitate to contact us.
                                 </p>
                                 <!-- EMAIL -->
                                 <div class="field m-30-0-15-0">
@@ -37,10 +37,7 @@
                                         <span style="color:red;" v-if="$v.message.from_user_email.$error"
                                             >Enter a valid email address</span
                                         >
-                                        <span v-else
-                                            >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                                            accusamus!</span
-                                        >
+                                        <span v-else>(Required) - Please enter your email address</span>
                                     </p>
                                     <div class="control" style="max-width: 500px;">
                                         <input
@@ -61,12 +58,9 @@
                                     <label class="label is-marginless">Subject</label>
                                     <p class="content is-small is-marginless pb-05">
                                         <span style="color:red;" v-if="$v.message.subject.$error"
-                                            >Subject is required and must be max 128 Characters</span
+                                            >Subject is required and must be max 128 characters</span
                                         >
-                                        <span v-else
-                                            >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                                            accusamus!</span
-                                        >
+                                        <span v-else>(Required) The subject of your message - Max 128 characters</span>
                                     </p>
                                     <div class="control">
                                         <input
@@ -88,10 +82,7 @@
                                         <span style="color:red;" v-if="$v.message.body.$error"
                                             >Message text is required and must be max 4096 Characters</span
                                         >
-                                        <span v-else
-                                            >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                                            accusamus!</span
-                                        >
+                                        <span v-else>(Required) The body of your message - Max 4096 characters</span>
                                     </p>
                                     <div class="control">
                                         <textarea

@@ -49,9 +49,9 @@
                 class="title is-size-4"
               >{{ $route.name === "create-story" ? 'Add a' : 'Edit' }} story</p>
               <p class="subtitle is-size-6">
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum,
-                facilis praesentium esse veritatis nemo! Quis autem vel eum iure reprehenderit qui in ea voluptate
-                velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur
+                Build your story, 6 to 12 photos. An informative text is required. Your images must be your own. Do not post any photos from other photographers. 
+                Do not hesitate to start the title of your story with [NSFW] if it is a mature or hard to view subject. <br>
+                Once saved, you can update/modify your post at any time through the top right > my stories menu item. 
               </p>
 
               <!-- SHOW STORY URL -->
@@ -221,7 +221,7 @@
                   <span class="isError" v-if="$v.story.category.$error">Please select a category</span>
                   <span
                     v-else
-                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
+                  >(Required) Please select the theme that better fits your photo story</span>
                 </p>
                 <div class="select" :class="{ 'is-danger': $v.story.category.$error }">
                   <select v-model="story.category">
@@ -246,7 +246,7 @@
                   >Title must be min 8 characters and max 128 characters</span>
                   <span
                     v-else
-                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
+                  >(Required) Title must be min 8 characters up to 128 characters</span>
                 </p>
                 <div class="control">
                   <input
@@ -265,7 +265,7 @@
 
               <!-- ABOUT MY STORY -->
               <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Pitch your story</label>
+                <label class="label is-marginless">Describe your story</label>
                 <p class="content is-small is-marginless pb-05">
                   <span
                     class="isError"
@@ -273,7 +273,7 @@
                   >Must be at least 300 and at most 5000 Characters</span>
                   <span
                     v-else
-                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
+                  >(Required) May be some context, additional information, your thoughts about the subject. Min 300 to 5000  characters.</span>
                 </p>
                 <div class="control">
                   <textarea
@@ -294,10 +294,10 @@
                   <b>Upload your images</b>
                 </p>
                 <p class="content is-small is-marginless pb-05">
-                  <span class="isError" v-if="$v.pics_uploaded.$error">Minimum 6, Maximum 12 photos.</span>
+                  <span class="isError" v-if="$v.pics_uploaded.$error">Minimum 6, Maximum 12 photos</span>
                   <span
                     v-else
-                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
+                  >(required) Obviously :) Minimum 6, Maximum 12 photos</span>
                 </p>
 
                 <!-- PIC UPLOAD BUTTON-->
@@ -382,7 +382,7 @@
 
               <!-- MORE INFO -->
               <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Gear, technique, inspiration...</label>
+                <label class="label is-marginless">Gear, technique, inspiration</label>
                 <p class="content is-small is-marginless pb-05">
                   <span
                     class="isError"
@@ -390,7 +390,7 @@
                   >Must be at most 5000 Characters</span>
                   <span
                     v-else
-                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
+                  >Everything that is not directly related to your story may come here</span>
                 </p>
                 <div class="control">
                   <textarea
@@ -416,7 +416,7 @@
                   >Comma separated list of words, max length 64 characters</span>
                   <span
                     v-else
-                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
+                  >Tags will be used amongst other criteria by users to search for and find you story - Coma separated list of single words</span>
                 </p>
                 <div class="control">
                   <input
@@ -441,7 +441,7 @@
                   >Max length is 128 characters.</span>
                   <span
                     v-else
-                  >Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span>
+                  >Where was it?</span>
                 </p>
                 <div class="control" style="max-width: 500px;">
                   <input
@@ -479,8 +479,7 @@
                     story
                   </label>
                   <p class="content is-small is-marginless pb-05">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                    accusamus!
+                    You may change your mind later
                   </p>
                 </div>
                 <div></div>

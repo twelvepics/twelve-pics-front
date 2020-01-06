@@ -70,7 +70,7 @@
                                                 <p style="margin:0;padding:0;">
                                                     {{ `${file.name} [${(file.size / (1024 * 1024)).toFixed(1)}MB]` }}
                                                     <span v-if="fileIsTooBig(file)"
-                                                        >- Error: maximum file size is 5 MB</span
+                                                        >- Error: max file size is 5 MB</span
                                                     >
                                                 </p>
                                             </div>
@@ -144,15 +144,6 @@
                         </div>
                         <!-- ENDS UPLOAD FILES -->
                     </div>
-                    <!-- DEBUG -->
-                    <div style="margin: 0 22px">
-                        <p>DEBUG</p>
-                        <p>Remaining: {{ remainingUploads }}</p>
-                        <p>Too many: {{ tooManyPics }} -> {{ remainingUploads }}</p>
-                        <p>Remaining: {{ remainingUploads }}</p>
-                        <p>Selected: {{ selectedFiles.length }}</p>
-                    </div>
-                    <!-- END DEBUG -->
                 </div>
             </div>
         </div>

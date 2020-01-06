@@ -26,7 +26,7 @@
                     <story :story="story"></story>
                     <!-- END STORY -->
                     <!-- START COMMENTS -->
-                    <story-comments :story_key="story._key"></story-comments>
+                    <story-comments :story_key="story._key" v-if="story.allow_comments"></story-comments>
                     <!-- END COMMENTS -->
                     <div style="margin-top:50px"></div>
                 </div>

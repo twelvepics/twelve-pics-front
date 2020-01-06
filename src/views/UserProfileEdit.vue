@@ -21,7 +21,7 @@
                                     SERVER ERROR, SORRY. TRY AGAIN LATER.
                                 </div>
                             </div>
-                            <p class="title is-size-4">{{ user.username }}'s profile</p>
+                            <p class="title is-size-4">{{ authenticatedUser && user.username }}'s profile</p>
                             <p class="subtitle is-size-6">
                                 Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis
                                 praesentium esse veritatis nemo!
