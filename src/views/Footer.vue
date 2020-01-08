@@ -1,9 +1,8 @@
 <template>
   <footer class="footer">
-    <div class="notification is-dark has-text-centered">
+    <div class="notification is-dark has-text-centered" style="color:#808080;font-size:.8rem">
       <p>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Autem expedita maiores in esse labore!
-        Consectetur.
+        <span style="font-size:130%;">&copy;</span>2020 All Rights Reserved - This web site and all photos posted on twelvepics.com are protected by US and international copyright laws.
       </p>
     </div>
   </footer>

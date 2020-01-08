@@ -12,13 +12,16 @@
                 <div v-else class="card">
                     <!-- CARD CONTENT -->
                     <div class="card-content">
-                        <p class="title is-size-4">
-                            Stories posted by {{ user_info.display_name || user_info.username }}
+                        <p class="title is-size-4" style="border-bottom: 1px solid #aaa;padding-bottom:.8rem;">
+                            Stories posted by
+                            <router-link :to="{ name: 'user', params: { username: user_info.username } }">{{
+                                user_info.display_name || user_info.username
+                            }}</router-link>
                         </p>
-                        <p class="subtitle is-size-6">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore harum, facilis praesentium
-                            esse veritatis nemo!
-                        </p>
+                        <!-- <p class="subtitle is-size-6">
+                            {{ user_info.display_name || user_info.username }} has posted {{ stories.length }} stories.
+                            You can view his profile <a>here</a>.
+                        </p> -->
                         <!-- STORIES -->
                         <user-story
                             v-for="(story, idx) in stories"

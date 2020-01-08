@@ -49,9 +49,9 @@
                 class="title is-size-4"
               >{{ $route.name === "create-story" ? 'Add a' : 'Edit' }} story</p>
               <p class="subtitle is-size-6">
-                Build your story, 6 to 12 photos. An informative text is required. Your images must be your own. Do not post any photos from other photographers. 
-                Do not hesitate to start the title of your story with [NSFW] if it is a mature or hard to view subject. <br>
-                Once saved, you can update/modify your post at any time through the top right > my stories menu item. 
+                Build your story, 6 to 12 photos. An informative text is required. Your images must be your own. Do not post any photos from other photographers.
+                Do not hesitate to start the title of your story with [NSFW] if it is a mature or hard to view subject.
+                <br />Once saved, you can update/modify your post at any time through the top right > my stories menu item.
               </p>
 
               <!-- SHOW STORY URL -->
@@ -63,8 +63,7 @@
                   <b>PAGE URL</b>
                 </p>
                 <p class="content">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel,
-                  accusamus:
+                  This will be the public URL for your page, it will be linked on the site once you have decided to publish it.
                   <br />
                   <router-link
                     :to="{ name: 'view-story', params: { slug: story.slug }}"
@@ -219,9 +218,7 @@
                 <label class="label is-marginless">Category</label>
                 <p class="content is-small is-marginless pb-05">
                   <span class="isError" v-if="$v.story.category.$error">Please select a category</span>
-                  <span
-                    v-else
-                  >(Required) Please select the theme that better fits your photo story</span>
+                  <span v-else>(Required) Please select the theme that better fits your photo story</span>
                 </p>
                 <div class="select" :class="{ 'is-danger': $v.story.category.$error }">
                   <select v-model="story.category">
@@ -244,9 +241,7 @@
                     class="isError"
                     v-if="$v.story.title.$error"
                   >Title must be min 8 characters and max 128 characters</span>
-                  <span
-                    v-else
-                  >(Required) Title must be min 8 characters up to 128 characters</span>
+                  <span v-else>(Required) Title must be min 8 characters up to 128 characters</span>
                 </p>
                 <div class="control">
                   <input
@@ -273,7 +268,7 @@
                   >Must be at least 300 and at most 5000 Characters</span>
                   <span
                     v-else
-                  >(Required) May be some context, additional information, your thoughts about the subject. Min 300 to 5000  characters.</span>
+                  >(Required) May be some context, additional information, your thoughts about the subject. Min 300 to 5000 characters.</span>
                 </p>
                 <div class="control">
                   <textarea
@@ -295,9 +290,7 @@
                 </p>
                 <p class="content is-small is-marginless pb-05">
                   <span class="isError" v-if="$v.pics_uploaded.$error">Minimum 6, Maximum 12 photos</span>
-                  <span
-                    v-else
-                  >(required) Obviously :) Minimum 6, Maximum 12 photos - JPEG or PNG</span>
+                  <span v-else>(required) Obviously :) Minimum 6, Maximum 12 photos - JPEG or PNG</span>
                 </p>
 
                 <!-- PIC UPLOAD BUTTON-->
@@ -388,9 +381,7 @@
                     class="isError"
                     v-if="$v.story.inspiration.$error"
                   >Must be at most 5000 Characters</span>
-                  <span
-                    v-else
-                  >Everything that is not directly related to your story may come here</span>
+                  <span v-else>Everything that is not directly related to your story may come here</span>
                 </p>
                 <div class="control">
                   <textarea
@@ -439,9 +430,7 @@
                     style="color:red;"
                     v-if="$v.story.location.place_name.$error"
                   >Max length is 128 characters.</span>
-                  <span
-                    v-else
-                  >Where was it?</span>
+                  <span v-else>Where was it?</span>
                 </p>
                 <div class="control" style="max-width: 500px;">
                   <input
@@ -478,9 +467,7 @@
                     Allows users to comment my
                     story
                   </label>
-                  <p class="content is-small is-marginless pb-05">
-                    You may change your mind later
-                  </p>
+                  <p class="content is-small is-marginless pb-05">You may change your mind later</p>
                 </div>
                 <div></div>
                 <div class="field switch-btn-align">
@@ -630,7 +617,7 @@ export default {
         author_key: "",
         author_info: {},
         pics_tiles_layout: [],
-        use_white_borders: false,
+        use_white_borders: false
       },
       // location
       mapboxOptions: [],
@@ -802,7 +789,7 @@ export default {
           this.mapboxOptions = [];
         }
       } catch (err) {
-        if(err.response) {
+        if (err.response) {
           console.log(err.response);
         }
         console.log(err);
