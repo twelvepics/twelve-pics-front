@@ -5,6 +5,7 @@
     <nav
         class="navbar is-dark is-fixed-top box-shadow"
         :style="[isStoryComponentMounted ? { paddingRight: '15px' } : { paddingRight: '0' }]"
+        v-click-outside="onClickOutside"
     >
         <transition name="fade">
             <toast
@@ -39,11 +40,27 @@
                 <span aria-hidden="true"></span>
             </a>
         </div>
-        <div id="12PicsHomeNavBarDesktop" class="navbar-menu" :class="{ 'is-active': showBurgerDropdown }">
+        <div
+            id="12PicsHomeNavBarDesktop"
+            class="navbar-menu"
+            :class="{ 'is-active': showBurgerDropdown }"
+            @click="navbarMenuClicked()"
+        >
             <div class="navbar-start" style="flex-grow:1; justify-content: center;">
-                <div class="navbar-item" style="flex-grow: 1;justify-content: flex-end;margin-right:18px;">
-                    <div id="filter-categories-lnk" class="nav-lnk" @click="openModal('categories')">
-                        <a>
+                <div
+                    class="navbar-item"
+                    style="flex-grow: 1;justify-content: flex-end;margin-right:18px;"
+                    v-show="showCatsAndSearch"
+                >
+                    <div
+                        id="filter-categories-lnk"
+                        class="nav-lnk"
+                        @click="
+                            openModal('categories');
+                            hideBurgerDropdown();
+                        "
+                    >
+                        <a class="categoriesBtnColor">
                             <span class="fa-icon-pr4">
                                 <font-awesome-icon icon="list"></font-awesome-icon>
                             </span>
@@ -51,24 +68,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="navbar-item" style="flex-grow:2;">
-                    <!-- 
-                    <div class="field-body">
-                        <div class="field">
-                        <p class="control has-icons-left">
-                            <input
-                            class="input"
-                            type="text"
-                            placeholder="Search"
-                            style="flex-grow: 1;max-width:350px;"
-                            />
-                            <span class="icon is-small is-left">
-                            <font-awesome-icon icon="search" color="#666"></font-awesome-icon>
-                            </span>
-                        </p>
-                        </div>
-                    </div>
-                    -->
+                <div class="navbar-item" style="flex-grow:2;" v-show="showCatsAndSearch">
                     <!-- -->
                     <div class="field has-addons">
                         <div class="control">
@@ -77,12 +77,21 @@
                                 type="text"
                                 placeholder="Search stories"
                                 style="flex-grow: 1;min-width:300px;max-width:350px;"
-                                @keydown.enter.prevent="searchSubmit"
+                                @keydown.enter.prevent="
+                                    searchSubmit();
+                                    hideBurgerDropdown();
+                                "
                                 v-model="searchStories"
                             />
                         </div>
                         <div class="control">
-                            <a class="button is-primary" @click="searchSubmit">
+                            <a
+                                class="button is-primary"
+                                @click="
+                                    searchSubmit();
+                                    hideBurgerDropdown();
+                                "
+                            >
                                 <span class="icon is-small is-left">
                                     <font-awesome-icon icon="search"></font-awesome-icon>
                                 </span>
@@ -96,43 +105,37 @@
                 <!-- BUTTONS-->
                 <div class="navbar-item">
                     <div class="buttons">
-                        <!-- 
-                        <router-link
-                            class="button is-primary"
-                            id="post-story-btn"
-                            to="/story/create"
-                            v-if="isAuthenticated"
-                            @click.native="resetCreateForm"
-                        ></router-link>
-                        -->
                         <button
                             class="button is-primary"
                             id="post-story-btn"
-                            @click="goToCreateStory"
+                            @click="
+                                goToCreateStory();
+                                hideBurgerDropdown();
+                            "
                             v-if="isAuthenticated"
                             :disabled="isCreateStoryForm || isEditStoryForm"
                         >
                             <strong>Post a story</strong>
                         </button>
-                        <!-- 
-                            <a class="button is-primary"
-                                id="post-story-btn"
-                                @click="goToCreateStory"
-                                v-if="isAuthenticated"
-                                :disabled="isCreateStoryForm || isEditStoryForm"
-                            >
-                            <strong>Post a story</strong>
-                            </a>
-                        -->
                         <a
                             class="button is-primary"
                             id="signup-btn"
-                            @click="openModal('signup')"
+                            @click="
+                                openModal('signup');
+                                hideBurgerDropdown();
+                            "
                             v-if="!isAuthenticated"
                         >
                             <strong>Sign up</strong>
                         </a>
-                        <a class="button is-light" id="login-btn" @click="openModal('login')" v-if="!isAuthenticated"
+                        <a
+                            class="button is-light"
+                            id="login-btn"
+                            @click="
+                                openModal('login');
+                                hideBurgerDropdown();
+                            "
+                            v-if="!isAuthenticated"
                             >Sign in</a
                         >
                     </div>
@@ -144,7 +147,14 @@
                     :class="{ 'is-active': dropdownVisible }"
                     id="navbar-dropdown"
                 >
-                    <a class="navbar-link" id="navbar-link" @click="toggleDropdown">
+                    <a
+                        class="navbar-link"
+                        id="navbar-link"
+                        @click="
+                            toggleDropdown();
+                            hideBurgerDropdown();
+                        "
+                    >
                         <span v-if="isAuthenticated">Hi {{ authenticatedUser.username }}</span>
                         <span v-else>Hi there</span>
                     </a>
@@ -155,7 +165,7 @@
                             :to="{ name: 'user', params: { username: authenticatedUser.username } }"
                             exact
                             exact-active-class="is-active"
-                            @click.native="hideDropdown()"
+                            @click.native="hideDropdowns()"
                         >
                             <span class="fa-icon-pr7">
                                 <font-awesome-icon icon="user"></font-awesome-icon>
@@ -169,31 +179,21 @@
                             :to="{ name: 'user-stories', params: { username: authenticatedUser.username } }"
                             exact
                             exact-active-class="is-active"
-                            @click.native="hideDropdown()"
+                            @click.native="hideDropdowns()"
                         >
                             <span class="fa-icon-pr7">
                                 <font-awesome-icon icon="user"></font-awesome-icon>
                             </span>
                             <span>My stories</span>
                         </router-link>
-                        <!-- SETTINGS LATER -->
-                        <!-- 
-                            <router-link
-                                v-if="isAuthenticated"
-                                class="navbar-item"
-                                :to="`/user/${authenticatedUser.username}/settings`"
-                                active-class="is-active"
-                                exact
-                                @click.native="hideDropdown()"
-                                >
-                                <span class="fa-icon-pr7">
-                                    <font-awesome-icon icon="cog"></font-awesome-icon>
-                                </span>
-                                <span>Settings</span>
-                            </router-link>
-                        -->
-                        <!-- SETTINGS LATER -->
-                        <a v-if="isAuthenticated" class="navbar-item" @click.prevent="logout()">
+                        <a
+                            v-if="isAuthenticated"
+                            class="navbar-item"
+                            @click.prevent="
+                                logout();
+                                hideBurgerDropdown();
+                            "
+                        >
                             <span class="fa-icon-pr7">
                                 <font-awesome-icon icon="sign-out-alt"></font-awesome-icon>
                             </span>
@@ -204,7 +204,7 @@
                             class="navbar-item"
                             to="/contact"
                             active-class="is-active"
-                            @click.native="hideDropdown()"
+                            @click.native="hideDropdowns()"
                         >
                             <span class="fa-icon-pr7">
                                 <font-awesome-icon icon="envelope"></font-awesome-icon>
@@ -215,7 +215,7 @@
                             class="navbar-item"
                             to="/about"
                             active-class="is-active"
-                            @click.native="hideDropdown()"
+                            @click.native="hideDropdowns()"
                         >
                             <span class="fa-icon-pr7">
                                 <font-awesome-icon icon="question"></font-awesome-icon>
@@ -249,28 +249,6 @@
 </template>
 
 <script>
-//////////////////////////////////////////////////////////////////////////
-// A lot happens in this navbar
-// * Modals:
-//     - login modal X
-//        - recover password modal
-//     - signup modal X
-//     - categories modal
-// * Search
-// * Buttons
-//     - login button X
-//     - signup button X
-//     - post story button X
-// * Menu
-//     - View profile X
-//     - Settings view/edit X
-//     - logout X
-//     - contact us X
-//     - About page X
-////////////////////////////////////////////////////////////////////////////
-
-// import { CommonBands } from "vue-media-queries";
-// const bulmaBands = CommonBands.Bulma;
 import { mapGetters } from "vuex";
 import { EventBus } from "../event-bus.js";
 
@@ -285,17 +263,21 @@ import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 
 import * as Sentry from "@sentry/browser";
 
+import vClickOutside from "v-click-outside";
+
 const SIGNUP_MESSAGE_L1 = "Thank you for registering! Please confirm your email address. ";
 const SIGNUP_MESSAGE_L2 = "We have sent you a confirmation request email. Check your inbox.";
 export default {
     name: "Header",
-    // mixins: [bulmaBands.mixin]
     components: {
         LoginModal,
         SignupModal,
         RecoverModal,
         CategoriesModal,
         Toast
+    },
+    directives: {
+        clickOutside: vClickOutside.directive
     },
     data: function() {
         return {
@@ -312,18 +294,42 @@ export default {
         };
     },
     methods: {
+        onClickOutside(event) {
+            if (this.$mq === "mobile" || this.$mq === "tablet") {
+                console.log("Clicked outside. Event: ", event);
+                this.hideBurgerDropdown();
+            }
+        },
+        navbarMenuClicked() {
+            console.log("navbar-menu clicked");
+        },
+
         // dropdown
         toggleDropdown() {
+            console.log("TOGGLEDROPDOWN");
             this.dropdownVisible = !this.dropdownVisible;
         },
         hideDropdown() {
             if (this.dropdownVisible === true) {
+                console.log("HIDEDROPDOWN");
                 this.dropdownVisible = false;
             }
         },
         // burger - mobile
         toggleBurgerDropdown() {
             this.showBurgerDropdown = !this.showBurgerDropdown;
+            console.log("TOGGLEBURGERDROPDOWN");
+            console.log(`showBurgerDropdown -> ${this.showBurgerDropdown}`);
+        },
+        hideBurgerDropdown() {
+            if (this.showBurgerDropdown === true) {
+                console.log("HIDEBURGERDROPDOWN");
+                this.showBurgerDropdown = false;
+            }
+        },
+        hideDropdowns() {
+            this.hideDropdown();
+            this.hideBurgerDropdown();
         },
         openModal(modal) {
             lockBgScroll();
@@ -392,6 +398,12 @@ export default {
         },
         isEditStoryForm: function() {
             return this.$route.name === "edit-story";
+        },
+        showCatsAndSearch: function() {
+            if (["home", "search"].includes(this.$route.name)) {
+                return true;
+            }
+            return false;
         }
     },
     watch: {
@@ -431,6 +443,11 @@ export default {
 .navbar .button[disabled] {
     opacity: 0.7;
     cursor: default;
+}
+@media only screen and (max-width: 1000px) {
+    .categoriesBtnColor {
+        color: black !important;
+    }
 }
 /** END NAVBAR **/
 </style>

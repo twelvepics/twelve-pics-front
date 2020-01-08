@@ -33,7 +33,7 @@
                                     {{ uploadErrorMessage }}
                                 </p>
                                 <p v-else class="content is-small is-marginless pb-05">
-                                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!
+                                    Your profile pic - Must be a JPEG or PNG file - Max file size 4 MB
                                 </p>
                                 <!-- DROP BOX -->
                                 <div v-if="!hasPic && (isUploadInitial || isUploadSaving || isUploadFailed)">
@@ -80,9 +80,7 @@
                                     <span style="color:red;" v-if="$v.profile.display_name.$error"
                                         >Display name max length is 32 characters.</span
                                     >
-                                    <span v-else>
-                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
-                                    >
+                                    <span v-else> Set a display name. This does not change your username.</span>
                                 </p>
                                 <div class="control" style="max-width: 500px;">
                                     <input
@@ -108,7 +106,7 @@
                                         >Intro max length is 256 characters.</span
                                     >
                                     <span v-else>
-                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                        Will be used as a title of your profile - Max length: 256 characters</span
                                     >
                                 </p>
                                 <div class="control">
@@ -135,7 +133,8 @@
                                         >Max length is 3000 characters.</span
                                     >
                                     <span v-else>
-                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                        A few words about you, may be about what motivates you, your path in
+                                        photography...</span
                                     >
                                 </p>
                                 <div class="control">
@@ -154,13 +153,14 @@
 
                             <!-- TECH STUFF -->
                             <div class="field m-30-0-15-0">
-                                <label class="label is-marginless">Gear, technique, inspiration...</label>
+                                <label class="label is-marginless">Gear, technique, inspiration</label>
                                 <p class="content is-small is-marginless pb-05">
                                     <span style="color:red;" v-if="$v.profile.inspiration.$error"
                                         >Max length is 3000 characters.</span
                                     >
                                     <span v-else>
-                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                        The place to tell about how
+                                        your finally defeated your GAS, your technique, photographers that inspired you, </span
                                     >
                                 </p>
                                 <div class="control">
@@ -184,9 +184,7 @@
                                     <span style="color:red;" v-if="$v.profile.location.place_name.$error"
                                         >Max length is 128 characters.</span
                                     >
-                                    <span v-else>
-                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
-                                    >
+                                    <span v-else> Where are you from?</span>
                                 </p>
                                 <div class="control" style="max-width: 500px;">
                                     <input
@@ -232,7 +230,7 @@
                                         >Max length is 128 characters.</span
                                     >
                                     <span v-else>
-                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vel, accusamus!</span
+                                        Your social stuff, web sites where users may view your portfolio, photos</span
                                     >
                                 </p>
                                 <!-- HORIZONTAL 1 -->

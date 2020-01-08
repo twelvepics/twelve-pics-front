@@ -297,7 +297,7 @@
                   <span class="isError" v-if="$v.pics_uploaded.$error">Minimum 6, Maximum 12 photos</span>
                   <span
                     v-else
-                  >(required) Obviously :) Minimum 6, Maximum 12 photos</span>
+                  >(required) Obviously :) Minimum 6, Maximum 12 photos - JPEG or PNG</span>
                 </p>
 
                 <!-- PIC UPLOAD BUTTON-->

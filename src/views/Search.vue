@@ -26,12 +26,9 @@
                     <!-- END STORIES -->
                 </div>
                 <div class="is-divider-vertical"></div>
-                <div class="column is-narrow is-hidden-touch">
-                    <div class="notification is-danger" style="padding:1em;">
-                        <p class="title is-5">Fixed column</p>
-                        <p class="content">This column is fixed 300px wide.</p>
-                    </div>
-                </div>
+                <!-- right col -->
+                <home-right-col />
+                <!-- end right col -->
             </div>
         </div>
     </main>
@@ -50,6 +47,7 @@ import axiosBase from "../services/axiosBase";
 import StoryBrief from "../components/StoryBrief.vue";
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
+import HomeRightCol from "../components/HomeRightCol.vue";
 
 ///////////////////////////////////////
 // @ is an alias to /src
@@ -60,7 +58,8 @@ export default {
         InfiniteLoading,
         StoryBrief,
         PageLoader,
-        PageError
+        PageError,
+        HomeRightCol
     },
     data: function() {
         return {

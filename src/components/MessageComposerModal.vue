@@ -9,7 +9,7 @@
                     <button class="delete is-medium" id="message-close" @click.prevent="closeMessageModal"></button>
                 </div>
                 <div class="message-body">
-                    <p style="font-size:85%">
+                    <p style="font-size:85%; margin-bottom:1rem;">
                         <span v-if="apiError" class="isError">
                             <b>{{ apiError }}</b>
                         </span>
@@ -19,7 +19,7 @@
                         <span v-else-if="sending">
                             <b>SENDING MESSAGE...</b>
                         </span>
-                        <span v-else>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas, vitae.</span>
+                        <span v-else>Contact other users of the site through email</span>
                     </p>
                     <div class="field">
                         <label class="label is-size-6 mt10">

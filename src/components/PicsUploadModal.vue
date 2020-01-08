@@ -177,10 +177,7 @@ export default {
     methods: {
         getImagePreviews() {
             for (let i = 0; i < this.selectedFiles.length; i++) {
-                if (
-                    !this.previews[this.selectedFiles[i].name] &&
-                    /\.(jpe?g|png|gif)$/i.test(this.selectedFiles[i].name)
-                ) {
+                if (!this.previews[this.selectedFiles[i].name] && /\.(jpe?g|png)$/i.test(this.selectedFiles[i].name)) {
                     let reader = new FileReader();
                     reader.addEventListener(
                         "load",
