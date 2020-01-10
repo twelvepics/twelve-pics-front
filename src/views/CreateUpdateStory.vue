@@ -583,7 +583,7 @@ export default {
   },
   data() {
     return {
-      is_debug: true,
+      is_debug: false,
       is_loading: false,
       // action: "",
       // fetch auth / not found errors, hide the rest of the page
