@@ -14,7 +14,6 @@ module.exports = {
                 ignoreFile: '.sentryignore',
                 ignore: ['node_modules', 'webpack.config.js'],
                 release: process.env.VUE_APP_RELEASE,
-                dryRun: true
             }),
         ],
     }
