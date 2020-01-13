@@ -1,5 +1,8 @@
 <template>
-    <div class="content" style="margin:30px 0 30px 0;line-height:1.3rem;">
+    <div
+        class="content"
+        style="margin:30px 0 30px 0;line-height:1.3rem;border: 1px #ccc solid;padding:1rem .5rem 1rem .5rem"
+    >
         <div class="tiles-layout" v-show="!isImageSelected">
             <div v-for="(row, rowIdx) in tiles" :key="rowIdx" :style="getRowStyle(rowIdx)">
                 <div v-for="(pic, picIdx) in row" :key="picIdx">
@@ -50,6 +53,7 @@ export default {
     },
     methods: {
         getRowStyle(idx) {
+            // CALCULATE HEIGHT OF TILES AREA HERE
             const colStr = this.tiles[idx]
                 .map(p => {
                     // resize depending on screen size
@@ -102,6 +106,17 @@ export default {
             }
             return null;
         }
+        // tilesHeight() {
+        //     console.log(this.tiles);
+        //     console.log(this.tiles.length);
+        //     let total = 0;
+        //     for (let i = 0; i < this.tiles.length; i++) {
+        //         total += this.tiles[i][0].tile_height;
+        //     }
+        //     total += this.tiles.length * 5;
+        //     console.log(`${total}px`);
+        //     return `${total}px`;
+        // }
     },
     mounted() {
         console.log("#--- pics tiles mounted ---#");

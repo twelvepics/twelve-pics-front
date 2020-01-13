@@ -1,5 +1,9 @@
 <template>
-    <div class="content" style="border: 1px solid #ddd; width:100%; margin:30px 0 30px 0;">
+    <div
+        class="content"
+        :style="{ 'min-height': `${getContainerMinHeight}px` }"
+        style="border: 1px solid #ddd; width:100%; margin:30px 0 30px 0;padding:1rem 0 1rem 0;"
+    >
         <!-- Slider main container -->
         <div class="swiper-container" ref="swiper-container">
             <!-- Additional required wrapper -->
@@ -9,9 +13,9 @@
                     :key="index"
                     class="swiper-slide"
                     :style="{
-                        width: `${getPicSize(pic.large).width}px`,
-                        'padding-bottom': '15px'
+                        width: `${getPicSize(pic.large).width}px`
                     }"
+                    style="padding-bottom: 15px;visibility: hidden;"
                 >
                     <img
                         :src="pic.large.web_path"
@@ -20,14 +24,24 @@
                             'max-height': `${getPicSize(pic.small).height}px`,
                             border: '1px solid #777'
                         }"
+                        @load="onPicLoad($event)"
                     />
                     <p class="caption">{{ pic.caption }}</p>
                 </div>
             </div>
             <!-- END Additional required wrapper -->
             <!-- If we need navigation buttons -->
-            <div class="swiper-button-prev" v-show="$mq !== 'mobile'" style="color:red"></div>
-            <div class="swiper-button-next" v-show="$mq !== 'mobile'" style="color:red"></div>
+            <div
+                class="swiper-button-prev"
+                v-show="$mq !== 'mobile' && all_pics_loaded"
+                style="color:red"
+                :style="{ top: `${getContainerMinHeight / 2}px` }"
+            ></div>
+            <div class="swiper-button-next" 
+                v-show="$mq !== 'mobile' && all_pics_loaded" 
+                style="color:red" 
+                :style="{ top: `${getContainerMinHeight / 2}px` }"
+            ></div>
         </div>
         <!-- End Slider main container -->
     </div>
@@ -39,7 +53,9 @@ export default {
     props: ["pics"],
     data() {
         return {
-            debug: false
+            debug: false,
+            pics_loaded_num: 0,
+            all_pics_loaded: false
         };
     },
     methods: {
@@ -79,6 +95,31 @@ export default {
             width = Math.floor(_w / divider);
             height = Math.floor(_h / divider);
             return { width, height };
+        },
+        onPicLoad(event) {
+            // console.log("onPicLoad");
+            // console.log(event.target.parentNode);
+            // console.log(event.target.nextElementSibling);
+            // event.target.style.visibility = "visible";
+            // event.target.nextElementSibling.style.visibility = "visible";
+            event.target.parentNode.style.visibility = "visible";
+            this.pics_loaded_num += 1;
+            if (this.pics_loaded_num === this.num_pics) {
+                // console.log("all pics loaded");
+                this.all_pics_loaded = true;
+                // emit to parent
+                this.$emit("pics-loaded");
+            }
+        }
+    },
+    computed: {
+        num_pics() {
+            return this.pics.length;
+        },
+        getContainerMinHeight() {
+            const heights = this.pics.map(p => this.getPicSize(p.large).height);
+            // console.log(Math.max(...heights) + 13 * 2);
+            return Math.max(...heights) + 13 * 2;
         }
     },
     mounted() {
@@ -105,10 +146,10 @@ export default {
 .caption {
     font-size: 0.85rem;
 }
-.swiper-button-prev,
+/* .swiper-button-prev,
 .swiper-button-next {
     top: 37%;
-}
+} */
 /* media queries */
 @media only screen and (min-width: 1024px) {
     .story-padding {

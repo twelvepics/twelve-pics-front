@@ -20,7 +20,12 @@
                 </div>
             </div>
             <p class="content">{{ story.pitch }}</p>
-            <component :is="storyLayout" :pics="story.pics" :tiles="story.pics_tiles_layout"></component>
+            <component
+                :is="storyLayout"
+                :pics="story.pics"
+                :tiles="story.layout === 'tiles' ? story.pics_tiles_layout : null"
+                @pics-loaded="picsLoaded"
+            ></component>
             <p class="content">{{ story.inspiration }}</p>
         </div>
         <!-- END CONTENT -->
@@ -50,6 +55,9 @@ export default {
         },
         getTags() {
             return this.story.tags.map(item => `#${item}`).join(", ");
+        },
+        picsLoaded() {
+            console.log("pics loaded");
         }
     },
     mounted() {

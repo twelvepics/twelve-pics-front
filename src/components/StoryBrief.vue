@@ -17,7 +17,12 @@
                     params: { slug: story.slug }
                 }"
             >
-                <img :src="story_thumb.web_path" :alt="story_thumb.description" width="200" height="auto" />
+                <img
+                    :src="story_thumb.web_path"
+                    :alt="story_thumb.description"
+                    :width="story_thumb.width"
+                    :height="story_thumb.height"
+                />
             </router-link>
         </p>
         <p class="pitch">{{ story.pitch }}</p>
@@ -60,7 +65,12 @@
                     params: { slug: story.slug }
                 }"
             >
-                <img :src="story_thumb.web_path" :alt="story_thumb.description" width="120" height="auto" />
+                <img
+                    :src="story_thumb.web_path"
+                    :alt="story_thumb.description"
+                    :width="story_thumb.width"
+                    :height="story_thumb.height"
+                />
             </router-link>
         </p>
         <div class="is-divider story-divider"></div>
@@ -175,7 +185,7 @@ export default {
 
 .story-item-pic-portrait {
     display: grid;
-    grid-template-columns: 122px 15px 1fr;
+    grid-template-columns: 130px 15px 1fr;
     grid-auto-rows: min-content;
 }
 

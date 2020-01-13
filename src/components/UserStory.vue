@@ -41,12 +41,24 @@
                 <a @click.prevent="storyClicked">{{ story.title }}</a>
             </p>
             <p class="pic">
-                <img :src="story_thumb.web_path" :alt="story_thumb.description" width="200" height="auto" />
+                <a @click.prevent="storyClicked">
+                    <img
+                        :src="story_thumb.web_path"
+                        :alt="story_thumb.description"
+                        :width="story_thumb.width"
+                        :height="story_thumb.height"
+                    />
+                </a>
             </p>
             <p class="pitch">{{ story.pitch }}</p>
             <div class="is-divider story-divider"></div>
             <p class="bottom-line">
-                <span class="icon is-left star" @click="starMe">
+                <span
+                    class="icon is-left star"
+                    :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
+                    data-tooltip="Please authenticate to upvote"
+                    @click="starMe"
+                >
                     <font-awesome-icon icon="star"></font-awesome-icon>
                 </span>
                 <span class="cat">[{{ category_display }}]</span>
@@ -73,11 +85,23 @@
                 <p class="pitch">{{ story.pitch }}</p>
             </div>
             <p class="pic" style="padding-top:.3rem;">
-                <img :src="story_thumb.web_path" :alt="story_thumb.description" width="120" height="auto" />
+                <a @click.prevent="storyClicked">
+                    <img
+                        :src="story_thumb.web_path"
+                        :alt="story_thumb.description"
+                        :width="story_thumb.width"
+                        :height="story_thumb.height"
+                    />
+                </a>
             </p>
             <div class="is-divider story-divider"></div>
             <p class="bottom-line">
-                <span class="icon is-left star" @click="starMe">
+                <span
+                    class="icon is-left star"
+                    :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
+                    data-tooltip="Please authenticate to upvote"
+                    @click="starMe"
+                >
                     <font-awesome-icon icon="star"></font-awesome-icon>
                 </span>
                 <span class="cat">[{{ category_display }}]</span>
@@ -93,24 +117,48 @@
 import { categoriesDisplay } from "../utils/categories";
 import { timeSince } from "../utils/dateutils";
 import { mapGetters } from "vuex";
+import axiosBase from "../services/axiosBase";
+import * as Sentry from "@sentry/browser";
+
 export default {
     props: ["story", "user_info"],
     data() {
         return {
             num_comments: 0,
-            categoriesDisplay
+            categoriesDisplay,
+            upvoted: this.story.upvoted
         };
     },
     methods: {
+        async starMe() {
+            console.log("starMe");
+            try {
+                if (this.isAuthenticated) {
+                    if (!this.upvoted) {
+                        await axiosBase.post(`/stories/${this.story._key}/upvote`);
+                        this.upvoted = true;
+                    } else {
+                        // :story_key/upvotes/:upvote_key
+                        await axiosBase.delete(`/stories/${this.story._key}/upvote/${this.authenticatedUser._key}`);
+                        this.upvoted = false;
+                    }
+                }
+            } catch (e) {
+                if (e.response) {
+                    if (e.response.status) {
+                        console.log(e.response);
+                    }
+                } else {
+                    console.log(e);
+                    Sentry.captureException(e);
+                }
+            }
+        },
         storyClicked() {
             this.$router.push({
                 name: "view-story",
                 params: { slug: this.story.slug }
             });
-        },
-        starMe() {
-            // TODO
-            console.log("starred");
         },
         elapsed() {
             return timeSince(this.story.date_created);
@@ -227,11 +275,14 @@ export default {
 }
 .star {
     display: inline-block;
-    color: orange;
+    color: #aaa;
     padding: 0 0.3rem 0 0;
     height: 0rem;
     width: none;
     cursor: pointer;
+}
+.upvoted {
+    color: orange;
 }
 .pitch {
     --lh: 1.4rem;
