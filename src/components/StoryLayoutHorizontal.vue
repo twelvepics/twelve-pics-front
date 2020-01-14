@@ -20,7 +20,7 @@
                     <img
                         :src="pic.large.web_path"
                         :style="{
-                            'max-width': `${getPicSize(pic.small).width}px`,
+                            width: `${getPicSize(pic.small).width}px`,
                             'max-height': `${getPicSize(pic.small).height}px`,
                             border: '1px solid #777'
                         }"
@@ -37,9 +37,10 @@
                 style="color:red"
                 :style="{ top: `${getContainerMinHeight / 2}px` }"
             ></div>
-            <div class="swiper-button-next" 
-                v-show="$mq !== 'mobile' && all_pics_loaded" 
-                style="color:red" 
+            <div
+                class="swiper-button-next"
+                v-show="$mq !== 'mobile' && all_pics_loaded"
+                style="color:red"
                 :style="{ top: `${getContainerMinHeight / 2}px` }"
             ></div>
         </div>

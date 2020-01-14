@@ -1,11 +1,13 @@
 <template>
-    <div class="content" style="width:100%; margin:30px 0 20px 0;border:1px solid #aaa; padding:1rem .5rem 1rem .5rem;">
+    <div
+        class="content"
+        style="width:100%; min-height:1200px;margin:30px 0 20px 0;border:1px solid #aaa; padding:1rem .5rem 1rem .5rem;"
+    >
         <div class="pic-items" style="width:100%;text-align:center;" v-for="(pic, index) in pics" :key="index">
             <div
                 class="pic"
                 :style="{
                     'max-width': picOrientation(pic.large) === 'horizontal' ? '850px' : '450px',
-                    'min-height': `${pic.large.height}px`,
                     display: 'inline-block',
                     visibility: 'hidden'
                 }"
@@ -13,8 +15,7 @@
                 <img
                     :src="pic.large.web_path"
                     :style="{
-                        width: picOrientation(pic.large) === 'horizontal' ? '850px' : '450px',
-                        'min-height': `${pic.large.height}px`
+                        width: picOrientation(pic.large) === 'horizontal' ? '850px' : '450px'
                     }"
                     alt
                     @load="onPicLoad($event)"
