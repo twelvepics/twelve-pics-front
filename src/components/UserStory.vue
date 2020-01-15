@@ -56,14 +56,15 @@
                 <span
                     class="icon is-left star"
                     :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
-                    data-tooltip="Please authenticate to upvote"
+                    data-tooltip="Please authenticate to star a story"
                     @click="starMe"
                 >
                     <font-awesome-icon icon="star"></font-awesome-icon>
                 </span>
                 <span class="cat">[{{ category_display }}]</span>
-                - Posted {{ elapsed() }} - {{ story.comments_count }}
-                {{ story.comments_count > 1 ? "comments" : "comment" }}
+                - Posted {{ elapsed() }} -
+                {{ story.comments_count || "No" }}
+                {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
             </p>
         </div>
         <!-- END PIC LANDSCAPE BOX-->
@@ -99,14 +100,15 @@
                 <span
                     class="icon is-left star"
                     :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
-                    data-tooltip="Please authenticate to upvote"
+                    data-tooltip="Please authenticate to star a story"
                     @click="starMe"
                 >
                     <font-awesome-icon icon="star"></font-awesome-icon>
                 </span>
                 <span class="cat">[{{ category_display }}]</span>
-                - Posted {{ elapsed() }} - {{ story.num_comments }}
-                {{ story.num_comments > 1 ? "comments" : "comment" }}
+                - Posted {{ elapsed() }} -
+                {{ story.comments_count || "No" }}
+                {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
             </p>
         </div>
         <!-- END PIC PORTRAIT BOX-->

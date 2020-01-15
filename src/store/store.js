@@ -11,7 +11,6 @@ import { setHomeLayout, resetHomeLayout, resetGenericLayout } from '../utils/uti
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  // TODO filter user data in api
   state: {
     storyComponentMounted: false,
     jwtToken: null, // localStorage.getItem('token'),

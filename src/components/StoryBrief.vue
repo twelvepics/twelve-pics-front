@@ -31,7 +31,7 @@
             <span
                 class="icon is-left star"
                 :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
-                data-tooltip="Please authenticate to upvote"
+                data-tooltip="Please authenticate to star a story"
                 @click="starMe"
             >
                 <font-awesome-icon icon="star"></font-awesome-icon>
@@ -39,9 +39,12 @@
             <span class="cat">[{{ category_display }}]</span>
             - Posted by:
             <a @click.prevent="gotoUserProfile">{{ story.author_info.display_name || story.author_info.username }}</a>
-            - {{ elapsed() }} - {{ story.comments_count }} {{ story.comments_count > 1 ? "comments" : "comment" }}
+            - {{ elapsed() }} -
+            {{ story.comments_count || "No" }}
+            {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
         </p>
     </div>
+
     <!-- END PIC LANDSCAPE BOX-->
 
     <!-- PIC PORTRAIT BOX-->
@@ -78,7 +81,7 @@
             <span
                 class="icon is-left star"
                 :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
-                data-tooltip="Please authenticate to upvote"
+                data-tooltip="Please authenticate to star a story"
                 @click="starMe"
             >
                 <font-awesome-icon icon="star"></font-awesome-icon>
@@ -86,7 +89,9 @@
             <span class="cat">[{{ category_display }}]</span>
             - Posted by:
             <a @click.prevent="gotoUserProfile">{{ story.author_info.display_name || story.author_info.username }}</a>
-            - {{ elapsed() }} - {{ story.comments_count }} {{ story.comments_count > 1 ? "comments" : "comment" }}
+            - {{ elapsed() }} -
+            {{ story.comments_count || "No" }}
+            {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
         </p>
     </div>
     <!-- END PIC PORTRAIT BOX-->

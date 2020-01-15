@@ -1,8 +1,14 @@
 <template>
     <div
         class="content"
-        style="margin:30px 0 30px 0;line-height:1.3rem;border: 1px #ccc solid;padding:1rem .5rem 1rem .5rem"
+        style="margin:30px 0 30px 0;line-height:1.3rem;border: 1px #ccc solid;padding:1rem .5rem 1rem .5rem;position:relative;"
     >
+        <a
+            class="delete is-medium"
+            style="position:absolute;right:5px;top:5px;background:#777;"
+            @click="closeImage"
+            v-show="isImageSelected"
+        ></a>
         <div class="tiles-layout" v-if="!isImageSelected" :style="{ 'min-height': tilesHeight() }">
             <div v-for="(row, rowIdx) in tiles" :key="rowIdx" :style="getRowStyle(rowIdx)">
                 <div v-for="(pic, picIdx) in row" :key="picIdx">
@@ -12,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <div class="content" v-if="isImageSelected" style="width:100%;text-align:center;position:relative;">
+        <div class="content" v-if="isImageSelected" style="width:100%;text-align:center;">
             <div
                 class="loader"
                 style="position:absolute;"
@@ -27,7 +33,6 @@
                     visibility: selected_pic_loaded ? 'visible' : 'hidden'
                 }"
             >
-                <a class="delete is-medium" style="position:absolute;right:5px;top:5px;" @click="closeImage"></a>
                 <img
                     :src="imageSelected !== null && pics[imageSelected].large.web_path"
                     ref="imageLarge"
