@@ -19,11 +19,8 @@
                 >
                     <img
                         :src="pic.large.web_path"
-                        :style="{
-                            width: `${getPicSize(pic.small).width}px`,
-                            'max-height': `${getPicSize(pic.small).height}px`,
-                            border: '1px solid #777'
-                        }"
+                        style="border: '1px solid #777"
+                        :width="pic.large.width"
                         @load="onPicLoad($event)"
                     />
                     <p class="caption">{{ pic.caption }}</p>
@@ -85,13 +82,7 @@ export default {
                     divider = _h / 550;
                 }
             } else {
-                if (_w >= _h) {
-                    // horizontal, make it 530 high
-                    divider = _h / 530;
-                } else {
-                    // vertical, make it 647 high
-                    divider = _h / 647;
-                }
+                divider = 1;
             }
             width = Math.floor(_w / divider);
             height = Math.floor(_h / divider);

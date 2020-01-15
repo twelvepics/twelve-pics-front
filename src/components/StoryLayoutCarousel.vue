@@ -47,8 +47,8 @@
             ></div>
             <div class="slideshow-pic" :style="{ visibility: top_pic_visible ? 'visible' : 'hidden' }">
                 <img
-                    :src="pics[0].large.web_path"
-                    style="max-height:650px;border:1px solid #aaa;"
+                    :src="pics[selectedPicId].large.web_path"
+                    :width="pics[selectedPicId].large.width"
                     ref="top_pic"
                     alt
                     @load="onPicLoad()"
@@ -56,7 +56,7 @@
                 <p
                     class="caption"
                     :style="{
-                        'max-width': `${getCaptionWidth()}px`
+                        'max-width': `${pics[selectedPicId].large.width}px`
                     }"
                     style="text-align:left;"
                     ref="top_caption"
@@ -90,28 +90,13 @@ export default {
         picOrientation(pic) {
             return pic.width >= pic.height ? "horizontal" : "vertical";
         },
-        // getThumbSize(pic) {
-        //     const _h = pic.height;
-        //     const _w = pic.width;
-        //     let width, height, divider;
-        //     if (_w >= _h) {
-        //         // horizontal, make it 126 high
-        //         divider = _h / 126;
-        //     } else {
-        //         // vertical, make it 150 high
-        //         divider = _h / 160;
-        //     }
-        //     width = Math.floor(_w / divider);
-        //     height = Math.floor(_h / divider);
-        //     return { width, height };
-        // },
         thumbClicked(idx) {
             this.top_pic_visible = false;
-            const top_pic = this.$refs.top_pic;
+            // const top_pic = this.$refs.top_pic;
             // console.log(top_pic);
             // console.log(top_pic.src);
             this.selectedPicId = idx;
-            top_pic.src = this.pics[idx].large.web_path;
+            // top_pic.src = this.pics[idx].large.web_path;
             this.$refs.top_caption.textContent = this.pics[idx].caption;
         },
         getCaptionWidth(maxHeight = 650) {

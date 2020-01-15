@@ -332,7 +332,7 @@
                     </div>
                     <div class="pic column is-narrow handle">
                       <img
-                        :src="pic.small.web_path"
+                        :src="pic.medium.web_path"
                         :width="isHorizontal(pic.small) ? 270 : 160"
                         height="auto"
                       />

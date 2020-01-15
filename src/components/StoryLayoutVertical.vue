@@ -7,19 +7,12 @@
             <div
                 class="pic"
                 :style="{
-                    'max-width': picOrientation(pic.large) === 'horizontal' ? '850px' : '450px',
+                    'max-width': `${pic.large.width}px`,
                     display: 'inline-block',
                     visibility: 'hidden'
                 }"
             >
-                <img
-                    :src="pic.large.web_path"
-                    :style="{
-                        width: picOrientation(pic.large) === 'horizontal' ? '850px' : '450px'
-                    }"
-                    alt
-                    @load="onPicLoad($event)"
-                />
+                <img :src="pic.large.web_path" :width="pic.large.width" alt @load="onPicLoad($event)" />
                 <div class="caption" style="text-align:left;">{{ pic.caption }}</div>
             </div>
         </div>

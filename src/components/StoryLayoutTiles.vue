@@ -20,7 +20,7 @@
             ></div>
             <div
                 :style="{
-                    'max-width': picOrientation() === 'horizontal' ? '850px' : '450px',
+                    'max-width': `${pics[imageSelected].large.width}px`,
                     'min-height': pics[imageSelected] && getPicMinHeight(pics[imageSelected]),
                     display: 'inline-block',
                     position: 'relative',
@@ -31,10 +31,10 @@
                 <img
                     :src="imageSelected !== null && pics[imageSelected].large.web_path"
                     ref="imageLarge"
-                    :width="picOrientation() === 'horizontal' ? '850px' : '450px'"
+                    :width="pics[imageSelected].large.width"
                     @load="onPicLoad()"
                 />
-                <div class="caption" style="text-align:left;padding-bottom:2rem;">
+                <div class="caption" style="text-align:left;">
                     {{ imageSelected !== null && pics[imageSelected].caption }}
                 </div>
             </div>
@@ -87,10 +87,10 @@ export default {
         },
         getPicMinHeight(pic) {
             console.log("get pic min height");
-            if (this.$mq === "fullhd" && this.picOrientation() === "horizontal") {
-                return `${(pic.large.height / 1000) * 850 + 10}px`;
-            }
-            return `${this.resampler(pic.large.height) + 10}px`;
+            // if (this.$mq === "fullhd" && this.picOrientation() === "horizontal") {
+            //     return `${(pic.large.height / 1000) * 850 + 10}px`;
+            // }
+            return `${this.resampler(pic.large.height)}px`;
         },
         getRowStyle(idx) {
             // CALCULATE HEIGHT OF TILES AREA HERE
@@ -145,9 +145,8 @@ export default {
             console.log("tiles height");
             let total = 0;
             for (let i = 0; i < this.tiles.length; i++) {
-                total += this.tiles[i][0].tile_height + 5;
+                total += this.tiles[i][0].tile_height;
             }
-            total += this.tiles.length * 5;
             total = this.resampler(total);
             console.log(`${total}px`);
             return `${total}px`;
