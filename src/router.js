@@ -43,6 +43,16 @@ export default new Router(
           isModalView: true
         }
       },
+      {
+        path: '/user/:username/starred',
+        name: 'starred',
+        components: {
+          default: () => import(/* webpackChunkName: "starred-stories" */ './views/Starred.vue'),
+        },
+        meta: {
+          isModalView: true
+        }
+      },
       // create a story
       {
         path: '/story/create',

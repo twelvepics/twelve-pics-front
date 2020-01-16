@@ -4,15 +4,11 @@
     <div class="container is-fluid" ref="stories-container">
       <div class="columns">
         <div class="column auto">
-          <page-loader v-if="this.isAuthenticated && !this.isUserInited"></page-loader>
           <!-- STORIES -->
-          <div>
+          <page-error v-if="!isAuthenticated" errorMessage="PLEASE AUTHENTICATE!"></page-error>
+          <div v-else>
             <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
-            <infinite-loading
-              v-if="!this.isAuthenticated || this.isUserInited"
-              @infinite="infiniteHandler"
-              :identifier="infiniteId"
-            >
+            <infinite-loading @infinite="infiniteHandler" :identifier="infiniteId">
               <div slot="spinner">
                 <page-loader></page-loader>
               </div>
@@ -23,7 +19,7 @@
                 <page-error errorMessage="No result :("></page-error>
               </div>
               <div slot="error">
-                <page-error errorMessage="Ooops, something went wrong :("></page-error>
+                <page-error :errorMessage="errorMessage"></page-error>
               </div>
             </infinite-loading>
           </div>
@@ -41,24 +37,23 @@
 </template>
 
 <script>
+// eslint-disable-next-line
+import Vue from "vue";
+import * as Sentry from "@sentry/browser";
 import InfiniteLoading from "vue-infinite-loading";
-import { EventBus } from "../event-bus.js";
 import { mapActions, mapGetters } from "vuex";
-import store from "@/store/store.js";
-import { categoriesToIds } from "@/utils/categories.js";
 import axiosBase from "../services/axiosBase";
+// import StoryModal from "../components/StoryModal.vue";
 import StoryBrief from "../components/StoryBrief.vue";
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
 import HomeRightCol from "../components/HomeRightCol.vue";
 
-import * as Sentry from "@sentry/browser";
-
 ///////////////////////////////////////
 // @ is an alias to /src
 ///////////////////////////////////////
 export default {
-  name: "home",
+  name: "starred",
   components: {
     InfiniteLoading,
     StoryBrief,
@@ -77,27 +72,26 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "authenticatedUser", "isUserInited"])
+    ...mapGetters(["isAuthenticated", "authenticatedUser"])
   },
   methods: {
     ...mapActions(["resetStoryComponentHomeLayout"]),
     async fetchStories($state) {
       try {
-        console.log("# --- infiniteHandler called --- #");
-        console.log(`# --- Fetching page ${this.page} --- #`);
+        console.log("infiniteHandler called");
+        console.log(`Fetching page ${this.page}`);
         // await new Promise(resolve => setTimeout(resolve, 1000));
         let params = {};
-        // not authenticated user, need to send categories as a qs
-        const categories = store.getters.getCategories;
-        const categories_by_ids = categories
-          .map(c => categoriesToIds[c])
-          .sort((a, b) => a - b)
-          .join("-");
-        params.categories = categories_by_ids;
-        params.page = this.page;
-        const response = await axiosBase.get(`/stories`, {
-          params
-        });
+        if (this.page > 1) {
+          params.page = this.page;
+        }
+        const response = await axiosBase.get(
+          `/users/${this.authenticatedUser.username}/starred`,
+          {
+            params
+          }
+        );
+        console.log(response.data.stories);
         const stories = response.data.stories;
         if (stories.length) {
           this.page += 1;
@@ -107,74 +101,59 @@ export default {
           $state.complete();
         }
       } catch (e) {
-        console.log(e);
-        Sentry.captureException(e);
         $state.error();
+        if (e.response) {
+          if ([401, 403].includes(e.response.status)) {
+            console.log(e.response.data);
+            this.errorMessage = e.response.data.error;
+          } else {
+            // Most probably a 500
+            this.errorMessage = "SERVER ERROR";
+          }
+        } else {
+          this.errorMessage = "Ooops, something went wrong :(";
+          Sentry.captureException(e);
+          console.log(e);
+        }
       }
-    },
-    async onCategoriesChanged() {
-      this.changeFilter();
-    },
-    async onSearchTriggered(searchStr) {
-      // go to search page pass searchstr as qs
-      // hide cats in header
-      this.$router.push({ name: "search", query: { q: searchStr } });
     },
     async infiniteHandler($state) {
       await this.fetchStories($state);
     },
     changeFilter() {
+      console.log("Change filter");
+      // console.log(`InfiniteId = > ${this.infiniteId}`);
       this.page = 1;
       this.stories = [];
       this.infiniteId += 1;
     },
     updateStory(story) {
+      console.log("updating story");
+      // console.log(story);
       const [story_to_update] = this.stories.filter(s => s._key === story._key);
+      // console.log(story_to_update);
       story_to_update.comments_count = story.comments_count;
     }
   },
-  created() {
-    console.log(`User inited -> ${this.isUserInited}`);
-    console.log(`Env: ${process.env.NODE_ENV}`);
-    console.log(`Env base url: ${process.env.BASE_URL}`);
-  },
   mounted() {
-    console.log("Home mounted");
-    EventBus.$on("categoriesChanged", () => {
-      this.onCategoriesChanged();
-    });
-    EventBus.$on("searchTriggered", searchStr => {
-      this.onSearchTriggered(searchStr);
-    });
-    EventBus.$on("login", () => {
-      this.changeFilter();
-    });
+    console.log("Starred mounted");
+  },
+  created() {
+    //
   },
   beforeDestroy() {
-    console.log("Home beforeDestroyed");
-    EventBus.$off("categoriesChanged");
-    EventBus.$off("searchTriggered");
-    EventBus.$off("login");
+    console.log("Starred beforeDestroyed");
   },
   destroyed() {
-    console.log("Home destroyed");
+    console.log("Starred destroyed");
   },
   watch: {
     // ----------------------------------------------------------------------
-    isUserInited(newVal, oldVal) {
-      console.log(`User inited watcher: ${oldVal} to ${newVal}`);
-    },
-    // ----------------------------------------------------------------------
     $route(to, from) {
       // UPDATE NUM COMMENTS IF ROUTE FROM == view-story
-      console.log("# --- Watch route --- #");
-      // if (from.name === "home") {
-      //     try {
-      //         this.changeFilter();
-      //     } catch (e) {
-      //         // do nothing
-      //     }
-      // }
+      console.log("# --- Starred: watch route --- #");
+
+      console.log("# -------------- #");
       if (from.name === "view-story") {
         const from_slug = from.params.slug;
         axiosBase
@@ -186,7 +165,7 @@ export default {
           })
           .catch(e => {
             // just log me
-            console.error(e);
+            console.log(e);
             Sentry.captureException(e);
           });
       }
