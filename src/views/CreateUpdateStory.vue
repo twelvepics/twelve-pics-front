@@ -289,7 +289,10 @@
                   <b>Upload your images</b>
                 </p>
                 <p class="content is-small is-marginless pb-05">
-                  <span class="isError" v-if="$v.pics_uploaded.$error">Minimum 6, Maximum 12 photos</span>
+                  <span
+                    class="isError"
+                    v-if="$v.pics_uploaded.$error"
+                  >Minimum 6, Maximum 12 photos - Maximum caption length 256 characters</span>
                   <span v-else>(required) Obviously :) Minimum 6, Maximum 12 photos - JPEG or PNG</span>
                 </p>
 

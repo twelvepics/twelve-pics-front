@@ -38,6 +38,7 @@ $input-placeholder-color: $my-darker-grey;
 @import "./node_modules/bulma-extensions/bulma-switch/src/sass/index.sass";
 @import "./node_modules/bulma-extensions/bulma-tooltip/src/sass/index.sass";
 @import "./node_modules/swiper/swiper.scss";
+@import "./node_modules/swiper/components/navigation/navigation.scss";
 
 .is-divider-vertical {
     padding: 0;
