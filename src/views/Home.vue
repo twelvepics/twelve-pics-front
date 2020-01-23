@@ -4,15 +4,10 @@
     <div class="container is-fluid" ref="stories-container">
       <div class="columns">
         <div class="column auto">
-          <page-loader v-if="this.isAuthenticated && !this.isUserInited"></page-loader>
           <!-- STORIES -->
           <div>
             <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
-            <infinite-loading
-              v-if="!this.isAuthenticated || this.isUserInited"
-              @infinite="infiniteHandler"
-              :identifier="infiniteId"
-            >
+            <infinite-loading @infinite="infiniteHandler" :identifier="infiniteId">
               <div slot="spinner">
                 <page-loader></page-loader>
               </div>
@@ -85,7 +80,9 @@ export default {
       try {
         console.log("# --- infiniteHandler called --- #");
         console.log(`# --- Fetching page ${this.page} --- #`);
-        // await new Promise(resolve => setTimeout(resolve, 1000));
+        if (this.isAuthenticated && !this.isUserInited) {
+          await this.$store.dispatch("initUser");
+        }
         let params = {};
         // not authenticated user, need to send categories as a qs
         const categories = store.getters.getCategories;
