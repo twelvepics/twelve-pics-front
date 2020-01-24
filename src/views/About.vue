@@ -17,13 +17,10 @@
               <h5
                 class="has-text-weight-semibold is-2"
                 style="color:#0960c4;"
-              >A very selfish project</h5>
+              >Photo stories are amazing</h5>
               <p class="is-size-6">
-                Hi. I'm a photographer, and a web developer. There are many options to showcase and
-                share photographic work on the web. Some are nice and cool but never what I really would
-                like, maybe i'm a bit picky. So I decided to give it a try and build my "ideal" photo
-                sharing website. It is a personnal project, I love viewing other photographers work, and
-                wish I had a cool place to land and share mine, just this&nbsp;:)
+                Hi. I'm a photographer, and a web developer. This website is a personnal project,
+                I love viewing other photographers work, and wish I had a cool place to land and share mine.
               </p>
             </div>
             <!-- ABOUT ONE -->
@@ -35,18 +32,18 @@
                 style="color:#0960c4;"
               >Current status and what's next</h5>
               <p class="is-size-6">
-                Right now Twelvepics is in beta stage. You can try the site, your feedback and suggestions are welcome, bug reports too, use the contact form.
-                The site is just starting and will of course evolve and mature, little by little, no rush.
+                Right now Twelvepics is in early stage. You can try the site, your feedback and suggestions are welcome,
+                bug reports too, use the contact form. The site is just starting and will of course evolve and mature, little by little, no rush.
               </p>
               <p class="is-size-6">
-                The general and acknowledged trend in web site building is mobile first. To be honnest I really prefer to watch photos on a real big nice display,
-                never enjoyed so much watching pics on a mobile phone screen. So for now twelvepics is desktop first, who cares about trends.
-                An improved mobile version is in the works though.
+                The general and acknowledged trend in web site building is mobile first. To be honnest I really prefer to watch good photos
+                on a real big nice display, never enjoyed so much watching pics on a mobile phone screen. So for now twelvepics is desktop first.
+                A mobile version is in the works though.
               </p>
               <p class="is-size-6">
                 In a near future, I am willing to experiment on new ways for photographers to finance and be rewarded for their work.
-                Documentary or street photographers for exemple produce incredible work, and at the same time have a hard time making any money of it.
-                Well, more about this later, stay tuned.
+                Documentary or street photographers for exemple produce incredible work, and at the same time some are having a hard time
+                making any money of it. Well, more about this later, stay tuned.
               </p>
             </div>
             <!-- ABOUT TWO -->
@@ -57,13 +54,14 @@
                 class="has-text-weight-semibold is-2"
                 style="color:#0960c4;"
               >Copyright and other stuff</h5>
+              <p
+                class="is-size-6"
+              >Twelvepics is and will remain completely free to use, for visitors as well as for creators.</p>
               <p class="is-size-6">
-                Twelvepics is and will remain completely free to use. If the projects grows up, it may need financial baking, based on business sponsoring and users donations.
-                Time will tell.
-              </p>
-              <p class="is-size-6">
-                We believe that copyright empowers creativity, no further use of the photos you have decided to publish on the site will ever be made by us. When you create an image it is automatically protected by copyright. You should never give up this right. If you are willing to share your creations there are plenty of solutions that allow you to do it without giving up all your rights.
-                See who i'm thinking about?
+                I believe that copyright empowers creativity, no further use of the photos you have decided to publish
+                on the site will ever be made. When you create an image it is automatically protected by copyright.
+                You should never give up this right. If you are willing to share for free your creations there are plenty
+                of solutions that allow you to do it without giving up all your rights.
               </p>
               <p
                 class="is-size-6"
