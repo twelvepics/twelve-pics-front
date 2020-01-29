@@ -19,34 +19,21 @@
                 style="color:#0960c4;"
               >Photo stories are amazing</h5>
               <p class="is-size-6">
-                Hi. I'm a photographer, and a web developer. This website is a personnal project,
-                I love viewing other photographers work, and wish I had a cool place to land and share mine.
+                Hi. I'm a photographer, and a web developer. Twelvepics.com is dedicated to photo stories/essays.
+                Everyone is welcome to post and share their stories. For now I'm just launching the site, it will of course evolve and mature,
+                little by little, depending on the feedback I get from users. No rush.
+              </p>
+              <p class="is-size-6">
+                In the upcoming months, I am willing to experiment and find new ways for photographers to finance and be rewarded for their work.
+                Hey guys, it's already 2020 :)
+                The photography industry is still stuck to its 90's models. Magazines suffer severe budgetary restrictions,
+                the awards and grants system make one happy winner and the remaining thousand depressive, including me, let's not talk about the pay for exposure trend.
+                To me it looks like a total disaster.
+                The music industry evolved, changed its models, nowadays many musicians earn a living, isn't it time for photography to do the same?
+                More about this later, stay tuned.
               </p>
             </div>
             <!-- ABOUT ONE -->
-
-            <!-- ABOUT TWO -->
-            <div class="field m-30-0-15-0">
-              <h5
-                class="has-text-weight-semibold is-2"
-                style="color:#0960c4;"
-              >Current status and what's next</h5>
-              <p class="is-size-6">
-                Right now Twelvepics is in early stage. You can try the site, your feedback and suggestions are welcome,
-                bug reports too, use the contact form. The site is just starting and will of course evolve and mature, little by little, no rush.
-              </p>
-              <p class="is-size-6">
-                The general and acknowledged trend in web site building is mobile first. To be honnest I really prefer to watch good photos
-                on a real big nice display, never enjoyed so much watching pics on a mobile phone screen. So for now twelvepics is desktop first.
-                A mobile version is in the works though.
-              </p>
-              <p class="is-size-6">
-                In a near future, I am willing to experiment on new ways for photographers to finance and be rewarded for their work.
-                Documentary or street photographers for exemple produce incredible work, and at the same time some are having a hard time
-                making any money of it. Well, more about this later, stay tuned.
-              </p>
-            </div>
-            <!-- ABOUT TWO -->
 
             <!-- ABOUT THREE -->
             <div class="field m-30-0-15-0">

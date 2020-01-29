@@ -13,7 +13,7 @@
           <!-- CARD CONTENT -->
           <div class="card-content">
             <p class="title is-size-4" style="border-bottom: 1px solid #aaa;padding-bottom:.8rem;">
-              Stories posted by
+              Stories by
               <router-link :to="{ name: 'user', params: { username: user_info.username } }">
                 {{
                 user_info.display_name || user_info.username

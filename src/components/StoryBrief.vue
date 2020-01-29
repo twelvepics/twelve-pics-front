@@ -36,7 +36,7 @@
         <font-awesome-icon icon="star"></font-awesome-icon>
       </span>
       <span class="cat">[{{ category_display }}]</span>
-      - Posted by:
+      - Author:
       <a
         @click.prevent="gotoUserProfile"
       >{{ story.author_info.display_name || story.author_info.username }}</a>
@@ -87,7 +87,7 @@
         <font-awesome-icon icon="star"></font-awesome-icon>
       </span>
       <span class="cat">[{{ category_display }}]</span>
-      - Posted by:
+      - Author:
       <a
         @click.prevent="gotoUserProfile"
       >{{ story.author_info.display_name || story.author_info.username }}</a>

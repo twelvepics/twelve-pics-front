@@ -13,8 +13,8 @@
           v-if="story"
           class="column"
           style="padding-left:35px;"
-        >Published by {{story.author_info.display_name || story.author_info.username}} - {{ elapsed() }}</div>
-        <div class="column is-narrow has-text-right" style="padding-right:35px;">
+        >Author: {{story.author_info.display_name || story.author_info.username}} - {{ elapsed() }}</div>
+        <div v-if="story" class="column is-narrow has-text-right" style="padding-right:35px;">
           <span style="font-weight:medium;padding-right:3px;">
             <a @click.prevent="closeStory()">CLOSE</a>
           </span>

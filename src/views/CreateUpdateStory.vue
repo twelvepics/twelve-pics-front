@@ -51,7 +51,7 @@
               <p class="subtitle is-size-6">
                 Build your story, 6 to 12 photos. An informative text is required. Your images must be your own. Do not post any photos from other photographers.
                 Do not hesitate to start the title of your story with [NSFW] if it is a mature or hard to view subject.
-                <br />Once saved, you can update/modify your post at any time through the top right > my stories menu item.
+                <br />Once saved, you can update/modify your post at any time through the top right menu > my stories.
               </p>
 
               <!-- SHOW STORY URL -->
