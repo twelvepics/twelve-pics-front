@@ -571,7 +571,7 @@ const MIN_PICS = 6;
 const notZero = value => value !== "0";
 const isTagsList = value => {
   if (value.trim().length)
-    return /^[a-zA-Z0-9 _-]+(,[a-zA-Z0-9 _-]+)*$/.test(value);
+    return /^[a-zA-Z0-9 _-]+(,[a-zA-Z0-9 _-]+(,{0,1}))*$/.test(value);
   return true;
 };
 
@@ -649,7 +649,10 @@ export default {
       }
       // tags to Array
       this.story.tags = this.tagsStr.trim().length
-        ? this.tagsStr.split(",").map(x => x.trim())
+        ? this.tagsStr
+            .split(",")
+            .map(t => t.trim())
+            .filter(t => t.length)
         : [];
       this.$store.commit("setCreateFormCache", this.story);
     },
@@ -687,7 +690,10 @@ export default {
         }
         // tags to Array
         this.story.tags = this.tagsStr.trim().length
-          ? this.tagsStr.split(",").map(x => x.trim())
+          ? this.tagsStr
+              .split(",")
+              .map(x => x.trim())
+              .filter(t => t.length)
           : [];
         if (action === "update") {
           console.log("I am an update");

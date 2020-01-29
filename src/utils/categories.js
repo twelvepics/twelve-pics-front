@@ -20,9 +20,9 @@ const categoriesList = [
         display: 'Nature and wildlife'
     },
     {
-        key: 'wedding',
+        key: 'landscape',
         id: 5,
-        display: 'Wedding'
+        display: 'Landscape'
     },
     {
         key: 'travel',
@@ -35,24 +35,29 @@ const categoriesList = [
         display: 'Daily life'
     },
     {
-        key: 'fineArt',
+        key: 'cityScape',
         id: 8,
+        display: 'CityScape'
+    },
+    {
+        key: 'fineArt',
+        id: 9,
         display: 'Fine art'
     },
     {
         key: 'portrait',
-        id: 9,
+        id: 10,
         display: 'Portrait'
     },
     {
         key: 'sport',
-        id: 10,
+        id: 11,
         display: 'Sport'
     },
     {
-        key: 'architecture',
-        id: 11,
-        display: 'Architecture'
+        key: 'whatever',
+        id: 12,
+        display: 'Whatever'
     },
 ]
 

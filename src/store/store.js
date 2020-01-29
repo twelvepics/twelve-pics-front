@@ -4,6 +4,7 @@ import axiosBase from '../services/axiosBase'
 ////////////////////////////////////////////////////////////
 
 import { setHomeLayout, resetHomeLayout, resetGenericLayout } from '../utils/utils'
+import { categoriesList } from '../utils/categories'
 
 ////////////////////////////////////////////////////////////
 // modularize and namespace later when it's too messy
@@ -15,7 +16,9 @@ export default new Vuex.Store({
     storyComponentMounted: false,
     jwtToken: null, // localStorage.getItem('token'),
     user: null, // JSON.parse(localStorage.getItem('user')),
-    categories: ['documentary', 'stillLife', 'wildLife', 'wedding', 'travel', 'dailyLife', 'fineArt', 'portrait', 'sport', 'architecture', 'streetPhotography'],
+    categories: categoriesList.map(cat =>
+      cat.key
+    ),
     userInited: false,
     createFormCache: {},
   },
