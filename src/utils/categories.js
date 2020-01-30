@@ -37,7 +37,7 @@ const categoriesList = [
     {
         key: 'cityScape',
         id: 8,
-        display: 'CityScape'
+        display: 'Cityscape'
     },
     {
         key: 'fineArt',
