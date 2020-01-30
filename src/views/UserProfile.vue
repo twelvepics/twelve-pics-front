@@ -241,7 +241,7 @@ export default {
     },
     async fetchData() {
       try {
-        // if confirm email from another browser
+        // refresh local user in case confirmed email from another browser
         if (this.isAuthenticated && !this.authenticatedUser.email_confirmed) {
           await this.$store.dispatch("initUser");
         }

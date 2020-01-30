@@ -333,7 +333,7 @@
                         ></font-awesome-icon>
                       </span>
                     </div>
-                    <div class="pic column is-narrow handle">
+                    <div class="pic column is-narrow handle" style="margin-top:1.3rem">
                       <img
                         :src="pic.medium.web_path"
                         :width="isHorizontal(pic.small) ? 270 : 160"
@@ -342,28 +342,45 @@
                     </div>
                     <div class="picInfo column">
                       <div class="field">
-                        <label class="label">Caption</label>
+                        <label
+                          class="label"
+                          v-if="$v.pics_uploaded.$each[idx].caption.$error"
+                          style="color:red"
+                        >Caption must be max 256 characters</label>
+                        <label class="label" v-else>Caption</label>
+                        <!--- XOXO --->
+
+                        <!--- XOXO --->
                         <div class="control">
                           <textarea
                             class="textarea"
-                            placeholder="2 lines of textarea"
+                            :class="{ 'is-danger': $v.pics_uploaded.$each[idx].caption.$error }"
+                            placeholder="Enter your caption"
                             rows="2"
                             :value="pic.caption"
                             @blur="setPicCaption(idx, $event)"
+                            @keyup="onCaptionKeyup(idx, $event)"
                           ></textarea>
                         </div>
                       </div>
 
                       <div class="field">
-                        <label class="label">Description</label>
+                        <label
+                          class="label"
+                          v-if="$v.pics_uploaded.$each[idx].description.$error"
+                          style="color:red"
+                        >Description must be max 64 characters</label>
+                        <label class="label" v-else>Description (Alt tag)</label>
                         <div class="control">
                           <input
                             class="input"
+                            :class="{ 'is-danger': $v.pics_uploaded.$each[idx].description.$error }"
                             type="text"
                             placeholder="A short description"
                             style="max-width:30rem;"
                             :value="pic.description"
                             @blur="setPicDescription(idx, $event)"
+                            @keyup="onDescriptionKeyup(idx, $event)"
                             @keydown.enter.prevent
                           />
                         </div>
@@ -768,12 +785,32 @@ export default {
       });
     },
     setPicDescription(idx, event) {
-      // console.log(event.target.value);
+      console.log("#--- setPicDescription ---#");
+      console.log(event.target.value.length);
       this.pics_uploaded[idx].description = event.target.value;
+      this.$v.pics_uploaded.$each[idx].description.$touch();
+    },
+    onDescriptionKeyup(idx, event) {
+      console.log("#--- onDescriptionKeyup ---#");
+      // console.log(event.target.value.length);
+      console.log(`-> ${this.pics_uploaded[idx].description}`);
+      this.pics_uploaded[idx].description = event.target.value;
+      this.$v.pics_uploaded.$each[idx].description.$touch();
     },
     setPicCaption(idx, event) {
-      // console.log(event.target.value);
+      // console.log("#--- setPicCaption ---#");
+      // console.log(event.target);
+      // console.log(event.target.value.length);
       this.pics_uploaded[idx].caption = event.target.value;
+      this.$v.pics_uploaded.$each[idx].caption.$touch();
+    },
+    onCaptionKeyup(idx, event) {
+      // console.log("#--- onCaptionKeyup ---#");
+      // console.log(event.target);
+      // console.log(event.target.value);
+      // console.log(event.target.value.length);
+      this.pics_uploaded[idx].caption = event.target.value;
+      this.$v.pics_uploaded.$each[idx].caption.$touch();
     },
     removePic(idx) {
       this.pics_uploaded.splice(idx, 1);
