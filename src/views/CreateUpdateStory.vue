@@ -268,7 +268,7 @@
                   >Must be at least 300 and at most 5000 Characters</span>
                   <span
                     v-else
-                  >(Required) May be some context, additional information, your thoughts about the subject. Min 300 to 5000 characters.</span>
+                  >(Required) May be some context, additional information, your thoughts about the subject. Min 300 to max 5000 characters.</span>
                 </p>
                 <div class="control">
                   <textarea
@@ -314,11 +314,13 @@
                   ghost-class="moving-card"
                   handle=".handle"
                   :animation="200"
+                  @change="draggableChange"
                 >
                   <div
                     v-for="(pic, idx) in pics_uploaded"
                     :key="idx"
                     class="columns box uploadedImageBox"
+                    style="border: 1px solid #ccc"
                     :class="{first: idx === 0}"
                   >
                     <div class="controlIcons">
@@ -333,7 +335,7 @@
                         ></font-awesome-icon>
                       </span>
                     </div>
-                    <div class="pic column is-narrow handle" style="margin-top:1.3rem">
+                    <div class="pic column is-narrow handle">
                       <img
                         :src="pic.medium.web_path"
                         :width="isHorizontal(pic.small) ? 270 : 160"
@@ -344,7 +346,7 @@
                       <div class="field">
                         <label
                           class="label"
-                          v-if="$v.pics_uploaded.$each[idx].caption.$error"
+                          v-if="caption_errors.includes(idx)"
                           style="color:red"
                         >Caption must be max 256 characters</label>
                         <label class="label" v-else>Caption</label>
@@ -354,12 +356,11 @@
                         <div class="control">
                           <textarea
                             class="textarea"
-                            :class="{ 'is-danger': $v.pics_uploaded.$each[idx].caption.$error }"
+                            :class="{ 'is-danger': caption_errors.includes(idx) }"
                             placeholder="Enter your caption"
                             rows="2"
                             :value="pic.caption"
-                            @blur="setPicCaption(idx, $event)"
-                            @keyup="onCaptionKeyup(idx, $event)"
+                            @input="setCaption(idx, $event)"
                           ></textarea>
                         </div>
                       </div>
@@ -367,20 +368,19 @@
                       <div class="field">
                         <label
                           class="label"
-                          v-if="$v.pics_uploaded.$each[idx].description.$error"
+                          v-if="description_errors.includes(idx)"
                           style="color:red"
                         >Description must be max 64 characters</label>
                         <label class="label" v-else>Description (Alt tag)</label>
                         <div class="control">
                           <input
                             class="input"
-                            :class="{ 'is-danger': $v.pics_uploaded.$each[idx].description.$error }"
+                            :class="{ 'is-danger': description_errors.includes(idx) }"
                             type="text"
                             placeholder="A short description"
                             style="max-width:30rem;"
                             :value="pic.description"
-                            @blur="setPicDescription(idx, $event)"
-                            @keyup="onDescriptionKeyup(idx, $event)"
+                            @input="setDescription(idx, $event)"
                             @keydown.enter.prevent
                           />
                         </div>
@@ -583,6 +583,8 @@ import { isHorizontal, isVertical } from "../utils/pics";
 
 const MAX_PICS = 12;
 const MIN_PICS = 6;
+const CAPTION_MAXLEN = 256;
+const DESCRIPTION_MAXLEN = 64;
 
 // custom validators
 const notZero = value => value !== "0";
@@ -649,6 +651,8 @@ export default {
       // pics uploaded
       pics_uploaded: [],
       maxUploads: MAX_PICS,
+      caption_errors: [],
+      description_errors: [],
       // toast
       toast_message: "",
       toast_type: "",
@@ -677,7 +681,7 @@ export default {
       this.is_form_error = false;
       this.submit_pending = true;
       this.$v.$touch();
-      if (this.$v.$invalid) {
+      if (this.$v.$invalid || this.hasPicsError()) {
         this.is_form_error = true;
         this.submit_pending = false;
         window.scrollTo(0, 0);
@@ -784,33 +788,37 @@ export default {
         large: pic.large
       });
     },
-    setPicDescription(idx, event) {
-      console.log("#--- setPicDescription ---#");
-      console.log(event.target.value.length);
-      this.pics_uploaded[idx].description = event.target.value;
-      this.$v.pics_uploaded.$each[idx].description.$touch();
-    },
-    onDescriptionKeyup(idx, event) {
-      console.log("#--- onDescriptionKeyup ---#");
-      // console.log(event.target.value.length);
-      console.log(`-> ${this.pics_uploaded[idx].description}`);
-      this.pics_uploaded[idx].description = event.target.value;
-      this.$v.pics_uploaded.$each[idx].description.$touch();
-    },
-    setPicCaption(idx, event) {
-      // console.log("#--- setPicCaption ---#");
-      // console.log(event.target);
-      // console.log(event.target.value.length);
+    setCaption(idx, event) {
+      // console.log(`setCaption ${idx}`);
       this.pics_uploaded[idx].caption = event.target.value;
-      this.$v.pics_uploaded.$each[idx].caption.$touch();
+      if (this.pics_uploaded[idx].caption.length > CAPTION_MAXLEN) {
+        // add error
+        if (!this.caption_errors.includes(idx)) {
+          this.caption_errors.push(idx);
+        }
+      } else {
+        // remove error if any
+        const index = this.caption_errors.indexOf(idx);
+        if (index > -1) {
+          this.caption_errors.splice(index, 1);
+        }
+      }
     },
-    onCaptionKeyup(idx, event) {
-      // console.log("#--- onCaptionKeyup ---#");
-      // console.log(event.target);
-      // console.log(event.target.value);
-      // console.log(event.target.value.length);
-      this.pics_uploaded[idx].caption = event.target.value;
-      this.$v.pics_uploaded.$each[idx].caption.$touch();
+    setDescription(idx, event) {
+      // console.log(`setDescription ${idx}`);
+      this.pics_uploaded[idx].description = event.target.value;
+      if (this.pics_uploaded[idx].description.length > DESCRIPTION_MAXLEN) {
+        // add error
+        if (!this.description_errors.includes(idx)) {
+          this.description_errors.push(idx);
+        }
+      } else {
+        // remove error if any
+        const index = this.description_errors.indexOf(idx);
+        if (index > -1) {
+          this.description_errors.splice(index, 1);
+        }
+      }
     },
     removePic(idx) {
       this.pics_uploaded.splice(idx, 1);
@@ -1024,8 +1032,50 @@ export default {
       this.show_toast = true;
       this.toast_message = "This Story has been deleted";
       this.toast_type = "is-warning";
-    }
+    },
     ///////////////////////////
+
+    ///////////////////////////
+    // draggable events
+    ///////////////////////////
+    draggableChange() {
+      // console.log("draggable change");
+      // console.log(evt);
+      // console.log(this);
+      console.log(this.caption_errors);
+      this.resetPicsErrors();
+    },
+    resetPicsErrors() {
+      // console.log(this.caption_errors);
+      // console.log(this.pics_uploaded.length);
+
+      this.caption_errors = [];
+      this.description_errors = [];
+
+      for (let i = 0; i < this.pics_uploaded.length; i++) {
+        // console.log(i);
+        // console.log(this.pics_uploaded[i]);
+        if (
+          this.pics_uploaded[i].caption &&
+          this.pics_uploaded[i].caption.length > CAPTION_MAXLEN
+        ) {
+          // add error
+          this.caption_errors.push(i);
+        }
+        if (
+          this.pics_uploaded[i].description &&
+          this.pics_uploaded[i].description.length > DESCRIPTION_MAXLEN
+        ) {
+          // add error
+          this.description_errors.push(i);
+        }
+      }
+    },
+    hasPicsError() {
+      return (
+        this.caption_errors.length !== 0 || this.description_errors.length !== 0
+      );
+    }
   },
   computed: {
     ...mapGetters([
@@ -1101,27 +1151,27 @@ export default {
     pics_uploaded: {
       required,
       minLength: minLength(MIN_PICS),
-      maxLength: maxLength(MAX_PICS),
-      $each: {
-        original: {
-          required
-        },
-        small: {
-          required
-        },
-        medium: {
-          required
-        },
-        large: {
-          required
-        },
-        caption: {
-          maxLength: maxLength(256)
-        },
-        description: {
-          maxLength: maxLength(64)
-        }
-      }
+      maxLength: maxLength(MAX_PICS)
+      // $each: {
+      //   original: {
+      //     required
+      //   },
+      //   small: {
+      //     required
+      //   },
+      //   medium: {
+      //     required
+      //   },
+      //   large: {
+      //     required
+      //   },
+      //   caption: {
+      //     maxLength: maxLength(256)
+      //   },
+      //   description: {
+      //     maxLength: maxLength(64)
+      //   }
+      // }
     } // TODO
   }
 };
@@ -1228,7 +1278,7 @@ footer {
   margin: 15px 0 0 0;
 }
 .picInfo {
-  margin-top: 15px;
+  margin-top: 13px;
 }
 @media only screen and (max-width: 768px) {
   .picInfo {

@@ -15,15 +15,14 @@
         world. Share yours...
       </p>
     </div>
-    <!-- 
     <div class="notification is-primary" style="padding:1em;">
       <p class="title is-6" style="padding:0;margin:0;">Where we stand</p>
       <p class="content" style="padding:0;margin:.5rem 0 0 0;font-size:95%;">
-        Twelvepics is free to use and will remain so. We believe that copyright empowers creativity, no further
+        We believe that copyright empowers creativity, no further
         use of the photos you have decided to publish on the site will ever be made by us.
+        Twelvepics is free to use and will remain so.
         <br />
       </p>
     </div>
-    -->
   </div>
 </template>
