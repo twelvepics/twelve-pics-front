@@ -425,7 +425,6 @@ const UPLOAD_STATUS_INITIAL = 0,
   UPLOAD_STATUS_SAVING = 1,
   UPLOAD_STATUS_SUCCESS = 2,
   UPLOAD_STATUS_FAILED = 3;
-const AVATARS_BASE_URL = "http://localhost/images/avatars";
 import { maxLength } from "vuelidate/lib/validators";
 import PageError from "../components/PageError.vue";
 
@@ -452,8 +451,6 @@ export default {
       uploadErrorMessage: "",
       uploadCurrentStatus: null,
       uploadFieldName: "avatar",
-      /* fetch avatars */
-      avatars_base_url: AVATARS_BASE_URL,
       profile: {
         display_name: "",
         avatar_path: "",

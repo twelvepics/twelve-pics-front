@@ -34,24 +34,118 @@
     <div class="navbar-menu" :class="{ 'is-active': showBurgerDropdown }">
       <div class="navbar-start">
         <!-- navbar items -->
-        <div class="navbar-item buttons">
-          <a href class="button is-dark is-inverted is-outlined">Sign-up</a>
-          <a href class="button is-dark is-inverted is-outlined">Sign-in</a>
+        <div class="navbar-item buttons" v-if="!isAuthenticated">
+          <a
+            class="button is-dark is-inverted is-outlined"
+            @click.prevent="hideBurgerDropdown()"
+          >Sign-up</a>
+          <a
+            class="button is-dark is-inverted is-outlined"
+            @click.prevent="hideBurgerDropdown()"
+          >Sign-in</a>
+        </div>
+        <div class="navbar-item buttons" v-else>
+          <a
+            class="button is-dark is-inverted is-outlined"
+            @click.prevent="hideBurgerDropdown()"
+          >Post a story</a>
         </div>
         <div class="navbar-item">
           <div class="field">
             <div class="control">
-              <input class="input is-dark" type="text" placeholder="Search stories" />
+              <input
+                class="input is-dark"
+                type="text"
+                placeholder="Search stories"
+                @keydown.enter.prevent="hideBurgerDropdown()"
+              />
             </div>
           </div>
         </div>
       </div>
       <div class="navbar-end">
         <!-- navbar items -->
-        <a class="navbar-item">Filter categories</a>
-        <a class="navbar-item">My profile</a>
-        <a class="navbar-item">My stories</a>
-        <a class="navbar-item">Starred</a>
+
+        <!-- CATEGORIES -->
+        <a class="navbar-item" @click.prevent="hideBurgerDropdown()">
+          <span class="fa-icon-pr7">
+            <font-awesome-icon icon="list"></font-awesome-icon>
+          </span>
+          <span>Filter categories</span>
+        </a>
+        <!-- -->
+
+        <!-- MY PROFILE -->
+        <router-link
+          v-if="isAuthenticated"
+          class="navbar-item"
+          to="/<profile-url>"
+          exact
+          @click.native="hideBurgerDropdown()"
+        >
+          <span class="fa-icon-pr7">
+            <font-awesome-icon icon="user"></font-awesome-icon>
+          </span>
+          <span>My profile</span>
+        </router-link>
+        <!-- -->
+
+        <!-- MY STORIES -->
+        <router-link
+          v-if="isAuthenticated"
+          class="navbar-item"
+          to="</stories-url>"
+          exact
+          @click.native="hideBurgerDropdown()"
+        >
+          <span class="fa-icon-pr7">
+            <font-awesome-icon icon="camera"></font-awesome-icon>
+          </span>
+          <span>My stories</span>
+        </router-link>
+        <!-- -->
+
+        <!-- STARRED -->
+        <router-link
+          v-if="isAuthenticated"
+          class="navbar-item"
+          to="</starred-urls>"
+          exact
+          @click.native="hideBurgerDropdown()"
+        >
+          <span class="fa-icon-pr7">
+            <font-awesome-icon icon="star"></font-awesome-icon>
+          </span>
+          <span>Stories I starred</span>
+        </router-link>
+        <!-- -->
+
+        <!-- LOGOUT -->
+        <a v-if="isAuthenticated" class="navbar-item" @click.prevent="hideBurgerDropdown()">
+          <span class="fa-icon-pr7">
+            <font-awesome-icon icon="sign-out-alt"></font-awesome-icon>
+          </span>
+          <span>Logout</span>
+        </a>
+        <!-- -->
+
+        <!-- CONTACT -->
+        <router-link class="navbar-item" to="/contact" @click.native="hideBurgerDropdown()">
+          <span class="fa-icon-pr7">
+            <font-awesome-icon icon="envelope"></font-awesome-icon>
+          </span>
+          <span>Contact us</span>
+        </router-link>
+        <!-- -->
+
+        <!-- ABOUT -->
+        <router-link class="navbar-item" to="/about" @click.native="hideBurgerDropdown()">
+          <span class="fa-icon-pr7">
+            <font-awesome-icon icon="question"></font-awesome-icon>
+          </span>
+          <span>About 12 pics</span>
+        </router-link>
+        <!-- -->
       </div>
     </div>
     <!-- ENDS NAVBAR MENU -->
@@ -68,20 +162,16 @@ export default {
   },
   data() {
     return {
-      showBurgerDropdown: false
+      showBurgerDropdown: false,
+      isAuthenticated: false
     };
   },
   methods: {
     onClickOutside() {
       this.hideBurgerDropdown();
     },
-    navbarMenuClicked() {
-      console.log("navbar-menu clicked");
-    },
     toggleBurgerDropdown() {
       this.showBurgerDropdown = !this.showBurgerDropdown;
-      // console.log("TOGGLEBURGERDROPDOWN");
-      // console.log(`showBurgerDropdown -> ${this.showBurgerDropdown}`);
     },
     hideBurgerDropdown() {
       if (this.showBurgerDropdown === true) {
@@ -118,13 +208,26 @@ export default {
   background-color: #363636;
   color: #ddd;
 }
-.navbar-item:hover,
-.navbar-link:hover {
-  color: #fff;
+// .navbar-item:hover,
+// .navbar-link:hover {
+//   color: #ddd;
+// }
+
+a.navbar-item:focus,
+a.navbar-item:focus-within,
+// a.navbar-item:hover,
+a.navbar-item.is-active,
+.navbar-link:focus,
+.navbar-link:focus-within,
+// .navbar-link:hover,
+.navbar-link.is-active {
+  background-color: #363636;
+  color: #ddd;
 }
 .navbar.is-dark .navbar-start > a.navbar-item:hover,
 .navbar.is-dark .navbar-end > a.navbar-item:hover {
   background-color: #464646;
+  color: #ddd;
 }
 .navbar.is-dark .navbar-start > a.navbar-item,
 .navbar.is-dark .navbar-end > a.navbar-item,

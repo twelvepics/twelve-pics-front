@@ -1,6 +1,7 @@
 <template>
   <div>
     <component :is="navbar"></component>
+    <component :is="modal"></component>
   </div>
 </template>
 
@@ -18,7 +19,8 @@ export default {
     return {
       showBurgerDropdown: false,
       layout: null,
-      navbar: null
+      navbar: null,
+      modal: null
     };
   },
   methods: {
@@ -43,6 +45,7 @@ export default {
     }
   },
   created: function() {
+    console.log(process.env.NODE_ENV);
     console.log("#--- created ---#");
     _mql = window.matchMedia("(max-width: 999px)");
     console.log(_mql.matches);

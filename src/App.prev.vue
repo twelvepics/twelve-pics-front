@@ -1,17 +1,40 @@
 <template>
-  <div id="app">
+  <div id="app" v-if="!is_mobile">
     <app-header></app-header>
     <router-view />
     <router-view name="footer"></router-view>
     <router-view name="storyModal"></router-view>
   </div>
+  <div id="app" v-else>
+    <if-mobile />
+  </div>
 </template>
 
 <script>
+import UAParser from "ua-parser-js";
 import Header from "./components/Header.vue";
+import IfMobile from "./components/IfMobile.vue";
 export default {
   components: {
-    appHeader: Header
+    appHeader: Header,
+    IfMobile: IfMobile
+  },
+  computed: {
+    // a computed getter
+    is_mobile: function() {
+      const result = UAParser(window.navigator.userAgent);
+      // console.log(`device type -> ${result.device.type}`);
+      const is_mobile = [
+        "console",
+        "mobile",
+        "tablet",
+        "smarttv",
+        "wearable",
+        "embedded"
+      ].includes(result.device.type);
+      // console.log(`is mobile -> ${is_mobile}`);
+      return is_mobile;
+    }
   }
 };
 </script>
