@@ -251,7 +251,7 @@
         </div>
         <!-- END DROP DOWN-->
       </div>
-      <!-- ENDS NAVBAR START -->
+      <!-- ENDS NAVBAR END -->
     </div>
     <!-- ENDS NAVBAR MENU -->
     <login-modal

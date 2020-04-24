@@ -1,0 +1,183 @@
+<template>
+  <nav
+    class="navbar is-dark is-fixed-top box-shadow"
+    role="navigation"
+    aria-label="main navigation"
+    v-click-outside="onClickOutside"
+  >
+    <!-- BRAND  -->
+    <div class="navbar-brand">
+      <div class="navbar-item" style="padding-bottom:0">
+        <router-link to="/">
+          <img src="/img/logo.png" alt="12 pics logo" />
+        </router-link>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div class="navbar-menu">
+      <!-- START -->
+      <div class="navbar-start" style="flex-grow:1; justify-content: center;">
+        <!-- CATEGORIES-->
+        <div class="navbar-item" style="flex-grow: 1;justify-content: flex-end;margin-right:18px;">
+          <div id="filter-categories-lnk" class="nav-lnk">
+            <a class="categoriesBtnColor">
+              <span class="fa-icon-pr4">
+                <font-awesome-icon icon="list"></font-awesome-icon>
+              </span>
+              Filter categories
+            </a>
+          </div>
+        </div>
+        <!-- END CATEGROIES -->
+        <!-- SEARCH INPUT -->
+        <div class="navbar-item" style="flex-grow:2;">
+          <div class="field has-addons">
+            <div class="control">
+              <input
+                class="input"
+                type="text"
+                placeholder="Search stories"
+                style="flex-grow: 1;min-width:300px;max-width:350px;"
+              />
+            </div>
+            <div class="control">
+              <a class="button is-primary">
+                <span class="icon is-small is-left">
+                  <font-awesome-icon icon="search"></font-awesome-icon>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <!-- END SEARCH INPUT -->
+      </div>
+      <!-- END START -->
+      <!-- END -->
+      <div class="navbar-end">
+        <!-- BUTTONS -->
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-primary" id="signup-btn">
+              <strong>Sign up</strong>
+            </a>
+            <a class="button is-light" id="login-btn">Sign in</a>
+          </div>
+        </div>
+        <!-- BUTTONS -->
+        <!-- DROP DOWN-->
+        <div
+          class="navbar-item has-dropdown dropdown-spacing"
+          :class="{ 'is-active': showDropdown }"
+          id="navbar-dropdown"
+        >
+          <a class="navbar-link" id="navbar-link" @click="toggleDropdown()">
+            <span>Hi there</span>
+          </a>
+          <!-- DROP DOWN ITEMS -->
+          <div class="navbar-dropdown is-right is-boxed">
+            <!-- PROFILE LINK -->
+            <router-link class="navbar-item" to="/my-profile" @click.native="hideDropdown()">
+              <span class="fa-icon-pr7">
+                <font-awesome-icon icon="user"></font-awesome-icon>
+              </span>
+              <span>My profile</span>
+            </router-link>
+            <!-- STORIES LINK -->
+            <router-link class="navbar-item" to="my-stories" @click.native="hideDropdown()">
+              <span class="fa-icon-pr7">
+                <font-awesome-icon icon="camera"></font-awesome-icon>
+              </span>
+              <span>My stories</span>
+            </router-link>
+            <hr class="navbar-divider" />
+            <router-link class="navbar-item" to="/contact" @click.native="hideDropdown()">
+              <span class="fa-icon-pr7">
+                <font-awesome-icon icon="envelope"></font-awesome-icon>
+              </span>
+              <span>Contact us</span>
+            </router-link>
+            <router-link class="navbar-item" to="/about" @click.native="hideDropdown()" s>
+              <span class="fa-icon-pr7">
+                <font-awesome-icon icon="question"></font-awesome-icon>
+              </span>
+              <span>About 12 pics</span>
+            </router-link>
+            <hr class="navbar-divider" />
+            <div class="navbar-item">Version 0.0.2</div>
+          </div>
+          <!-- END  DROP DOWN ITEMS -->
+        </div>
+        <!-- END DROP DOWN-->
+      </div>
+      <!-- END END -->
+    </div>
+    <!-- END MENU -->
+  </nav>
+</template>
+
+<script>
+import vClickOutside from "v-click-outside";
+
+export default {
+  name: "NavbarFull",
+  directives: {
+    clickOutside: vClickOutside.directive
+  },
+  data: function() {
+    return {
+      showDropdown: false
+    };
+  },
+  methods: {
+    onClickOutside() {
+      this.hideDropdown();
+    },
+    // dropdown
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+    hideDropdown() {
+      if (this.showDropdown === true) {
+        this.showDropdown = false;
+      }
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.box-shadow {
+  box-shadow: 0px 0px 6px 2px rgba(0, 0, 0, 0.5);
+  width: 100%;
+}
+.navbar-item img {
+  max-height: none;
+}
+.nav-lnk a {
+  color: #ddd;
+}
+
+.nav-lnk a:hover {
+  color: #fff;
+}
+
+.box-shadow {
+  box-shadow: 0px 0px 6px 2px rgba(0, 0, 0, 0.5);
+  width: 100%;
+}
+
+.navbar.is-dark .navbar-dropdown a.navbar-item.is-active {
+  background-color: #bbb;
+}
+
+.navbar .button[disabled] {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.dropdown-spacing {
+  margin-right: 15px;
+  margin-left: 10px;
+}
+</style>
