@@ -35,20 +35,11 @@
       <div class="navbar-start">
         <!-- navbar items -->
         <div class="navbar-item buttons" v-if="!isAuthenticated">
-          <a
-            class="button is-dark is-inverted is-outlined"
-            @click.prevent="hideBurgerDropdown()"
-          >Sign-up</a>
-          <a
-            class="button is-dark is-inverted is-outlined"
-            @click.prevent="hideBurgerDropdown()"
-          >Sign-in</a>
+          <a class="button is-dark is-inverted is-outlined" @click.prevent="signup">Sign-up</a>
+          <a class="button is-dark is-inverted is-outlined" @click.prevent="signin">Sign-in</a>
         </div>
         <div class="navbar-item buttons" v-else>
-          <a
-            class="button is-dark is-inverted is-outlined"
-            @click.prevent="hideBurgerDropdown()"
-          >Post a story</a>
+          <a class="button is-dark is-inverted is-outlined" @click.prevent="newStory">Post a story</a>
         </div>
         <div class="navbar-item">
           <div class="field">
@@ -67,7 +58,7 @@
         <!-- navbar items -->
 
         <!-- CATEGORIES -->
-        <a class="navbar-item" @click.prevent="hideBurgerDropdown()">
+        <a class="navbar-item" @click.prevent="selectCategories">
           <span class="fa-icon-pr7">
             <font-awesome-icon icon="list"></font-awesome-icon>
           </span>
@@ -79,8 +70,9 @@
         <router-link
           v-if="isAuthenticated"
           class="navbar-item"
-          to="/<profile-url>"
+          :to="{ name: 'user', params: { username: authenticatedUser.username } }"
           exact
+          exact-active-class="is-active"
           @click.native="hideBurgerDropdown()"
         >
           <span class="fa-icon-pr7">
@@ -94,8 +86,9 @@
         <router-link
           v-if="isAuthenticated"
           class="navbar-item"
-          to="</stories-url>"
+          :to="{ name: 'user-stories', params: { username: authenticatedUser.username } }"
           exact
+          exact-active-class="is-active"
           @click.native="hideBurgerDropdown()"
         >
           <span class="fa-icon-pr7">
@@ -109,8 +102,9 @@
         <router-link
           v-if="isAuthenticated"
           class="navbar-item"
-          to="</starred-urls>"
+          :to="{ name: 'starred', params: { username: authenticatedUser.username } }"
           exact
+          exact-active-class="is-active"
           @click.native="hideBurgerDropdown()"
         >
           <span class="fa-icon-pr7">
@@ -121,7 +115,7 @@
         <!-- -->
 
         <!-- LOGOUT -->
-        <a v-if="isAuthenticated" class="navbar-item" @click.prevent="hideBurgerDropdown()">
+        <a v-if="isAuthenticated" class="navbar-item" @click.prevent="logout">
           <span class="fa-icon-pr7">
             <font-awesome-icon icon="sign-out-alt"></font-awesome-icon>
           </span>
@@ -130,7 +124,12 @@
         <!-- -->
 
         <!-- CONTACT -->
-        <router-link class="navbar-item" to="/contact" @click.native="hideBurgerDropdown()">
+        <router-link
+          class="navbar-item"
+          to="/contact"
+          @click.native="hideBurgerDropdown()"
+          active-class="is-active"
+        >
           <span class="fa-icon-pr7">
             <font-awesome-icon icon="envelope"></font-awesome-icon>
           </span>
@@ -139,7 +138,12 @@
         <!-- -->
 
         <!-- ABOUT -->
-        <router-link class="navbar-item" to="/about" @click.native="hideBurgerDropdown()">
+        <router-link
+          class="navbar-item"
+          to="/about"
+          @click.native="hideBurgerDropdown()"
+          active-class="is-active"
+        >
           <span class="fa-icon-pr7">
             <font-awesome-icon icon="question"></font-awesome-icon>
           </span>
@@ -160,10 +164,10 @@ export default {
   directives: {
     clickOutside: vClickOutside.directive
   },
+  props: { isAuthenticated: Boolean, authenticatedUser: Object },
   data() {
     return {
-      showBurgerDropdown: false,
-      isAuthenticated: false
+      showBurgerDropdown: false
     };
   },
   methods: {
@@ -177,7 +181,30 @@ export default {
       if (this.showBurgerDropdown === true) {
         this.showBurgerDropdown = false;
       }
+    },
+    signin() {
+      this.$emit("signin");
+      this.hideBurgerDropdown();
+    },
+    signup() {
+      this.$emit("signup");
+      this.hideBurgerDropdown();
+    },
+    selectCategories() {
+      this.$emit("selectCategories");
+      this.hideBurgerDropdown();
+    },
+    logout() {
+      this.$emit("logout");
+      this.hideBurgerDropdown();
+    },
+    newStory() {
+      this.$emit("newStory");
+      this.hideBurgerDropdown();
     }
+  },
+  created() {
+    console.log(`Mobile navbar onCreated => ${this.isAuthenticated}`);
   }
 };
 </script>

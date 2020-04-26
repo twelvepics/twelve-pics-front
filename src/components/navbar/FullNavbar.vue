@@ -21,7 +21,7 @@
         <!-- CATEGORIES-->
         <div class="navbar-item" style="flex-grow: 1;justify-content: flex-end;margin-right:18px;">
           <div id="filter-categories-lnk" class="nav-lnk">
-            <a class="categoriesBtnColor">
+            <a class="categoriesBtnColor" @click.prevent="selectCategories">
               <span class="fa-icon-pr4">
                 <font-awesome-icon icon="list"></font-awesome-icon>
               </span>
@@ -58,10 +58,33 @@
         <!-- BUTTONS -->
         <div class="navbar-item">
           <div class="buttons">
-            <a class="button is-primary" id="signup-btn">
+            <!-- SIGNUP -->
+            <a
+              class="button is-primary"
+              id="signup-btn"
+              @click.prevent="signup"
+              v-if="!isAuthenticated"
+            >
               <strong>Sign up</strong>
             </a>
-            <a class="button is-light" id="login-btn">Sign in</a>
+            <!-- SIGNIN -->
+            <a
+              class="button is-light"
+              id="login-btn"
+              @click.prevent="signin"
+              v-if="!isAuthenticated"
+            >
+              <strong>Sign in</strong>
+            </a>
+            <!-- NEW STORY -->
+            <button
+              class="button is-primary"
+              id="post-story-btn"
+              @click="newStory"
+              v-if="isAuthenticated"
+            >
+              <strong>Post a story</strong>
+            </button>
           </div>
         </div>
         <!-- BUTTONS -->
@@ -72,32 +95,80 @@
           id="navbar-dropdown"
         >
           <a class="navbar-link" id="navbar-link" @click="toggleDropdown()">
-            <span>Hi there</span>
+            <span v-if="isAuthenticated">Hi {{ authenticatedUser.username }}</span>
+            <span v-else>Hi there</span>
           </a>
           <!-- DROP DOWN ITEMS -->
           <div class="navbar-dropdown is-right is-boxed">
             <!-- PROFILE LINK -->
-            <router-link class="navbar-item" to="/my-profile" @click.native="hideDropdown()">
+            <router-link
+              class="navbar-item"
+              :to="{ name: 'user', params: { username: authenticatedUser.username } }"
+              exact
+              exact-active-class="is-active"
+              @click.native="hideDropdown()"
+              v-if="isAuthenticated"
+            >
               <span class="fa-icon-pr7">
                 <font-awesome-icon icon="user"></font-awesome-icon>
               </span>
               <span>My profile</span>
             </router-link>
             <!-- STORIES LINK -->
-            <router-link class="navbar-item" to="my-stories" @click.native="hideDropdown()">
+            <router-link
+              class="navbar-item"
+              :to="{ name: 'user-stories', params: { username: authenticatedUser.username } }"
+              exact
+              exact-active-class="is-active"
+              @click.native="hideDropdown()"
+              v-if="isAuthenticated"
+            >
               <span class="fa-icon-pr7">
                 <font-awesome-icon icon="camera"></font-awesome-icon>
               </span>
               <span>My stories</span>
             </router-link>
+            <!-- STARRED  -->
+            <router-link
+              v-if="isAuthenticated"
+              class="navbar-item"
+              :to="{ name: 'starred', params: { username: authenticatedUser.username } }"
+              exact
+              exact-active-class="is-active"
+              @click.native="hideDropdown()"
+            >
+              <span class="fa-icon-pr7">
+                <font-awesome-icon icon="star"></font-awesome-icon>
+              </span>
+              <span>Stories I starred</span>
+            </router-link>
             <hr class="navbar-divider" />
-            <router-link class="navbar-item" to="/contact" @click.native="hideDropdown()">
+            <!-- LOGOUT LINK -->
+            <a v-if="isAuthenticated" class="navbar-item" @click.prevent="logout">
+              <span class="fa-icon-pr7">
+                <font-awesome-icon icon="sign-out-alt"></font-awesome-icon>
+              </span>
+              <span>Logout</span>
+            </a>
+            <!-- CONTACT US LINK -->
+            <router-link
+              class="navbar-item"
+              to="/contact"
+              @click.native="hideDropdown()"
+              active-class="is-active"
+            >
               <span class="fa-icon-pr7">
                 <font-awesome-icon icon="envelope"></font-awesome-icon>
               </span>
               <span>Contact us</span>
             </router-link>
-            <router-link class="navbar-item" to="/about" @click.native="hideDropdown()" s>
+            <!-- ABOUT LINK -->
+            <router-link
+              class="navbar-item"
+              to="/about"
+              @click.native="hideDropdown()"
+              active-class="is-active"
+            >
               <span class="fa-icon-pr7">
                 <font-awesome-icon icon="question"></font-awesome-icon>
               </span>
@@ -121,6 +192,7 @@ import vClickOutside from "v-click-outside";
 
 export default {
   name: "NavbarFull",
+  props: { isAuthenticated: Boolean, authenticatedUser: Object },
   directives: {
     clickOutside: vClickOutside.directive
   },
@@ -141,7 +213,30 @@ export default {
       if (this.showDropdown === true) {
         this.showDropdown = false;
       }
+    },
+    signin() {
+      this.$emit("signin");
+      this.hideDropdown();
+    },
+    signup() {
+      this.$emit("signup");
+      this.hideDropdown();
+    },
+    logout() {
+      this.$emit("logout");
+      this.hideDropdown();
+    },
+    newStory() {
+      this.$emit("newStory");
+      this.hideDropdown();
+    },
+    selectCategories() {
+      this.$emit("selectCategories");
+      this.hideDropdown();
     }
+  },
+  created() {
+    console.log(`Full navbar onCreated => ${this.isAuthenticated}`);
   }
 };
 </script>

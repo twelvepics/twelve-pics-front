@@ -6,7 +6,7 @@
       <form class="message" @submit.prevent="onSubmit" novalidate>
         <div class="message-header">
           <p class="is-1">Sign up</p>
-          <button class="delete is-medium" id="signup-close" @click.prevent="closeSignupModal"></button>
+          <button class="delete is-medium" id="signup-close" @click.prevent="$emit('closeModal')"></button>
         </div>
         <div class="message-body" style="padding-top:0;">
           <div
@@ -173,7 +173,7 @@ export default {
     closeSignupModal() {
       this.resetForm();
       // emit close to parent (HeaderComponent)
-      this.$emit("signupModalClosed", this.isActive);
+      this.$emit("closeModal");
     },
     async onSubmit() {
       const userData = {

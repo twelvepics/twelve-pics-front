@@ -6,7 +6,7 @@
       <form class="message" @submit.prevent="onSubmit" novalidate>
         <div class="message-header">
           <p class="is-1">Sign in</p>
-          <button class="delete is-medium" id="login-close" @click.prevent="closeLoginModal"></button>
+          <button class="delete is-medium" id="login-close" @click.prevent="$emit('closeModal')"></button>
         </div>
         <div class="message-body" style="padding-top:0;">
           <div
@@ -82,20 +82,17 @@
               <button type="submit" class="button is-primary" :disabled="$v.$invalid">Submit</button>
             </div>
             <div class="control">
-              <button class="button is-light" @click.prevent="closeLoginModal">Cancel</button>
+              <button class="button is-light" @click.prevent="$emit('closeModal')">Cancel</button>
             </div>
           </div>
         </div>
       </form>
     </div>
   </div>
-  <!--
-<button class="modal-close is-large" id="login-close"></button>
-  -->
   <!-- END LOGIN MODAL -->
 </template>
 <script>
-import { EventBus } from "../event-bus.js";
+// import { EventBus } from "../event-bus.js";
 import { required } from "vuelidate/lib/validators";
 import * as Sentry from "@sentry/browser";
 
@@ -114,12 +111,10 @@ export default {
   props: ["isActive"],
   methods: {
     closeLoginModal() {
-      // console.log(e);
       this.resetForm();
-      this.$emit("loginModalClosed", this.isActive);
+      this.$emit("closeModal");
     },
-    openRecoverPasswordModal(e) {
-      console.log(e);
+    openRecoverPasswordModal() {
       this.resetForm();
       this.$emit("openRecoverPasswordModal", this.isActive);
     },
@@ -135,6 +130,12 @@ export default {
         this.apiError = null;
       }
     },
+    showLoginSuccesToast() {
+      this.$emit("showToast", {
+        message: "You are now signed in",
+        messageType: "is-success"
+      });
+    },
     async onSubmit() {
       this.apiError = null;
       this.loading = true;
@@ -146,20 +147,20 @@ export default {
       try {
         await this.$store.dispatch("login", userData);
         this.closeLoginModal();
-        if (this.$router.currentRoute.name === "home") {
-          EventBus.$emit("login");
-        } else {
+        this.showLoginSuccesToast();
+        // TODO use a computed prop to update listing
+        // removed EventBus.$emit
+        if (this.$router.currentRoute.name !== "home") {
           this.$router.push({ name: "home" });
         }
-      } catch (e) {
-        // this.apiError = e;
-        if (e.response) {
-          console.log(e.response.status);
-          console.log(e.response.data);
-          this.apiError = e.response.data.error;
+      } catch (error) {
+        if (error.response) {
+          console.log(error.response.status);
+          console.log(error.response.data);
+          this.apiError = error.response.data.error;
         } else {
-          console.log(e);
-          Sentry.captureException(e);
+          console.log(error);
+          Sentry.captureException(error);
         }
         this.loading = false;
       }

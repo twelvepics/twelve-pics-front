@@ -318,6 +318,7 @@ export default {
     };
   },
   methods: {
+    // DONE
     onClickOutside(event) {
       if (this.$mq === "mobile" || this.$mq === "tablet") {
         console.log("Clicked outside. Event: ", event);
@@ -325,50 +326,57 @@ export default {
       }
       this.hideDropdown();
     },
+    // USELESS
     navbarMenuClicked() {
       console.log("navbar-menu clicked");
     },
 
-    // dropdown
+    // DONE
     toggleDropdown() {
       console.log("TOGGLEDROPDOWN");
       this.dropdownVisible = !this.dropdownVisible;
     },
+    // DONE
     hideDropdown() {
       if (this.dropdownVisible === true) {
         console.log("HIDEDROPDOWN");
         this.dropdownVisible = false;
       }
     },
-    // burger - mobile
+    // DONE
     toggleBurgerDropdown() {
       this.showBurgerDropdown = !this.showBurgerDropdown;
       console.log("TOGGLEBURGERDROPDOWN");
       console.log(`showBurgerDropdown -> ${this.showBurgerDropdown}`);
     },
+    // DONE
     hideBurgerDropdown() {
       if (this.showBurgerDropdown === true) {
         console.log("HIDEBURGERDROPDOWN");
         this.showBurgerDropdown = false;
       }
     },
+    // DONE
     hideDropdowns() {
       this.hideDropdown();
       this.hideBurgerDropdown();
     },
+    // DONE
     openModal(modal) {
       lockBgScroll();
       this.currentModal = modal;
     },
+    // DONE
     closeModal() {
       unlockBgScroll();
       this.currentModal = null;
     },
+    // TODO
     closeLoginModalAndOpenRecoverModal() {
       this.currentModal = null;
       this.currentModal = "recover";
     },
-    // logout - call store logout
+    // DONE
     async logout() {
       await this.$store.dispatch("logout");
       this.hideDropdown();
@@ -384,14 +392,14 @@ export default {
         });
     },
 
-    // if button not disabled
-    // clear create form cache
+    // DONE
     async goToCreateStory() {
       await this.$store.dispatch("clearCreateFormCache");
       this.$router.push({
         name: "create-story"
       });
     },
+    // TODO
     async searchSubmit() {
       // this.searchStories = "";
       if (this.searchStories.trim().length) {
@@ -401,12 +409,14 @@ export default {
     //////////////////////////////////
     // Toaster
     //////////////////////////////////
+    // TODO
     closeToast() {
       this.show_toast = false;
       this.toast_message_l1 = "";
       this.toast_message_l2 = "";
       this.toast_type = "";
     },
+    // TODO
     toastPostSignupSuccess() {
       this.show_toast = true;
       this.toast_message_l1 = SIGNUP_MESSAGE_L1;
@@ -417,17 +427,21 @@ export default {
   },
   computed: {
     // style scrollbar hidden when story is mounted
+    // DONE
     ...mapGetters([
       "isStoryComponentMounted",
       "isAuthenticated",
       "authenticatedUser"
     ]),
+    // TODO
     isCreateStoryForm: function() {
       return this.$route.name === "create-story";
     },
+    // TODO
     isEditStoryForm: function() {
       return this.$route.name === "edit-story";
     },
+    // TODO
     showCatsAndSearch: function() {
       if (["home", "search"].includes(this.$route.name)) {
         return true;
@@ -435,6 +449,7 @@ export default {
       return false;
     }
   },
+  // TODO
   created() {
     const vm = this;
     window.addEventListener("keydown", function(event) {
@@ -448,6 +463,7 @@ export default {
       }
     });
   },
+  // TODO
   watch: {
     // eslint-disable-next-line
     $route(to, from) {

@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <app-header></app-header>
+    <!-- <router-view :key="$route.fullPath" /> -->
     <router-view />
     <router-view name="footer"></router-view>
+    <!-- <router-view name="storyModal" :key="$route.fullPath"></router-view> -->
     <router-view name="storyModal"></router-view>
   </div>
 </template>
@@ -58,22 +60,6 @@ main {
 }
 .message-header {
   font-weight: 400 !important;
-}
-/*********** Toast  *********/
-.fade-enter-active,
-.fade-leave-active {
-  transition-property: opacity;
-  transition-duration: 0.3s;
-}
-.fade-leave-active {
-  transition-duration: 0s;
-}
-/* .fade-enter-active {
-  transition-delay: 0.25s;
-} */
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
 }
 /*************** errors  *************/
 .isError {
