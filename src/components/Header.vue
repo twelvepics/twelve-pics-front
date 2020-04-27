@@ -1,6 +1,10 @@
 <template>
   <div>
-    <toast v-show="showToast" :closeToast="closeToast" :toastType="toastType">{{ toastMessage }}</toast>
+    <toast v-show="showToast" :closeToast="closeToast" :toastType="toastType">
+      <template v-slot:default>
+        <div v-html="toastMessageJoined"></div>
+      </template>
+    </toast>
     <component
       @signup="showModal('signup')"
       @signin="showModal('signin')"
@@ -10,7 +14,7 @@
       :is="navbar"
       :is-authenticated="isAuthenticated"
       :authenticatedUser="authenticatedUser"
-    ></component>
+    />
     <component :isActive="modal !== null" :is="modal" @closeModal="closeModal" @showToast="toastIt"></component>
   </div>
 </template>
@@ -54,7 +58,7 @@ export default {
       // toast
       showToast: false,
       showToastTimeout: null,
-      toastMessage: "",
+      toastMessage: [],
       toastType: ""
     };
   },
@@ -64,7 +68,10 @@ export default {
       "isStoryComponentMounted",
       "isAuthenticated",
       "authenticatedUser"
-    ])
+    ]),
+    toastMessageJoined() {
+      return this.toastMessage.join("<br />");
+    }
   },
   methods: {
     handleWindowChange(event) {
@@ -103,7 +110,6 @@ export default {
       console.log("Close modal");
       this.modal = null;
       unlockBgScroll();
-      // this.toastIt("Lorem ipsum dolor sit amet", 3000);
     },
     // --
     goToCreateStory: async function() {
@@ -115,13 +121,17 @@ export default {
     },
     async logout() {
       await this.$store.dispatch("logout");
+      this.toastIt({
+        message: ["You are now signed out"],
+        messageType: "toast-bottom is-success"
+      });
       if (this.$router.currentRoute.name !== "home") {
         this.$router.push({ name: "home" });
       }
     },
     toastIt(messageObj, duration = 3000) {
       // console.log("toastIt I was called");
-      // console.log(messageObj);
+      // console.log(messageObj.message.join('<br />'));
       this.showToast = true;
       this.toastMessage = messageObj.message;
       this.toastType = messageObj.messageType;

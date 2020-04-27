@@ -175,6 +175,16 @@ export default {
       // emit close to parent (HeaderComponent)
       this.$emit("closeModal");
     },
+    showSignupSuccesToast() {
+      const message = [
+        "Thank you for registering! Please confirm your email address",
+        "We have sent you a confirmation request email. Check your inbox."
+      ];
+      this.$emit("showToast", {
+        message,
+        messageType: "toast-top-centered is-success"
+      });
+    },
     async onSubmit() {
       const userData = {
         username: this.user.username,
@@ -186,6 +196,7 @@ export default {
         await this.$store.dispatch("signup", userData);
         this.$emit("toastPostSignupSuccess");
         this.closeSignupModal();
+        this.showSignupSuccesToast();
       } catch (e) {
         if (e.response) {
           if (e.response.data.error_type === "INVALID_USER_ERROR") {
@@ -266,5 +277,13 @@ label.label {
 .button.is-light {
   background-color: #cccccc;
   font-weight: bold;
+}
+@media only screen and (max-width: 999px) {
+  .modal {
+    justify-content: start;
+  }
+  .modal-content {
+    max-height: 100%;
+  }
 }
 </style>

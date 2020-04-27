@@ -132,8 +132,8 @@ export default {
     },
     showLoginSuccesToast() {
       this.$emit("showToast", {
-        message: "You are now signed in",
-        messageType: "is-success"
+        message: ["You are now signed in"],
+        messageType: "toast-bottom is-success"
       });
     },
     async onSubmit() {
@@ -200,5 +200,13 @@ label.label {
 .button.is-light {
   background-color: #cccccc;
   font-weight: bold;
+}
+@media only screen and (max-width: 999px) {
+  .modal {
+    justify-content: start;
+  }
+  .modal-content {
+    max-height: 100%;
+  }
 }
 </style>

@@ -84,4 +84,16 @@ export default {
 input[type="checkbox"] {
   margin-right: 6px;
 }
+
+@media only screen and (max-width: 999px) {
+  .modal {
+    justify-content: start;
+  }
+  .modal-content {
+    max-height: 100%;
+  }
+  .categories-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 </style>

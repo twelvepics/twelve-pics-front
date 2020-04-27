@@ -6,6 +6,7 @@
     </div>
   </transition>
 </template>
+
 <script>
 export default {
   props: ["toastType", "closeToast"],
@@ -18,13 +19,23 @@ export default {
 </script>
 <style scoped>
 .toast {
-  position: fixed; /* Sit on top of the screen */
-  z-index: 100; /* Add a z-index if needed */
+  position: fixed;
+  z-index: 100;
   max-width: 65%;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+.toast-top-centered {
   top: 75px;
   left: 50%;
   transform: translate(-50%, 0);
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+.toast-bottom {
+  /* bottom goes on the right for full screen */
+  bottom: 10px;
+  right: 25px;
+}
+.notification {
+  padding: 0.8rem 2.3rem 0.5rem 1rem;
 }
 
 /*********** Transitiob  *********/
@@ -44,6 +55,11 @@ export default {
   .toast {
     width: 95%;
     max-width: 95%;
+  }
+  .toast-bottom {
+    /* bottom is centered for small screen / mobile */
+    left: 50%;
+    transform: translate(-50%, 0);
   }
 }
 </style>
