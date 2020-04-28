@@ -137,12 +137,16 @@ export default {
   },
   mounted() {
     console.log("Home mounted");
+    // Keep eventBus stuff for now
+    // OK
     EventBus.$on("categoriesChanged", () => {
       this.onCategoriesChanged();
     });
+    // OK KEEP
     EventBus.$on("searchTriggered", searchStr => {
       this.onSearchTriggered(searchStr);
     });
+    // OK
     EventBus.$on("login", () => {
       this.changeFilter();
     });

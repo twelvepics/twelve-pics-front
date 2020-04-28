@@ -10,12 +10,19 @@
       @signin="showModal('signin')"
       @selectCategories="showModal('selectCategories')"
       @newStory="goToCreateStory"
+      @searchStories="searchSubmit"
       @logout="logout"
       :is="navbar"
       :is-authenticated="isAuthenticated"
       :authenticatedUser="authenticatedUser"
     />
-    <component :isActive="modal !== null" :is="modal" @closeModal="closeModal" @showToast="toastIt"></component>
+    <component
+      :isActive="modal !== null"
+      :is="modal"
+      @closeModal="closeModal"
+      @showToast="toastIt"
+      @openRecoverPasswordModal="openRecoverPasswordModal"
+    ></component>
   </div>
 </template>
 
@@ -31,7 +38,7 @@ import CategoriesModal from "./CategoriesModal.vue";
 import RecoverModal from "./RecoverModal.vue";
 
 import { mapGetters } from "vuex";
-// import { EventBus } from "../event-bus.js";
+import { EventBus } from "../event-bus.js";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 // import * as Sentry from "@sentry/browser";
 
@@ -105,13 +112,15 @@ export default {
         this.modal = CategoriesModal;
       }
     },
-
     closeModal: function() {
       console.log("Close modal");
       this.modal = null;
       unlockBgScroll();
     },
-    // --
+    openRecoverPasswordModal: function() {
+      console.log("openRecoverPasswordModal");
+      this.modal = RecoverModal;
+    },
     goToCreateStory: async function() {
       console.log("goToCreateStory");
       await this.$store.dispatch("clearCreateFormCache");
@@ -119,6 +128,30 @@ export default {
         name: "create-story"
       });
     },
+    async searchSubmit(searchTerms) {
+      // console.log(`Search submitted => ${searchTerms}`);
+      // this.$router.push({ name: "search", query: { q: searchTerms } });
+      if (searchTerms.trim().length) {
+        EventBus.$emit("searchTriggered", searchTerms);
+      }
+    },
+    // async logout() {
+    //   await this.$store.dispatch("logout");
+    //   this.toastIt({
+    //     message: ["You are now signed out"],
+    //     messageType: "toast-bottom is-success"
+    //   });
+    //   this.$router
+    //     .push({
+    //       name: "home"
+    //     })
+    //     .catch(err => {
+    //       if (err.name != "NavigationDuplicated") {
+    //         console.log(err);
+    //         Sentry.captureException(err);
+    //       }
+    //     });
+    // },
     async logout() {
       await this.$store.dispatch("logout");
       this.toastIt({

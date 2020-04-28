@@ -48,7 +48,8 @@
                 class="input is-dark"
                 type="text"
                 placeholder="Search stories"
-                @keydown.enter.prevent="hideBurgerDropdown()"
+                @keydown.enter.prevent="searchSubmit"
+                v-model="searchTerms"
               />
             </div>
           </div>
@@ -167,7 +168,8 @@ export default {
   props: { isAuthenticated: Boolean, authenticatedUser: Object },
   data() {
     return {
-      showBurgerDropdown: false
+      showBurgerDropdown: false,
+      searchTerms: ""
     };
   },
   methods: {
@@ -200,6 +202,10 @@ export default {
     },
     newStory() {
       this.$emit("newStory");
+      this.hideBurgerDropdown();
+    },
+    searchSubmit() {
+      this.$emit("searchStories", this.searchTerms);
       this.hideBurgerDropdown();
     }
   },

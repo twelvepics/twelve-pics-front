@@ -38,7 +38,7 @@
 <script>
 // import { mapGetters } from "vuex";
 import { categoriesList } from "../utils/categories";
-// import { EventBus } from "../event-bus.js";
+import { EventBus } from "../event-bus.js";
 
 export default {
   data() {
@@ -58,9 +58,7 @@ export default {
     async onSubmit() {
       console.log("onSubmit");
       await this.$store.dispatch("save_categories", this.categories);
-      // TODO use a computed prop to update listing
-      // no need for this emit
-      // EventBus.$emit("categoriesChanged");
+      EventBus.$emit("categoriesChanged");
       this.closeCategoriesModal();
     }
   },

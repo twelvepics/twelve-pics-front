@@ -39,10 +39,12 @@
                 type="text"
                 placeholder="Search stories"
                 style="flex-grow: 1;min-width:300px;max-width:350px;"
+                @keydown.enter.prevent="searchSubmit"
+                v-model="searchTerms"
               />
             </div>
             <div class="control">
-              <a class="button is-primary">
+              <a class="button is-primary" @click="searchSubmit">
                 <span class="icon is-small is-left">
                   <font-awesome-icon icon="search"></font-awesome-icon>
                 </span>
@@ -198,7 +200,8 @@ export default {
   },
   data: function() {
     return {
-      showDropdown: false
+      showDropdown: false,
+      searchTerms: ""
     };
   },
   methods: {
@@ -233,6 +236,9 @@ export default {
     selectCategories() {
       this.$emit("selectCategories");
       this.hideDropdown();
+    },
+    searchSubmit() {
+      this.$emit("searchStories", this.searchTerms);
     }
   },
   created() {

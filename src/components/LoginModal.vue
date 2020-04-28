@@ -92,7 +92,7 @@
   <!-- END LOGIN MODAL -->
 </template>
 <script>
-// import { EventBus } from "../event-bus.js";
+import { EventBus } from "../event-bus.js";
 import { required } from "vuelidate/lib/validators";
 import * as Sentry from "@sentry/browser";
 
@@ -116,7 +116,8 @@ export default {
     },
     openRecoverPasswordModal() {
       this.resetForm();
-      this.$emit("openRecoverPasswordModal", this.isActive);
+      this.$emit("closeModal");
+      this.$emit("openRecoverPasswordModal");
     },
     resetForm() {
       this.apiError = null;
@@ -150,7 +151,9 @@ export default {
         this.showLoginSuccesToast();
         // TODO use a computed prop to update listing
         // removed EventBus.$emit
-        if (this.$router.currentRoute.name !== "home") {
+        if (this.$router.currentRoute.name === "home") {
+          EventBus.$emit("login");
+        } else {
           this.$router.push({ name: "home" });
         }
       } catch (error) {
