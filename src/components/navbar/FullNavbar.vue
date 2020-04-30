@@ -9,7 +9,7 @@
     <div class="navbar-brand">
       <div class="navbar-item" style="padding-bottom:0">
         <router-link to="/">
-          <img src="/img/logo.png" alt="12 pics logo" />
+          <img src="/img/logo_v2.png" alt="12 pics logo" />
         </router-link>
       </div>
     </div>
@@ -253,7 +253,7 @@ export default {
   width: 100%;
 }
 .navbar-item img {
-  max-height: none;
+  max-height: 2.25rem;
 }
 .nav-lnk a {
   color: #ddd;
@@ -271,7 +271,9 @@ export default {
 .navbar.is-dark .navbar-dropdown a.navbar-item.is-active {
   background-color: #bbb;
 }
-
+.navbar.is-dark .navbar-item.has-dropdown:hover .navbar-link {
+  background-color: #363636;
+}
 .navbar .button[disabled] {
   opacity: 0.7;
   cursor: default;
@@ -280,5 +282,21 @@ export default {
 .dropdown-spacing {
   margin-right: 15px;
   margin-left: 10px;
+}
+
+// more ---------------------- .button,
+.button,
+.input {
+  height: 2.25rem;
+}
+.navbar.is-dark .navbar-item.has-dropdown:hover .navbar-link,
+.navbar.is-dark .navbar-end .navbar-link:hover,
+.navbar-link:focus,
+.navbar.is-dark .navbar-end .navbar-link:focus,
+.navbar.is-dark .navbar-item.has-dropdown.is-active .navbar-link {
+  background-color: #363636;
+}
+.navbar.is-dark .navbar-end .navbar-link {
+  color: #ddd;
 }
 </style>

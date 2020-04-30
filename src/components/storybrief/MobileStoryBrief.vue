@@ -52,13 +52,6 @@
       >
         <font-awesome-icon icon="star"></font-awesome-icon>
       </span>
-      <!-- <span class="cat">[{{ category_display }}]</span>
-      - Author:
-      <a
-        @click.prevent="gotoUserProfile"
-      >{{ story.author_info.display_name || story.author_info.username }}</a>
-      - 
-      -->
       {{ elapsed() }} -
       {{ story.comments_count || "No" }}
       {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
@@ -125,36 +118,6 @@ export default {
 
 <style scoped>
 /**************** STORIES BOXES STYLES *****************/
-/* .story-item-pic-landscape {
-  display: grid;
-  grid-template-columns: 200px 15px 1fr;
-}
-
-.story-item-pic-landscape .title {
-  grid-column: 1 / -1;
-}
-
-.story-item-pic-landscape .pitch {
-  grid-column: 3 / -1;
-}
-
-.story-item-pic-portrait {
-  display: grid;
-  grid-template-columns: 130px 15px 1fr;
-  grid-auto-rows: min-content;
-}
-
-.story-item-pic-portrait .pic {
-  grid-column: 1 / 2;
-  grid-row: 1 / span 2;
-}
-
-.story-item-pic-portrait .title-pitch {
-  grid-column: 3 / -1;
-  grid-row: 1 / span 2;
-}
-
-*/
 
 /**** types ******/
 .box {
@@ -187,6 +150,7 @@ export default {
   height: 0rem;
   width: none;
   cursor: pointer;
+  font-size: 120%;
 }
 
 .upvoted {

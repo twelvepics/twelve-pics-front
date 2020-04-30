@@ -9,7 +9,7 @@
     <div class="navbar-brand">
       <div class="navbar-item" style="padding-bottom:0">
         <router-link to="/">
-          <img src="/img/logo.png" alt="12 pics logo" />
+          <img src="/img/logo_v2.png" alt="12 pics logo" />
         </router-link>
       </div>
       <!-- BURGER -->
@@ -220,7 +220,7 @@ export default {
   width: 100%;
 }
 .navbar-item img {
-  max-height: none;
+  max-height: 2.25rem;
 }
 // .navbar.is-fixed-top-touch .navbar-menu:hover,
 // .navbar.is-fixed-top .navbar-menu:hover {
@@ -299,5 +299,15 @@ a.navbar-item.is-active,
   background-color: #565656;
   border-color: #dddddd;
   color: #ddd;
+}
+
+// more ----------------------
+
+.button,
+.input {
+  height: 2.25rem;
+}
+.navbar-burger:hover {
+  background-color: #363636;
 }
 </style>
