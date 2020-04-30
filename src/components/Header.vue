@@ -211,7 +211,8 @@ export default {
   },
   beforeDestroy: function() {
     console.log("#--- beforeDestroy ---#");
-    _mql.removeListener(_mql);
+    _mql.removeListener(this.handleWindowChange);
+    // _mql = null; // ?
   }
 };
 </script>
