@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="columns is-centered">
+    <div class="columns is-centered" style="margin:0;padding:0;">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
         <!-- ERRORS AND AUTH -->
@@ -734,7 +734,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /************** layout ***********/
 html,
 body {

@@ -1,19 +1,8 @@
 <template>
   <main>
-    <div class="columns is-centered">
+    <div class="columns is-centered" style="margin:0;padding:0;">
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
-        <!-- TOAST USED FOR form errors and deleted -->
-        <!-- <transition name="fade">
-          <toast
-            v-show="show_toast"
-            :duration="toast_duration"
-            :type="toast_type"
-            :show="show_toast"
-            :closeToast="closeToast"
-          >{{ toast_message }}</toast>
-        </transition>-->
-
         <toast v-show="showToast" :closeToast="closeToast" :toastType="toastType">
           <template v-slot:default>
             <div v-html="toastMessageJoined"></div>
@@ -230,21 +219,6 @@ export default {
       this.is_api_error = null;
       this.apiErrorMessage = "";
     },
-    //////////////////////////////////
-    // Toaster
-    //////////////////////////////////
-    // closeToast() {
-    //   // console.log("F I was called");
-    //   this.show_toast = false;
-    //   this.toast_message = "";
-    //   this.toast_type = "";
-    // },
-    // toastSuccess() {
-    //   this.show_toast = true;
-    //   this.toast_message =
-    //     "Your message has been successfully sent. We will contact you very soon!";
-    //   this.toast_type = "is-success";
-    // }
     toastIt(messageObj, duration = 3000) {
       // console.log("toastIt I was called");
       // console.log(messageObj.message.join('<br />'));
@@ -305,7 +279,6 @@ body {
   width: 100%;
   height: 100%;
 }
-
 #app {
   min-height: 100%;
   display: flex;
