@@ -6,7 +6,7 @@
   <div class="card comments" style="margin-top:25px;">
     <!-- CARD CONTENT -->
     <div class="card-content">
-      <p class="title is-size-4" style="margin:0 0 1rem 0">Comments</p>
+      <p class="title is-size-4">Comments</p>
       <p class="content">
         <span
           v-if="isAuthenticated"
@@ -21,7 +21,7 @@
             <p
               v-if="comment.length <= 5000"
               class="content is-small is-marginless pb-05"
-            >Have a comment about this story? Got a question? Post it.</p>
+            >Have a comment about this story, a question?</p>
             <p
               v-else
               class="content isError is-small is-marginless pb-05"
@@ -251,6 +251,9 @@ export default {
 
 <style scoped>
 /*** comments ****/
+.is-size-4 {
+  margin: 0 0 0.8rem 0 !important;
+}
 .card.comments {
   margin-top: 25px;
 }
@@ -268,5 +271,29 @@ export default {
 }
 .isError {
   color: red;
+}
+
+@media only screen and (max-width: 600px) {
+  .is-size-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem;
+    margin: 0 0 0.3rem 0 !important;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+  .content {
+    font-size: 90%;
+  }
+  .content:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .card-content {
+    padding: 0.75rem;
+  }
+  textarea {
+    font-size: 90%;
+    padding: 0.3rem;
+  }
 }
 </style>

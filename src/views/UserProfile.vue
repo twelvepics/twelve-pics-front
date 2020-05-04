@@ -393,11 +393,6 @@ main,
 footer {
   flex-shrink: 0;
 }
-
-main {
-  margin-top: 90px;
-}
-
 footer {
   margin-top: 30px;
 }

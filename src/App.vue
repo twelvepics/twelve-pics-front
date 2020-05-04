@@ -21,7 +21,7 @@ export default {
 <style lang="scss">
 /**** layout ****/
 main {
-  margin-top: 100px;
+  margin-top: 85px;
 }
 /**** spacing  ****/
 .mt20 {
@@ -64,5 +64,11 @@ main {
 /*************** errors  *************/
 .isError {
   color: red;
+}
+
+@media only screen and (max-width: 600px) {
+  main {
+    margin-top: 70px;
+  }
 }
 </style>

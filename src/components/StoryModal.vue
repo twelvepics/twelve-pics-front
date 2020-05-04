@@ -27,7 +27,7 @@
     <!-- START LOADER / SERVER ERRORS-->
     <div class="card">
       <!-- Modal content -->
-      <div class="story-modal-content" style="padding-top:35px">
+      <div class="story-modal-content">
         <page-loader v-if="is_loading"></page-loader>
         <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
         <div v-else class="content">
@@ -147,7 +147,7 @@ export default {
   z-index: 10;
   /* Sit on top */
   left: 0;
-  top: 56px;
+  top: 52px;
   width: 100%;
   /* Full width */
   height: 100%;
@@ -165,7 +165,7 @@ export default {
 .story-modal-content {
   background-color: #eff0eb;
   /* 15% from the top and centered */
-  padding: 20px;
+  padding: 35px 20px 20px 20px;
   /* border: 1px solid #222; */
   width: 100%;
 }
@@ -202,6 +202,19 @@ html.frf-hide-sb {
 @media only screen and (max-width: 1024px) {
   .story-modal {
     padding: 0;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .heady {
+    font-size: 90%;
+  }
+  .story-modal-content {
+    background-color: #eff0eb;
+    /* 15% from the top and centered */
+    padding: 25px 15px 15px 15px;
+    /* border: 1px solid #222; */
+    width: 100%;
   }
 }
 
