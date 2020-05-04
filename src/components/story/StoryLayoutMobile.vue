@@ -73,6 +73,7 @@ export default {
 
 .caption {
   font-size: 0.85rem;
+  color: #999;
 }
 .mobile-content {
   width: 100%;

@@ -4,7 +4,7 @@
       <!-- CENTER COLUMNN -->
       <div class="column is-three-quarters-desktop">
         <!-- TOAST USED FOR form errors and deleted -->
-        <transition name="fade">
+        <!-- <transition name="fade">
           <toast
             v-show="show_toast"
             :duration="toast_duration"
@@ -12,7 +12,13 @@
             :show="show_toast"
             :closeToast="closeToast"
           >{{ toast_message }}</toast>
-        </transition>
+        </transition>-->
+
+        <toast v-show="showToast" :closeToast="closeToast" :toastType="toastType">
+          <template v-slot:default>
+            <div v-html="toastMessageJoined"></div>
+          </template>
+        </toast>
         <!-- LOADER -->
         <page-loader v-if="is_loading"></page-loader>
         <!-- ERRORS  -->
@@ -25,12 +31,12 @@
             <form @submit.prevent="onSubmit">
               <fieldset :disabled="done">
                 <p class="title is-size-4">Contact us</p>
-                <p class="subtitle is-size-6">
+                <p class="content">
                   Any question, suggestion? You want to give us your feedback about the site? Do not
                   hesitate to contact us.
                 </p>
                 <!-- EMAIL -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <label class="label is-marginless">Your Email</label>
                   <p class="content is-small is-marginless pb-05">
                     <span
@@ -54,7 +60,7 @@
                 <!-- EMAIL -->
 
                 <!-- SUBJECT -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <label class="label is-marginless">Subject</label>
                   <p class="content is-small is-marginless pb-05">
                     <span
@@ -66,7 +72,8 @@
                   <div class="control">
                     <input
                       class="input"
-                      type="textt"
+                      type="text"
+                      :class="{ 'is-danger': $v.message.subject.$error }"
                       placeholder="Subject"
                       v-model="message.subject"
                       @blur="$v.message.subject.$touch()"
@@ -77,7 +84,7 @@
                 <!-- SUBJECT -->
 
                 <!-- MSG BODY -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <label class="label is-marginless">Your message</label>
                   <p class="content is-small is-marginless pb-05">
                     <span
@@ -91,6 +98,7 @@
                       class="textarea"
                       placeholder="Your message"
                       v-model="message.body"
+                      :class="{ 'is-danger': $v.message.body.$error }"
                       @blur="$v.message.body.$touch()"
                     ></textarea>
                   </div>
@@ -98,7 +106,7 @@
                 <!-- ABOUT ME -->
               </fieldset>
               <!-- SUBMIT -->
-              <div class="is-divider" style="margin-top:35px;"></div>
+              <div class="is-divider submit-divider"></div>
               <div class="field is-grouped submit-buttons">
                 <div class="control">
                   <button
@@ -158,10 +166,10 @@ export default {
         user_key: (this.isAuthenticated && this.authenticatedUser._key) || ""
       },
       // toast
-      toast_message: "",
-      toast_type: "",
-      toast_duration: 4000,
-      show_toast: false
+      showToast: false,
+      showToastTimeout: null,
+      toastMessage: [],
+      toastType: ""
     };
   },
   methods: {
@@ -183,7 +191,12 @@ export default {
         this.is_sending = false;
         this.is_api_error = false;
         this.apiErrorMessage = "";
-        this.toastSuccess();
+        this.toastIt({
+          message: [
+            "Your message has been successfully sent. We will contact you very soon!"
+          ],
+          messageType: "toast-top-centered is-success"
+        });
         console.log("DONE");
       } catch (e) {
         this.sending = false;
@@ -220,17 +233,34 @@ export default {
     //////////////////////////////////
     // Toaster
     //////////////////////////////////
-    closeToast() {
-      // console.log("F I was called");
-      this.show_toast = false;
-      this.toast_message = "";
-      this.toast_type = "";
+    // closeToast() {
+    //   // console.log("F I was called");
+    //   this.show_toast = false;
+    //   this.toast_message = "";
+    //   this.toast_type = "";
+    // },
+    // toastSuccess() {
+    //   this.show_toast = true;
+    //   this.toast_message =
+    //     "Your message has been successfully sent. We will contact you very soon!";
+    //   this.toast_type = "is-success";
+    // }
+    toastIt(messageObj, duration = 3000) {
+      // console.log("toastIt I was called");
+      // console.log(messageObj.message.join('<br />'));
+      this.showToast = true;
+      this.toastMessage = messageObj.message;
+      this.toastType = messageObj.messageType;
+      this.showToastTimeout = setTimeout(() => {
+        this.closeToast();
+      }, duration);
     },
-    toastSuccess() {
-      this.show_toast = true;
-      this.toast_message =
-        "Your message has been successfully sent. We will contact you very soon!";
-      this.toast_type = "is-success";
+    closeToast() {
+      if (this.showToastTimeout) {
+        clearTimeout(this.showToastTimeout);
+      }
+      this.showToast = false;
+      this.toastMessageType = "";
     }
   },
   computed: {
@@ -238,7 +268,10 @@ export default {
       "isAuthenticated",
       "authenticatedUser",
       "getCreateFormCache"
-    ])
+    ]),
+    toastMessageJoined() {
+      return this.toastMessage.join("<br />");
+    }
   },
   created() {
     // I don't store user email in vuex, fetch user and get his email
@@ -265,7 +298,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /************** layout ***********/
 html,
 body {
@@ -279,23 +312,68 @@ body {
   flex-direction: column;
   align-items: stretch;
 }
-
 main {
   flex-grow: 1;
 }
-
 navbar,
 main,
 footer {
   flex-shrink: 0;
 }
-
 footer {
   margin-top: 30px;
 }
-
+.form-item {
+  margin: 30px 0 15px 0;
+}
 /************** spacing ***********/
 .content h5 {
   margin-bottom: 0.5rem;
+}
+
+.title:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+.submit-divider {
+  margin-top: 35px;
+}
+
+@media only screen and (max-width: 600px) {
+  .is-size-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem;
+    margin: 0 0 0.3rem 0 !important;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+  .content {
+    font-size: 90%;
+  }
+
+  .content:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .card-content {
+    padding: 0.75rem;
+  }
+  input,
+  textarea {
+    font-size: 90%;
+    padding: 0.3rem;
+  }
+  .form-item {
+    margin: 15px 0 15px 0;
+  }
+  .label {
+    color: #888;
+    font-size: 0.9rem;
+  }
+  .content.is-small {
+    font-size: 0.7rem;
+  }
+  .submit-divider {
+    margin-top: 10px;
+  }
 }
 </style>

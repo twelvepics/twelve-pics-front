@@ -62,4 +62,15 @@ export default {
     transform: translate(-50%, 0);
   }
 }
+@media only screen and (max-width: 600px) {
+  .toast-top-centered {
+    top: 75px;
+    left: 48%;
+    transform: translate(-50%, 0);
+  }
+  .toast {
+    width: 90%;
+    max-width: 90%;
+  }
+}
 </style>
