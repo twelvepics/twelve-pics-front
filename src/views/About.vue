@@ -10,8 +10,7 @@
             <p class="title is-size-4">About twelvepics</p>
             <p
               class="subtitle is-size-5"
-              style="margin-top:1rem;color:#0960c4;"
-            >Be creative, touching, powerful, real... Tell your story, with images.</p>
+            >Be creative, touching, powerful, real. Tell your story, with images.</p>
             <!-- ABOUT ONE -->
             <div class="field m-30-0-15-0">
               <h5
@@ -36,7 +35,7 @@
             <!-- ABOUT ONE -->
 
             <!-- ABOUT THREE -->
-            <div class="field m-30-0-15-0">
+            <div class="field">
               <h5
                 class="has-text-weight-semibold is-2"
                 style="color:#0960c4;"
@@ -57,8 +56,8 @@
             <!-- ABOUT THREE -->
 
             <!-- LOCATION -->
-            <div class="field m-30-0-15-0">
-              <h5 class="has-text-weight-semibold" style="font-size:120%;color:#0960c4;">
+            <div class="field">
+              <h5 class="has-text-weight-semibold bottom-quote">
                 "It is an illusion that photos are made with the camera... they are made with the eye, heart and head."
                 <br />Henri Cartier-Bresson
               </h5>
@@ -109,5 +108,58 @@ footer {
 /************** spacing ***********/
 .content h5 {
   margin-bottom: 0.5rem;
+}
+.subtitle.is-size-5 {
+  margin-top: 1.1rem;
+  color: #0960c4;
+}
+.bottom-quote {
+  font-size: 120%;
+  color: #0960c4;
+}
+.field {
+  margin: 30px 0 15px 0;
+}
+@media only screen and (max-width: 600px) {
+  .is-size-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem;
+    margin: 0 0 0.3rem 0 !important;
+  }
+  .is-size-5 {
+    font-size: 1rem !important;
+  }
+  .subtitle.is-size-5 {
+    margin-top: 0.7rem;
+    color: #555;
+  }
+  .subtitle:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+  h5 {
+    margin: 0 0 0.3rem 0;
+    padding: 0;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+  .is-size-6 {
+    font-size: 90% !important;
+  }
+  .content:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .card-content {
+    padding: 0.75rem;
+  }
+  .bottom-quote {
+    font-size: 100%;
+  }
+  .field {
+    margin: 15px 0 15px 0;
+  }
+  .has-text-weight-semibold {
+    font-weight: 400 !important;
+  }
 }
 </style>

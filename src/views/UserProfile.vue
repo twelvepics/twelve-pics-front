@@ -19,28 +19,27 @@
           <br />
         </div>
         <!-- END EMAIL NOT CONFIRMED WARNINGS -->
-        <!-- START PROFILE -->
+        <!-- START PROFILE_ALL -->
         <page-loader v-if="is_loading"></page-loader>
         <page-error v-if="is_error" :errorMessage="errorMessage"></page-error>
 
         <div class="card" v-if="!!user && !is_loading">
           <!-- CARD CONTENT -->
           <div class="card-content">
+            <!-- START COLUMNS IS-MOBILE -->
             <div
               class="columns is-mobile"
-              style="margin-bottom:1.5rem;border-bottom:1px solid #bbb;padding-bottom:.5rem"
+              style="border-bottom:1px solid #bbb;margin:0 0 .5rem 0;padding:0;"
             >
-              <div class="column is-half">
-                <p class="title is-size-4">
-                  <router-link :to="{ name: 'user-stories', params: { username: user.username } }">
-                    {{
-                    user.profile.display_name || user.username
-                    }}
-                  </router-link>
+              <div class="column is-half" style="margin:0;padding:0;">
+                <p class="title is-size-4" style="padding-top:.5rem;">
+                  {{
+                  user.profile.display_name || user.username
+                  }}
                 </p>
               </div>
               <div v-if="showEditButton" class="column is-half" style="margin:0;padding:0;">
-                <p class="has-text-right" style="padding:3px 5px 0 0">
+                <p class="has-text-right" style="padding:0 0 .3rem 0">
                   <router-link
                     class="button is-primary"
                     id="profile-edit-btn"
@@ -50,8 +49,8 @@
                   </router-link>
                 </p>
               </div>
-              <div v-if="showMessageButton" class="column is-half" style="margin:0; padding:0;">
-                <p class="has-text-right" style="padding:3px 5px 0 0;">
+              <div v-if="showMessageButton" class="column is-half" style="margin:0;padding:0;">
+                <p class="has-text-right" style="padding:0 0 .3rem 0;">
                   <button
                     class="button is-primary"
                     @click.prevent="openMessageModal"
@@ -60,107 +59,126 @@
                 </p>
               </div>
             </div>
-            <div v-if="profileIsEmpty">
+            <!-- ENDS COLUMNS IS-MOBILE -->
+            <!-- START SUBTITLE/LINK -->
+            <div>
               <p class="subtitle is-size-6">
-                <b>{{ user.username }}</b> did not fill his profile yet.
+                <router-link :to="{ name: 'user-stories', params: { username: user.username } }">
+                  Stories posted by {{
+                  user.profile.display_name || user.username
+                  }}
+                </router-link>
               </p>
             </div>
-            <div v-else>
-              <!-- START PROFILE ITEMS -->
-              <p
-                class="subtitle is-size-5"
-                style="color: #555;"
-                v-if="user.profile.intro"
-              >{{ user.profile.intro }}</p>
+            <!-- ENDS SUBTITLE/LINK -->
 
-              <!-- PIC -->
-              <div style="margin:30px 0 15px 0;" v-if="!!user.profile.avatar_path">
-                <img :src="user.profile.avatar_path" width="200px" height="200px" />
+            <!-- START PROFILE_DETAIL -->
+            <!-- IF PROFILE EMPTY -->
+            <div class="profile-detail">
+              <div v-if="profileIsEmpty">
+                <p class="subtitle is-size-6">
+                  <b>{{ user.username }}</b> did not fill his profile yet.
+                </p>
               </div>
-              <!-- PIC -->
+              <!-- ELSE IF PROFILE -->
+              <div v-else>
+                <!-- START PROFILE ITEMS -->
+                <p
+                  class="subtitle is-size-5"
+                  style="color: #555;"
+                  v-if="user.profile.intro"
+                >{{ user.profile.intro }}</p>
 
-              <!-- ABOUT ME -->
-              <div class="field m-30-0-15-0 ta-html" v-if="user.profile.about_me">
-                <h5 class="has-text-weight-semibold is-2">A few worlds about me</h5>
-                <p class="is-size-6" v-html="nl2p(user.profile.about_me)"></p>
-              </div>
-              <!-- ABOUT ME -->
-
-              <!-- TECH STUFF -->
-              <div class="field m-30-0-15-0 ta-html" v-if="user.profile.inspiration">
-                <h5 class="has-text-weight-semibold is-2">Gear, technique, inspiration</h5>
-                <p class="is-size-6" v-html="nl2p(user.profile.inspiration)"></p>
-              </div>
-              <!-- TECH STUFF -->
-
-              <!-- LOCATION -->
-              <div class="field m-30-0-15-0" v-if="user.profile.location.place_name">
-                <h5 class="has-text-weight-semibold is-2">
-                  Location:
-                  <span class="is-size-6 has-text-weight-normal">
-                    {{
-                    user.profile.location.place_name
-                    }}
-                  </span>
-                </h5>
-              </div>
-              <!-- LOCATION -->
-
-              <!-- LINKS -->
-              <div class="field m-30-0-15-0 ta-html" v-if="hasLinks">
-                <h5 class="has-text-weight-semibold is-2">Links</h5>
-                <div class="is-divider links-divider"></div>
-                <div class="links">
-                  <span v-if="user.profile.links.website" style="padding-right:1rem;">
-                    <a :href="user.profile.links.website" target="_blank">
-                      <font-awesome-icon icon="file-code" size="2x" :style="{ color: '#348BF8' }"></font-awesome-icon>
-                    </a>
-                  </span>
-                  <span v-if="user.profile.links.instagram">
-                    <a :href="user.profile.links.instagram" target="_blank">
-                      <font-awesome-icon
-                        :icon="['fab', 'instagram']"
-                        size="2x"
-                        :style="{ color: '#348BF8' }"
-                      ></font-awesome-icon>
-                    </a>
-                  </span>
-                  <span v-if="user.profile.links.twitter">
-                    <a :href="user.profile.links.twitter" target="_blank">
-                      <font-awesome-icon
-                        :icon="['fab', 'twitter-square']"
-                        size="2x"
-                        :style="{ color: '#348BF8' }"
-                      ></font-awesome-icon>
-                    </a>
-                  </span>
-                  <span v-if="user.profile.links.facebook">
-                    <a :href="user.profile.links.facebook" target="_blank">
-                      <font-awesome-icon
-                        :icon="['fab', 'facebook-square']"
-                        size="2x"
-                        :style="{ color: '#348BF8' }"
-                      ></font-awesome-icon>
-                    </a>
-                  </span>
-                  <span v-if="user.profile.links.flickr">
-                    <a :href="user.profile.links.flickr" target="_blank">
-                      <font-awesome-icon
-                        :icon="['fab', 'flickr']"
-                        size="2x"
-                        :style="{ color: '#348BF8' }"
-                      ></font-awesome-icon>
-                    </a>
-                  </span>
+                <!-- PIC -->
+                <div style="margin:10px 0 15px 0;" v-if="!!user.profile.avatar_path">
+                  <img :src="user.profile.avatar_path" width="200px" height="200px" />
                 </div>
+                <!-- PIC -->
+
+                <!-- ABOUT ME -->
+                <div class="field m-30-0-15-0 ta-html" v-if="user.profile.about_me">
+                  <h5 class="has-text-weight-semibold is-2">A few worlds about me</h5>
+                  <p class="is-size-6" v-html="nl2p(user.profile.about_me)"></p>
+                </div>
+                <!-- ABOUT ME -->
+
+                <!-- TECH STUFF -->
+                <div class="field m-30-0-15-0 ta-html" v-if="user.profile.inspiration">
+                  <h5 class="has-text-weight-semibold is-2">Gear, technique, inspiration</h5>
+                  <p class="is-size-6" v-html="nl2p(user.profile.inspiration)"></p>
+                </div>
+                <!-- TECH STUFF -->
+
+                <!-- LOCATION -->
+                <div class="field m-30-0-15-0" v-if="user.profile.location.place_name">
+                  <h5 class="has-text-weight-semibold is-2">
+                    Location:
+                    <span class="is-size-6 has-text-weight-normal">
+                      {{
+                      user.profile.location.place_name
+                      }}
+                    </span>
+                  </h5>
+                </div>
+                <!-- LOCATION -->
+
+                <!-- LINKS -->
+                <div class="field m-30-0-15-0 ta-html" v-if="hasLinks">
+                  <h5 class="has-text-weight-semibold is-2">Links</h5>
+                  <div class="is-divider links-divider"></div>
+                  <div class="links">
+                    <span v-if="user.profile.links.website" style="padding-right:1rem;">
+                      <a :href="user.profile.links.website" target="_blank">
+                        <font-awesome-icon icon="file-code" size="2x" :style="{ color: '#348BF8' }"></font-awesome-icon>
+                      </a>
+                    </span>
+                    <span v-if="user.profile.links.instagram">
+                      <a :href="user.profile.links.instagram" target="_blank">
+                        <font-awesome-icon
+                          :icon="['fab', 'instagram']"
+                          size="2x"
+                          :style="{ color: '#348BF8' }"
+                        ></font-awesome-icon>
+                      </a>
+                    </span>
+                    <span v-if="user.profile.links.twitter">
+                      <a :href="user.profile.links.twitter" target="_blank">
+                        <font-awesome-icon
+                          :icon="['fab', 'twitter-square']"
+                          size="2x"
+                          :style="{ color: '#348BF8' }"
+                        ></font-awesome-icon>
+                      </a>
+                    </span>
+                    <span v-if="user.profile.links.facebook">
+                      <a :href="user.profile.links.facebook" target="_blank">
+                        <font-awesome-icon
+                          :icon="['fab', 'facebook-square']"
+                          size="2x"
+                          :style="{ color: '#348BF8' }"
+                        ></font-awesome-icon>
+                      </a>
+                    </span>
+                    <span v-if="user.profile.links.flickr">
+                      <a :href="user.profile.links.flickr" target="_blank">
+                        <font-awesome-icon
+                          :icon="['fab', 'flickr']"
+                          size="2x"
+                          :style="{ color: '#348BF8' }"
+                        ></font-awesome-icon>
+                      </a>
+                    </span>
+                  </div>
+                </div>
+                <!-- LINKS -->
+                <!-- ENDS PROFILE ITEMS -->
               </div>
-              <!-- LINKS -->
-              <!-- ENDS PROFILE ITEMS -->
             </div>
+            <!-- END PROFILE_DETAIL -->
             <div style="margin-top:20px;"></div>
           </div>
         </div>
-        <!-- END PROFILE -->
+        <!-- END PROFILE_ALL -->
       </div>
     </div>
     <!-- ENDS PROFILE COLUMN -->
@@ -369,7 +387,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /************** layout ***********/
 html,
 body {
@@ -417,5 +435,8 @@ div.ta-html br {
 }
 .links span {
   padding-right: 1rem;
+}
+.profile-detail {
+  margin-top: 1.5rem;
 }
 </style>
