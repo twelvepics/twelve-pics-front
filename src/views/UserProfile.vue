@@ -27,50 +27,16 @@
           <!-- CARD CONTENT -->
           <div class="card-content">
             <!-- START COLUMNS IS-MOBILE -->
-            <div
-              class="columns is-mobile"
-              style="border-bottom:1px solid #bbb;margin:0 0 .5rem 0;padding:0;"
-            >
-              <div class="column is-half" style="margin:0;padding:0;">
-                <p class="title is-size-4" style="padding-top:.5rem;">
-                  {{
-                  user.profile.display_name || user.username
-                  }}
-                </p>
-              </div>
-              <div v-if="showEditButton" class="column is-half" style="margin:0;padding:0;">
-                <p class="has-text-right" style="padding:0 0 .3rem 0">
-                  <router-link
-                    class="button is-primary"
-                    id="profile-edit-btn"
-                    :to="`/user/${authenticatedUser._key}/edit`"
-                  >
-                    <strong>Edit</strong>
-                  </router-link>
-                </p>
-              </div>
-              <div v-if="showMessageButton" class="column is-half" style="margin:0;padding:0;">
-                <p class="has-text-right" style="padding:0 0 .3rem 0;">
-                  <button
-                    class="button is-primary"
-                    @click.prevent="openMessageModal"
-                    :disabled="!messagingEnabled"
-                  >Send message</button>
-                </p>
-              </div>
-            </div>
-            <!-- ENDS COLUMNS IS-MOBILE -->
-            <!-- START SUBTITLE/LINK -->
-            <div>
-              <p class="subtitle is-size-6">
-                <router-link :to="{ name: 'user-stories', params: { username: user.username } }">
-                  Stories posted by {{
-                  user.profile.display_name || user.username
-                  }}
-                </router-link>
-              </p>
-            </div>
-            <!-- ENDS SUBTITLE/LINK -->
+            <!-- VIEW PROFILE TOP -->
+            <component
+              :is="profileTopLayout"
+              :user="user"
+              :showMessageButton="showMessageButton"
+              :showEditButton="showEditButton"
+              :messagingEnabled="messagingEnabled"
+              @openMessageModal="openMessageModal"
+            ></component>
+            <!-- ENDS VIEW PROFILE TOP -->
 
             <!-- START PROFILE_DETAIL -->
             <!-- IF PROFILE EMPTY -->
@@ -90,27 +56,27 @@
                 >{{ user.profile.intro }}</p>
 
                 <!-- PIC -->
-                <div style="margin:10px 0 15px 0;" v-if="!!user.profile.avatar_path">
-                  <img :src="user.profile.avatar_path" width="200px" height="200px" />
+                <div class="avatar-container" v-if="!!user.profile.avatar_path">
+                  <img :src="user.profile.avatar_path" class="avatar-img" />
                 </div>
                 <!-- PIC -->
 
                 <!-- ABOUT ME -->
-                <div class="field m-30-0-15-0 ta-html" v-if="user.profile.about_me">
+                <div class="field user-info ta-html" v-if="user.profile.about_me">
                   <h5 class="has-text-weight-semibold is-2">A few worlds about me</h5>
                   <p class="is-size-6" v-html="nl2p(user.profile.about_me)"></p>
                 </div>
                 <!-- ABOUT ME -->
 
                 <!-- TECH STUFF -->
-                <div class="field m-30-0-15-0 ta-html" v-if="user.profile.inspiration">
+                <div class="field user-info ta-html" v-if="user.profile.inspiration">
                   <h5 class="has-text-weight-semibold is-2">Gear, technique, inspiration</h5>
                   <p class="is-size-6" v-html="nl2p(user.profile.inspiration)"></p>
                 </div>
                 <!-- TECH STUFF -->
 
                 <!-- LOCATION -->
-                <div class="field m-30-0-15-0" v-if="user.profile.location.place_name">
+                <div class="field user-info" v-if="user.profile.location.place_name">
                   <h5 class="has-text-weight-semibold is-2">
                     Location:
                     <span class="is-size-6 has-text-weight-normal">
@@ -123,7 +89,7 @@
                 <!-- LOCATION -->
 
                 <!-- LINKS -->
-                <div class="field m-30-0-15-0 ta-html" v-if="hasLinks">
+                <div class="field user-info ta-html" v-if="hasLinks">
                   <h5 class="has-text-weight-semibold is-2">Links</h5>
                   <div class="is-divider links-divider"></div>
                   <div class="links">
@@ -216,15 +182,24 @@ import * as Sentry from "@sentry/browser";
 import { mapGetters } from "vuex";
 // Private messaging
 import MessageComposerModal from "../components/MessageComposerModal.vue";
+import ViewProfileFullTop from "../components/profile/ViewProfileFullTop.vue";
+import ViewProfileMobileTop from "../components/profile/ViewProfileMobileTop.vue";
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
+
+let _mql = null;
+const LAYOUT_FULL = 0;
+const LAYOUT_MOBILE = 1;
+const LAYOUT_SWITCH = 600;
 
 export default {
   components: {
     MessageComposerModal,
     PageLoader,
-    PageError
+    PageError,
+    ViewProfileFullTop,
+    ViewProfileMobileTop
   },
   data() {
     return {
@@ -236,7 +211,8 @@ export default {
       //-- messaging --
       messageModalActive: false,
       //-- warnings --
-      confirmEmailSent: false
+      confirmEmailSent: false,
+      layout: null
     };
   },
   methods: {
@@ -267,6 +243,7 @@ export default {
         const response = await axiosBase.get(`/users/${this.username}`);
         // console.log(response.data.user);
         this.user = response.data.user;
+        console.log(this.user);
         this.is_loading = false;
       } catch (e) {
         this.is_loading = false;
@@ -283,10 +260,34 @@ export default {
           Sentry.captureException(e);
         }
       }
+    },
+    handleWindowChange(event) {
+      if (event.matches) {
+        // < LAYOUT_SWITCH
+        console.log(`CHANGE < ${LAYOUT_SWITCH}`);
+        this.layout = LAYOUT_MOBILE;
+      } else {
+        // >= LAYOUT_SWITCH
+        console.log(`CHANGE >= ${LAYOUT_SWITCH}`);
+        this.layout = LAYOUT_FULL;
+      }
+    },
+    isLayoutMobile() {
+      return this.layout === LAYOUT_MOBILE;
+    },
+    isLayoutFull() {
+      return this.layout == LAYOUT_FULL;
     }
   },
   computed: {
     ...mapGetters(["isAuthenticated", "authenticatedUser"]),
+    profileTopLayout() {
+      if (this.layout === LAYOUT_FULL) {
+        return ViewProfileFullTop;
+      } else {
+        return ViewProfileMobileTop;
+      }
+    },
     messagingEnabled: function() {
       return (
         this.isAuthenticated &&
@@ -346,6 +347,23 @@ export default {
   },
   created() {
     this.fetchData();
+    _mql = window.matchMedia(`(max-width: ${LAYOUT_SWITCH}px)`);
+    console.log(_mql.matches);
+    if (_mql.matches) {
+      // < LAYOUT_SWITCH
+      console.log(`INITIAL < ${LAYOUT_SWITCH}`);
+      this.layout = LAYOUT_MOBILE;
+    } else {
+      // >= LAYOUT_SWITCH
+      console.log(`INITIAL >= ${LAYOUT_SWITCH}`);
+      this.layout = LAYOUT_FULL;
+    }
+    console.log(_mql);
+    // initial state here
+    _mql.addListener(this.handleWindowChange);
+  },
+  beforeDestroy() {
+    _mql.removeListener(this.handleWindowChange);
   },
   watch: {
     // eslint-disable-next-line
@@ -436,7 +454,61 @@ div.ta-html br {
 .links span {
   padding-right: 1rem;
 }
+/* --- */
 .profile-detail {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
+}
+.avatar-img {
+  width: 200px;
+  height: 200px;
+}
+.avatar-container {
+  margin: 10px 0 15px 0;
+}
+.user-info {
+  margin: 30px 0 15px 0;
+}
+
+@media only screen and (max-width: 600px) {
+  /* .is-size-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem;
+    margin: 0 0 0.3rem 0 !important;
+  }
+  .is-size-5 {
+    font-size: 1rem !important;
+  }
+  .subtitle.is-size-5 {
+    margin-top: 0.7rem;
+    color: #555;
+  }
+  .subtitle:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+  h5 {
+    margin: 0 0 0.3rem 0;
+    padding: 0;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+  .is-size-6 {
+    font-size: 90% !important;
+  }
+  .content:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .card-content {
+    padding: 0.75rem;
+  }
+  .bottom-quote {
+    font-size: 100%;
+  }
+  .field {
+    margin: 15px 0 15px 0;
+  }
+  .has-text-weight-semibold {
+    font-weight: 400 !important;
+  } */
 }
 </style>
