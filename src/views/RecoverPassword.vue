@@ -1,124 +1,126 @@
 <template>
   <main>
-    <div class="columns is-centered">
-      <!-- CENTER COLUMNN -->
-      <div class="column is-half-desktop">
-        <!-- START FORM -->
-        <div class="card" style="margin-top:50px;">
-          <!-- CARD CONTENT -->
-          <div class="card-content" v-if="preCheckRunning || !requestCheckedValid">
-            <p :class="{ isError: !requestCheckedValid }">{{ topMessage }}</p>
-          </div>
-          <div class="card-content" v-else>
-            <form @submit.prevent="onSubmit" novalidate>
-              <p class="title is-size-6">Reset your password</p>
-              <p
-                class="subtitle is-size-6 isError"
-                style="margin-bottom:0 !important"
-                v-if="apiErrors && apiErrors === 'SERVER ERROR'"
-              >SERVER ERROR - SORRY</p>
-              <p
-                class="subtitle is-size-6 isError"
-                style="margin-bottom:0 !important"
-                v-if="apiErrors && apiErrors === 'NOT FOUND'"
-              >COULDN'T FIND THIS REQUEST - SORRY</p>
-              <p
-                class="subtitle is-size-6 isError"
-                style="margin-bottom:0 !important"
-                v-else-if="apiErrors && apiErrors === 'GONE'"
-              >RESET REQUEST EXPIRED - SORRY</p>
-              <p
-                class="subtitle is-size-6 isDone"
-                style="margin-bottom:0 !important"
-                v-else-if="done"
-              >YOUR PASSWORD HAS BEEN SUCCESSFULLY UPDATED</p>
-              <p
-                v-else
-                class="subtitle is-size-6"
-                style="margin-bottom:0 !important"
-              >Please fill in your new password, it should be 5 to 16 characters.</p>
-              <!-- PASSWORD -->
-              <div class="field" style="margin-top:20px;">
-                <label class="label is-size-6 mt10">
-                  New password
-                  <span
-                    class="content is-small"
-                    style="color:red;"
-                    v-if="$v.password.$error"
-                  >Password should be 5 to 16 character</span>
-                  <span
-                    class="content is-small"
-                    style="color:red;"
-                    v-else-if="
+    <div class="container is-fluid max-container">
+      <div class="columns is-centered">
+        <!-- CENTER COLUMNN -->
+        <div class="column is-half-desktop">
+          <!-- START FORM -->
+          <div class="card" style="margin-top:50px;">
+            <!-- CARD CONTENT -->
+            <div class="card-content" v-if="preCheckRunning || !requestCheckedValid">
+              <p :class="{ isError: !requestCheckedValid }">{{ topMessage }}</p>
+            </div>
+            <div class="card-content" v-else>
+              <form @submit.prevent="onSubmit" novalidate>
+                <p class="title is-size-6">Reset your password</p>
+                <p
+                  class="subtitle is-size-6 isError"
+                  style="margin-bottom:0 !important"
+                  v-if="apiErrors && apiErrors === 'SERVER ERROR'"
+                >SERVER ERROR - SORRY</p>
+                <p
+                  class="subtitle is-size-6 isError"
+                  style="margin-bottom:0 !important"
+                  v-if="apiErrors && apiErrors === 'NOT FOUND'"
+                >COULDN'T FIND THIS REQUEST - SORRY</p>
+                <p
+                  class="subtitle is-size-6 isError"
+                  style="margin-bottom:0 !important"
+                  v-else-if="apiErrors && apiErrors === 'GONE'"
+                >RESET REQUEST EXPIRED - SORRY</p>
+                <p
+                  class="subtitle is-size-6 isDone"
+                  style="margin-bottom:0 !important"
+                  v-else-if="done"
+                >YOUR PASSWORD HAS BEEN SUCCESSFULLY UPDATED</p>
+                <p
+                  v-else
+                  class="subtitle is-size-6"
+                  style="margin-bottom:0 !important"
+                >Please fill in your new password, it should be 5 to 16 characters.</p>
+                <!-- PASSWORD -->
+                <div class="field" style="margin-top:20px;">
+                  <label class="label is-size-6 mt10">
+                    New password
+                    <span
+                      class="content is-small"
+                      style="color:red;"
+                      v-if="$v.password.$error"
+                    >Password should be 5 to 16 character</span>
+                    <span
+                      class="content is-small"
+                      style="color:red;"
+                      v-else-if="
                                             apiErrors &&
                                                 apiErrors.hasOwnProperty('password') &&
                                                 apiErrors.password !== null
                                         "
-                  >{{ apiErrors.password }}</span>
-                </label>
-                <div class="control" style="max-width: 500px;">
-                  <input
-                    class="input"
-                    :class="{ 'is-danger': $v.password.$error }"
-                    type="password"
-                    placeholder="New password"
-                    v-model="password"
-                    :readonly="done"
-                    @blur="$v.password.$touch()"
-                    @keydown.enter.prevent
-                    @input="resetApiError('password')"
-                  />
+                    >{{ apiErrors.password }}</span>
+                  </label>
+                  <div class="control" style="max-width: 500px;">
+                    <input
+                      class="input"
+                      :class="{ 'is-danger': $v.password.$error }"
+                      type="password"
+                      placeholder="New password"
+                      v-model="password"
+                      :readonly="done"
+                      @blur="$v.password.$touch()"
+                      @keydown.enter.prevent
+                      @input="resetApiError('password')"
+                    />
+                  </div>
                 </div>
-              </div>
-              <!-- PASSWORD -->
+                <!-- PASSWORD -->
 
-              <!-- CONFIRM PASSWORD -->
-              <div class="field" style="margin-top:20px;">
-                <label class="label is-size-6 mt10">
-                  Confirm password
-                  <span
-                    class="content is-small"
-                    style="color:red;"
-                    v-if="$v.repeat_password.$error"
-                  >Password and password confirm don't match</span>
-                  <span
-                    class="content is-small"
-                    style="color:red;"
-                    v-else-if="
+                <!-- CONFIRM PASSWORD -->
+                <div class="field" style="margin-top:20px;">
+                  <label class="label is-size-6 mt10">
+                    Confirm password
+                    <span
+                      class="content is-small"
+                      style="color:red;"
+                      v-if="$v.repeat_password.$error"
+                    >Password and password confirm don't match</span>
+                    <span
+                      class="content is-small"
+                      style="color:red;"
+                      v-else-if="
                                             apiErrors &&
                                                 Object.prototype.hasOwnProperty.call(apiErrors, 'repeat_password') &&
                                                 apiErrors.repeat_password !== null
                                         "
-                  >Password and password confirm don't match</span>
-                </label>
-                <div class="control" style="max-width: 500px;">
-                  <input
-                    class="input"
-                    :class="{ 'is-danger': $v.repeat_password.$error }"
-                    type="password"
-                    placeholder="Confirm your password"
-                    v-model="repeat_password"
-                    :readonly="done"
-                    @blur="$v.repeat_password.$touch()"
-                    @keydown.enter.prevent
-                    @input="resetApiError('repeat_password')"
-                  />
+                    >Password and password confirm don't match</span>
+                  </label>
+                  <div class="control" style="max-width: 500px;">
+                    <input
+                      class="input"
+                      :class="{ 'is-danger': $v.repeat_password.$error }"
+                      type="password"
+                      placeholder="Confirm your password"
+                      v-model="repeat_password"
+                      :readonly="done"
+                      @blur="$v.repeat_password.$touch()"
+                      @keydown.enter.prevent
+                      @input="resetApiError('repeat_password')"
+                    />
+                  </div>
                 </div>
-              </div>
-              <!-- CONFIRM PASSWORD -->
+                <!-- CONFIRM PASSWORD -->
 
-              <!-- SUBMIT -->
-              <div class="is-divider" style="margin-top:35px;"></div>
-              <div class="field is-grouped submit-buttons">
-                <div class="control">
-                  <button class="button is-primary" :disabled="$v.$invalid || done">Save</button>
+                <!-- SUBMIT -->
+                <div class="is-divider" style="margin-top:35px;"></div>
+                <div class="field is-grouped submit-buttons">
+                  <div class="control">
+                    <button class="button is-primary" :disabled="$v.$invalid || done">Save</button>
+                  </div>
                 </div>
-              </div>
-              <!-- SUBMIT -->
-              <div style="margin-top:25px;"></div>
-            </form>
+                <!-- SUBMIT -->
+                <div style="margin-top:25px;"></div>
+              </form>
+            </div>
+            <!-- END CARD CONTENT -->
           </div>
-          <!-- END CARD CONTENT -->
         </div>
       </div>
     </div>

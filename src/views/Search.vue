@@ -1,12 +1,12 @@
 <template>
   <!-- START MAIN CONTENT -->
   <main>
-    <div class="container is-fluid" ref="stories-container">
+    <div class="container is-fluid max-container" ref="stories-container">
       <div class="columns">
         <div class="column auto">
           <!-- STORIES -->
           <div>
-            <story-brief v-for="(story, idx) in stories" :key="idx" :story="story"></story-brief>
+            <component v-for="(story, idx) in stories" :key="idx" :story="story" :is="storyBrief"></component>
             <infinite-loading @infinite="infiniteHandler" :identifier="infiniteId">
               <div slot="spinner">
                 <page-loader></page-loader>
@@ -44,10 +44,16 @@ import { EventBus } from "../event-bus.js";
 import { mapActions, mapGetters } from "vuex";
 import axiosBase from "../services/axiosBase";
 // import StoryModal from "../components/StoryModal.vue";
-import StoryBrief from "../components/StoryBrief.vue";
+import FullStoryBrief from "../components/storybrief/FullStoryBrief.vue";
+import MobileStoryBrief from "../components/storybrief/MobileStoryBrief.vue";
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
 import HomeRightCol from "../components/HomeRightCol.vue";
+
+let _mql = null;
+const LAYOUT_FULL = 0;
+const LAYOUT_MOBILE = 1;
+const LAYOUT_SWITCH = 600;
 
 ///////////////////////////////////////
 // @ is an alias to /src
@@ -56,13 +62,16 @@ export default {
   name: "search",
   components: {
     InfiniteLoading,
-    StoryBrief,
+    FullStoryBrief,
+    MobileStoryBrief,
     PageLoader,
     PageError,
     HomeRightCol
   },
   data: function() {
     return {
+      storyBrief: null,
+      layout: null,
       page: 1,
       stories: [],
       infiniteId: +new Date(),
@@ -79,6 +88,25 @@ export default {
   },
   methods: {
     ...mapActions(["resetStoryComponentHomeLayout"]),
+    handleWindowChange(event) {
+      if (event.matches) {
+        // < LAYOUT_SWITCH
+        console.log(`CHANGE < ${LAYOUT_SWITCH}`);
+        this.layout = LAYOUT_MOBILE;
+        this.storyBrief = MobileStoryBrief;
+      } else {
+        // >= LAYOUT_SWITCH
+        console.log(`CHANGE >= ${LAYOUT_SWITCH}`);
+        this.layout = LAYOUT_FULL;
+        this.storyBrief = FullStoryBrief;
+      }
+    },
+    isLayoutMobile() {
+      return this.layout === LAYOUT_MOBILE;
+    },
+    isLayoutFull() {
+      return this.layout == LAYOUT_FULL;
+    },
     async fetchStories($state) {
       try {
         console.log("infiniteHandler called");
@@ -138,10 +166,27 @@ export default {
   },
   created() {
     // this.searchStr = this.$route.query.q;
+    _mql = window.matchMedia(`(max-width: ${LAYOUT_SWITCH}px)`);
+    console.log(_mql.matches);
+    if (_mql.matches) {
+      // < LAYOUT_SWITCH
+      console.log(`INITIAL < ${LAYOUT_SWITCH}`);
+      this.layout = LAYOUT_MOBILE;
+      this.storyBrief = MobileStoryBrief;
+    } else {
+      // >= LAYOUT_SWITCH
+      console.log(`INITIAL >= ${LAYOUT_SWITCH}`);
+      this.layout = LAYOUT_FULL;
+      this.storyBrief = FullStoryBrief;
+    }
+    console.log(_mql);
+    // initial state here
+    _mql.addListener(this.handleWindowChange);
   },
   beforeDestroy() {
     console.log("Search beforeDestroyed");
     EventBus.$off("searchTriggered");
+    _mql.removeListener(this.handleWindowChange);
   },
   destroyed() {
     console.log("Search destroyed");

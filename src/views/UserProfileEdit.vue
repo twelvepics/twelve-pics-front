@@ -1,414 +1,418 @@
 <template>
   <main>
-    <div class="columns is-centered" style="margin:0;padding:0;">
-      <!-- CENTER COLUMNN -->
-      <div class="column is-three-quarters-desktop">
-        <!-- ERRORS AND AUTH -->
-        <page-error v-if="is_error" :errorMessage="errorMessage"></page-error>
-        <!-- START FORM -->
-        <div class="card" v-else>
-          <!-- CARD CONTENT -->
-          <div class="card-content">
-            <form @submit.prevent="onSubmit">
-              <div
-                v-if="is_api_error"
-                class="isError"
-                style="text-align:center;margin-bottom:12px;"
-              >
-                <div v-if="apiErrorType == 'UPDATE ERROR'">
-                  <p>
-                    <b>VALIDATIONS ERRORS</b>
-                  </p>
-                  <ul id="apiErrors">
-                    <li v-for="(k, v, idx) in apiErrors" :key="idx">{{ k | cleanApiError }}</li>
-                  </ul>
-                </div>
-                <div v-else>SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
-              </div>
-              <p class="title is-size-4">{{ authenticatedUser && user.username }}'s profile</p>
-              <p
-                class="subtitle is-size-6"
-              >Edit your profile. All fields are optional. Be cool and informative. Include links to your works or portfolio.</p>
-              <!-- AVATAR -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Profile pic</label>
-                <p
-                  v-if="isUploadFailed"
-                  class="content is-small is-marginless pb-05 isError"
-                >{{ uploadErrorMessage }}</p>
-                <p
-                  v-else
-                  class="content is-small is-marginless pb-05"
-                >Your profile pic - Must be a JPEG or PNG file - Max file size 4 MB</p>
-                <!-- DROP BOX -->
-                <div v-if="!hasPic && (isUploadInitial || isUploadSaving || isUploadFailed)">
-                  <div class="dropbox">
-                    <input
-                      type="file"
-                      :name="uploadFieldName"
-                      :disabled="isUploadSaving"
-                      @change="fileChange($event.target.name, $event.target.files[0])"
-                      accept="image/*"
-                      class="input-file"
-                    />
-                    <p v-if="!hasPic && (isUploadInitial || isUploadFailed)">
-                      Drag your file here
-                      <br />or click to browse
+    <div class="container is-fluid max-container">
+      <div class="columns is-centered" style="margin:0;padding:0;">
+        <!-- CENTER COLUMNN -->
+        <div class="column is-three-quarters-desktop">
+          <!-- ERRORS AND AUTH -->
+          <page-error v-if="is_error" :errorMessage="errorMessage"></page-error>
+          <!-- START FORM -->
+          <div class="card" v-else>
+            <!-- CARD CONTENT -->
+            <div class="card-content">
+              <form @submit.prevent="onSubmit">
+                <div
+                  v-if="is_api_error"
+                  class="isError"
+                  style="text-align:center;margin-bottom:12px;"
+                >
+                  <div v-if="apiErrorType == 'UPDATE ERROR'">
+                    <p>
+                      <b>VALIDATIONS ERRORS</b>
                     </p>
-                    <p v-if="isUploadSaving">Uploading file...</p>
+                    <ul id="apiErrors">
+                      <li v-for="(k, v, idx) in apiErrors" :key="idx">{{ k | cleanApiError }}</li>
+                    </ul>
+                  </div>
+                  <div v-else>SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
+                </div>
+                <p class="title is-size-4">{{ authenticatedUser && user.username }}'s profile</p>
+                <p
+                  class="content"
+                >Edit your profile. All fields are optional. Be cool and informative. Include links to your works or portfolio.</p>
+                <!-- AVATAR -->
+                <div class="field">
+                  <label class="label is-marginless">Profile pic</label>
+                  <p
+                    v-if="isUploadFailed"
+                    class="content is-small is-marginless pb-05 isError"
+                  >{{ uploadErrorMessage }}</p>
+                  <p
+                    v-else
+                    class="content is-small is-marginless pb-05"
+                  >Your profile pic - Must be a JPEG or PNG file - Max file size 4 MB</p>
+                  <!-- DROP BOX -->
+                  <div v-if="!hasPic && (isUploadInitial || isUploadSaving || isUploadFailed)">
+                    <div class="dropbox">
+                      <input
+                        type="file"
+                        :name="uploadFieldName"
+                        :disabled="isUploadSaving"
+                        @change="fileChange($event.target.name, $event.target.files[0])"
+                        accept="image/*"
+                        class="input-file"
+                      />
+                      <p v-if="!hasPic && (isUploadInitial || isUploadFailed)">
+                        Drag your file here
+                        <br />or click to browse
+                      </p>
+                      <p v-if="isUploadSaving">Uploading file...</p>
+                    </div>
+                  </div>
+                  <div v-if="hasPic || isUploadSuccess" class="avatar-img-container">
+                    <img :src="profile.avatar_path" class="avatar-img" />
+                    <p class="control">
+                      <button class="button is-small is-primary" @click.prevent="resetAvatar">Change</button>
+                      <button
+                        class="button is-small is-dark"
+                        style="margin-left:10px"
+                        @click.prevent="deleteAvatar"
+                      >Delete</button>
+                    </p>
+                  </div>
+
+                  <!-- END DROP BOX -->
+                </div>
+                <!-- END AVATAR -->
+
+                <!-- DISPLAY NAME -->
+                <div class="field form-item">
+                  <label class="label is-marginless">Display name</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      style="color:red;"
+                      v-if="$v.profile.display_name.$error"
+                    >Display name max length is 32 characters.</span>
+                    <span v-else>Set a display name. This does not change your username.</span>
+                  </p>
+                  <div class="control" style="max-width: 500px;">
+                    <input
+                      class="input"
+                      :class="{ 'is-danger': $v.profile.display_name.$error }"
+                      type="text"
+                      v-model="profile.display_name"
+                      placeholder="Display name (Optional)"
+                      @keyup="$v.profile.display_name.$touch()"
+                      @keyup.22="$v.profile.display_name.$touch()"
+                      @input="resetApiErrors()"
+                      @keydown.enter.prevent
+                    />
                   </div>
                 </div>
-                <div v-if="hasPic || isUploadSuccess" width="200" height="200">
-                  <img :src="profile.avatar_path" width="200" height="200" />
-                  <p class="control">
-                    <button class="button is-small is-primary" @click.prevent="resetAvatar">Change</button>
-                    <button
-                      class="button is-small is-dark"
-                      style="margin-left:10px"
-                      @click.prevent="deleteAvatar"
-                    >Delete</button>
+                <!-- DISPLAY NAME -->
+
+                <!-- INTRO -->
+                <div class="field form-item">
+                  <label class="label is-marginless">A short intro</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      style="color:red;"
+                      v-if="$v.profile.intro.$error"
+                    >Intro max length is 256 characters.</span>
+                    <span
+                      v-else
+                    >Will be used as a title of your profile - Max length: 256 characters</span>
                   </p>
+                  <div class="control">
+                    <input
+                      class="input"
+                      :class="{ 'is-danger': $v.profile.intro.$error }"
+                      type="text"
+                      v-model="profile.intro"
+                      placeholder="A short intro"
+                      @keyup="$v.profile.intro.$touch()"
+                      @keyup.22="$v.profile.intro.$touch()"
+                      @input="resetApiErrors()"
+                      @keydown.enter.prevent
+                    />
+                  </div>
                 </div>
+                <!-- INTRO -->
 
-                <!-- END DROP BOX -->
-              </div>
-              <!-- END AVATAR -->
-
-              <!-- DISPLAY NAME -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Display name</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    style="color:red;"
-                    v-if="$v.profile.display_name.$error"
-                  >Display name max length is 32 characters.</span>
-                  <span v-else>Set a display name. This does not change your username.</span>
-                </p>
-                <div class="control" style="max-width: 500px;">
-                  <input
-                    class="input"
-                    :class="{ 'is-danger': $v.profile.display_name.$error }"
-                    type="text"
-                    v-model="profile.display_name"
-                    placeholder="Display name (Optional)"
-                    @keyup="$v.profile.display_name.$touch()"
-                    @keyup.22="$v.profile.display_name.$touch()"
-                    @input="resetApiErrors()"
-                    @keydown.enter.prevent
-                  />
+                <!-- ABOUT ME -->
+                <div class="field form-item">
+                  <label class="label is-marginless">More about you</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      style="color:red;"
+                      v-if="$v.profile.about_me.$error"
+                    >Max length is 3000 characters.</span>
+                    <span v-else>
+                      A few words about you, may be about what motivates you, your path in
+                      photography...
+                    </span>
+                  </p>
+                  <div class="control">
+                    <textarea
+                      class="textarea"
+                      :class="{ 'is-danger': $v.profile.about_me.$error }"
+                      v-model="profile.about_me"
+                      placeholder="A few worlds about you..."
+                      @keyup="$v.profile.about_me.$touch()"
+                      @keyup.22="$v.profile.about_me.$touch()"
+                      @input="resetApiErrors()"
+                    ></textarea>
+                  </div>
                 </div>
-              </div>
-              <!-- DISPLAY NAME -->
+                <!-- ABOUT ME -->
 
-              <!-- INTRO -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">A short intro</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    style="color:red;"
-                    v-if="$v.profile.intro.$error"
-                  >Intro max length is 256 characters.</span>
-                  <span v-else>Will be used as a title of your profile - Max length: 256 characters</span>
-                </p>
-                <div class="control">
-                  <input
-                    class="input"
-                    :class="{ 'is-danger': $v.profile.intro.$error }"
-                    type="text"
-                    v-model="profile.intro"
-                    placeholder="A short intro"
-                    @keyup="$v.profile.intro.$touch()"
-                    @keyup.22="$v.profile.intro.$touch()"
-                    @input="resetApiErrors()"
-                    @keydown.enter.prevent
-                  />
+                <!-- TECH STUFF -->
+                <div class="field form-item">
+                  <label class="label is-marginless">Gear, technique, inspiration</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      style="color:red;"
+                      v-if="$v.profile.inspiration.$error"
+                    >Max length is 3000 characters.</span>
+                    <span v-else>
+                      The place to tell about how
+                      your finally defeated your GAS, your technique, photographers that inspired you,
+                    </span>
+                  </p>
+                  <div class="control">
+                    <textarea
+                      class="textarea"
+                      :class="{ 'is-danger': $v.profile.inspiration.$error }"
+                      v-model="profile.inspiration"
+                      placeholder="Gear, technique, inspiration..."
+                      @keyup="$v.profile.inspiration.$touch()"
+                      @keyup.22="$v.profile.inspiration.$touch()"
+                      @input="resetApiErrors()"
+                    ></textarea>
+                  </div>
                 </div>
-              </div>
-              <!-- INTRO -->
+                <!-- TECH STUFF -->
 
-              <!-- ABOUT ME -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">More about you</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    style="color:red;"
-                    v-if="$v.profile.about_me.$error"
-                  >Max length is 3000 characters.</span>
-                  <span v-else>
-                    A few words about you, may be about what motivates you, your path in
-                    photography...
-                  </span>
-                </p>
-                <div class="control">
-                  <textarea
-                    class="textarea"
-                    :class="{ 'is-danger': $v.profile.about_me.$error }"
-                    v-model="profile.about_me"
-                    placeholder="A few worlds about you..."
-                    @keyup="$v.profile.about_me.$touch()"
-                    @keyup.22="$v.profile.about_me.$touch()"
-                    @input="resetApiErrors()"
-                  ></textarea>
+                <!-- LOCATION -->
+                <div class="field form-item">
+                  <label class="label is-marginless">Your location</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      style="color:red;"
+                      v-if="$v.profile.location.place_name.$error"
+                    >Max length is 128 characters.</span>
+                    <span v-else>Where are you from?</span>
+                  </p>
+                  <div class="control" style="max-width: 500px;">
+                    <input
+                      autocomplete="off"
+                      class="input"
+                      :class="{ 'is-danger': $v.profile.location.place_name.$error }"
+                      type="text"
+                      v-model="profile.location.place_name"
+                      placeholder="Type on and select your location"
+                      list="locations"
+                      @input="searchLocation"
+                      @change="setSelectedSelection"
+                      @keyup="$v.profile.location.place_name.$touch()"
+                      @keyup.22="$v.profile.location.place_name.$touch()"
+                      @keydown.enter.prevent
+                    />
+                    <datalist id="locations">
+                      <select>
+                        <option
+                          v-for="(option, idx) in mapboxOptions"
+                          :value="option.place_name"
+                          :key="idx"
+                        ></option>
+                      </select>
+                    </datalist>
+                  </div>
                 </div>
-              </div>
-              <!-- ABOUT ME -->
+                <!-- LOCATION -->
 
-              <!-- TECH STUFF -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Gear, technique, inspiration</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    style="color:red;"
-                    v-if="$v.profile.inspiration.$error"
-                  >Max length is 3000 characters.</span>
-                  <span v-else>
-                    The place to tell about how
-                    your finally defeated your GAS, your technique, photographers that inspired you,
-                  </span>
-                </p>
-                <div class="control">
-                  <textarea
-                    class="textarea"
-                    :class="{ 'is-danger': $v.profile.inspiration.$error }"
-                    v-model="profile.inspiration"
-                    placeholder="Gear, technique, inspiration..."
-                    @keyup="$v.profile.inspiration.$touch()"
-                    @keyup.22="$v.profile.inspiration.$touch()"
-                    @input="resetApiErrors()"
-                  ></textarea>
-                </div>
-              </div>
-              <!-- TECH STUFF -->
-
-              <!-- LOCATION -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Your location</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    style="color:red;"
-                    v-if="$v.profile.location.place_name.$error"
-                  >Max length is 128 characters.</span>
-                  <span v-else>Where are you from?</span>
-                </p>
-                <div class="control" style="max-width: 500px;">
-                  <input
-                    autocomplete="off"
-                    class="input"
-                    :class="{ 'is-danger': $v.profile.location.place_name.$error }"
-                    type="text"
-                    v-model="profile.location.place_name"
-                    placeholder="Type on and select your location"
-                    list="locations"
-                    @input="searchLocation"
-                    @change="setSelectedSelection"
-                    @keyup="$v.profile.location.place_name.$touch()"
-                    @keyup.22="$v.profile.location.place_name.$touch()"
-                    @keydown.enter.prevent
-                  />
-                  <datalist id="locations">
-                    <select>
-                      <option
-                        v-for="(option, idx) in mapboxOptions"
-                        :value="option.place_name"
-                        :key="idx"
-                      ></option>
-                    </select>
-                  </datalist>
-                </div>
-              </div>
-              <!-- LOCATION -->
-
-              <!-- WEBSITE & SOCIAL -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Website and socials</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    style="color:red;"
-                    v-if="
+                <!-- WEBSITE & SOCIAL -->
+                <div class="field form-item">
+                  <label class="label is-marginless">Website and socials</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      style="color:red;"
+                      v-if="
                                             $v.profile.links.website.$error ||
                                                 $v.profile.links.instagram.$error ||
                                                 $v.profile.links.facebook.$error ||
                                                 $v.profile.links.twitter.$error ||
                                                 $v.profile.links.flickr.$error
                                         "
-                  >Max length is 128 characters.</span>
-                  <span
-                    v-else
-                  >Your social stuff, web sites where users may view your portfolio, photos</span>
-                </p>
-                <!-- HORIZONTAL 1 -->
-                <div class="field is-horizontal socials">
-                  <div class="field-label is-normal">
-                    <label class="label">Website:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control is-expanded has-icons-left">
-                        <input
-                          class="input"
-                          :class="{ 'is-danger': $v.profile.links.website.$error }"
-                          type="text"
-                          placeholder="Your website url"
-                          v-model="profile.links.website"
-                          @keyup="$v.profile.links.website.$touch()"
-                          @keyup.22="$v.profile.links.website.$touch()"
-                          @input="resetApiErrors()"
-                          @keydown.enter.prevent
-                        />
-                        <span class="icon is-left">
-                          <font-awesome-icon icon="file-code" size="lg"></font-awesome-icon>
-                        </span>
-                      </p>
+                    >Max length is 128 characters.</span>
+                    <span
+                      v-else
+                    >Your social stuff, web sites where users may view your portfolio, photos</span>
+                  </p>
+                  <!-- HORIZONTAL 1 -->
+                  <div class="field is-horizontal socials">
+                    <div class="field-label is-normal">
+                      <label class="label">Website:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                          <input
+                            class="input"
+                            :class="{ 'is-danger': $v.profile.links.website.$error }"
+                            type="text"
+                            placeholder="Your website url"
+                            v-model="profile.links.website"
+                            @keyup="$v.profile.links.website.$touch()"
+                            @keyup.22="$v.profile.links.website.$touch()"
+                            @input="resetApiErrors()"
+                            @keydown.enter.prevent
+                          />
+                          <span class="icon is-left">
+                            <font-awesome-icon icon="file-code" size="lg"></font-awesome-icon>
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="field-label is-normal">
+                      <label class="label">Instagram:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                          <input
+                            class="input"
+                            :class="{ 'is-danger': $v.profile.links.instagram.$error }"
+                            type="text"
+                            placeholder="Your Instagram url"
+                            v-model="profile.links.instagram"
+                            @keyup="$v.profile.links.instagram.$touch()"
+                            @keyup.22="$v.profile.links.instagram.$touch()"
+                            @input="resetApiErrors()"
+                            @keydown.enter.prevent
+                          />
+                          <span class="icon is-left">
+                            <font-awesome-icon :icon="['fab', 'instagram']" size="lg"></font-awesome-icon>
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div class="field-label is-normal">
-                    <label class="label">Instagram:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control is-expanded has-icons-left">
-                        <input
-                          class="input"
-                          :class="{ 'is-danger': $v.profile.links.instagram.$error }"
-                          type="text"
-                          placeholder="Your Instagram url"
-                          v-model="profile.links.instagram"
-                          @keyup="$v.profile.links.instagram.$touch()"
-                          @keyup.22="$v.profile.links.instagram.$touch()"
-                          @input="resetApiErrors()"
-                          @keydown.enter.prevent
-                        />
-                        <span class="icon is-left">
-                          <font-awesome-icon :icon="['fab', 'instagram']" size="lg"></font-awesome-icon>
-                        </span>
-                      </p>
+                  <!-- ENDS HORIZONTAL 1-->
+                  <!-- HORIZONTAL 2 -->
+                  <div class="field is-horizontal socials">
+                    <div class="field-label is-normal">
+                      <label class="label">Twitter:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                          <input
+                            class="input"
+                            :class="{ 'is-danger': $v.profile.links.twitter.$error }"
+                            type="text"
+                            placeholder="Your Twitter url or handle"
+                            v-model="profile.links.twitter"
+                            @keyup="$v.profile.links.twitter.$touch()"
+                            @keyup.22="$v.profile.links.twitter.$touch()"
+                            @input="resetApiErrors()"
+                            @keydown.enter.prevent
+                          />
+                          <span class="icon is-left">
+                            <font-awesome-icon :icon="['fab', 'twitter-square']" size="lg"></font-awesome-icon>
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="field-label is-normal">
+                      <label class="label">Facebook:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                          <input
+                            class="input"
+                            :class="{ 'is-danger': $v.profile.links.facebook.$error }"
+                            type="text"
+                            placeholder="Your Facebook url"
+                            v-model="profile.links.facebook"
+                            @keyup="$v.profile.links.facebook.$touch()"
+                            @keyup.22="$v.profile.links.facebook.$touch()"
+                            @input="resetApiErrors()"
+                            @keydown.enter.prevent
+                          />
+                          <span class="icon is-left">
+                            <font-awesome-icon :icon="['fab', 'facebook-square']" size="lg"></font-awesome-icon>
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </div>
+                  <!-- ENDS HORIZONTAL 2-->
+                  <!-- HORIZONTAL 3 -->
+                  <div class="field is-horizontal socials">
+                    <div class="field-label is-normal">
+                      <label class="label">Flickr:</label>
+                    </div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control is-expanded has-icons-left">
+                          <input
+                            class="input"
+                            :class="{ 'is-danger': $v.profile.links.flickr.$error }"
+                            type="text"
+                            placeholder="Your Flickr url"
+                            v-model="profile.links.flickr"
+                            @blur="$v.profile.links.flickr.$touch()"
+                            @input="resetApiErrors()"
+                            @keydown.enter.prevent
+                          />
+                          <span class="icon is-left">
+                            <font-awesome-icon :icon="['fab', 'flickr']" size="lg"></font-awesome-icon>
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <!-- DUMMY -->
+                    <div class="field-label is-normal"></div>
+                    <div class="field-body">
+                      <div class="field">
+                        <p class="control is-expanded has-icons-left"></p>
+                      </div>
+                    </div>
+                    <!-- DUMMY -->
+                  </div>
+                  <!-- ENDS HORIZONTAL 3-->
                 </div>
-                <!-- ENDS HORIZONTAL 1-->
-                <!-- HORIZONTAL 2 -->
-                <div class="field is-horizontal socials">
-                  <div class="field-label is-normal">
-                    <label class="label">Twitter:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control is-expanded has-icons-left">
-                        <input
-                          class="input"
-                          :class="{ 'is-danger': $v.profile.links.twitter.$error }"
-                          type="text"
-                          placeholder="Your Twitter url or handle"
-                          v-model="profile.links.twitter"
-                          @keyup="$v.profile.links.twitter.$touch()"
-                          @keyup.22="$v.profile.links.twitter.$touch()"
-                          @input="resetApiErrors()"
-                          @keydown.enter.prevent
-                        />
-                        <span class="icon is-left">
-                          <font-awesome-icon :icon="['fab', 'twitter-square']" size="lg"></font-awesome-icon>
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <div class="field-label is-normal">
-                    <label class="label">Facebook:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control is-expanded has-icons-left">
-                        <input
-                          class="input"
-                          :class="{ 'is-danger': $v.profile.links.facebook.$error }"
-                          type="text"
-                          placeholder="Your Facebook url"
-                          v-model="profile.links.facebook"
-                          @keyup="$v.profile.links.facebook.$touch()"
-                          @keyup.22="$v.profile.links.facebook.$touch()"
-                          @input="resetApiErrors()"
-                          @keydown.enter.prevent
-                        />
-                        <span class="icon is-left">
-                          <font-awesome-icon :icon="['fab', 'facebook-square']" size="lg"></font-awesome-icon>
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <!-- ENDS HORIZONTAL 2-->
-                <!-- HORIZONTAL 3 -->
-                <div class="field is-horizontal socials">
-                  <div class="field-label is-normal">
-                    <label class="label">Flickr:</label>
-                  </div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control is-expanded has-icons-left">
-                        <input
-                          class="input"
-                          :class="{ 'is-danger': $v.profile.links.flickr.$error }"
-                          type="text"
-                          placeholder="Your Flickr url"
-                          v-model="profile.links.flickr"
-                          @blur="$v.profile.links.flickr.$touch()"
-                          @input="resetApiErrors()"
-                          @keydown.enter.prevent
-                        />
-                        <span class="icon is-left">
-                          <font-awesome-icon :icon="['fab', 'flickr']" size="lg"></font-awesome-icon>
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <!-- DUMMY -->
-                  <div class="field-label is-normal"></div>
-                  <div class="field-body">
-                    <div class="field">
-                      <p class="control is-expanded has-icons-left"></p>
-                    </div>
-                  </div>
-                  <!-- DUMMY -->
-                </div>
-                <!-- ENDS HORIZONTAL 3-->
-              </div>
-              <!-- ENDS WEBSITE & SOCIAL -->
+                <!-- ENDS WEBSITE & SOCIAL -->
 
-              <!-- SUBMIT -->
-              <div class="is-divider" style="margin-top:35px;"></div>
-              <div class="field is-grouped submit-buttons">
-                <div class="control">
-                  <button
-                    type="submit"
-                    class="button is-primary"
-                    :disabled="$v.$invalid || is_saving"
-                  >Save</button>
+                <!-- SUBMIT -->
+                <div class="is-divider" style="margin-top:35px;"></div>
+                <div class="field is-grouped submit-buttons">
+                  <div class="control">
+                    <button
+                      type="submit"
+                      class="button is-primary"
+                      :disabled="$v.$invalid || is_saving"
+                    >Save</button>
+                  </div>
+                  <div class="control">
+                    <button class="button is-dark" @click.prevent="backToProfile">Cancel</button>
+                  </div>
                 </div>
-                <div class="control">
-                  <button class="button is-dark" @click.prevent="backToProfile">Cancel</button>
-                </div>
-              </div>
-              <!-- SUBMIT -->
-              <div style="margin-top:25px;"></div>
-            </form>
-          </div>
-          <!-- END CARD CONTENT -->
-          <!-- <div>
+                <!-- SUBMIT -->
+                <div style="margin-top:25px;"></div>
+              </form>
+            </div>
+            <!-- END CARD CONTENT -->
+            <!-- <div>
                         <ul>
                         <li v-for="(item, key, index) in profile" :key="index">
                             {{ key }}: {{ item }}
                         </li>
                         </ul>
-          </div>-->
+            </div>-->
+          </div>
         </div>
       </div>
-    </div>
-    <!-- DEBUG -->
-    <div v-if="is_debug" class="columns is-centered">
-      <div class="column is-three-quarters-desktop">
-        <!-- START PROFILE -->
-        <div class="card" style="padding:20px;">
-          <p>DEBUG</p>
-          <!-- <p>{{ $v }}</p> -->
+      <!-- DEBUG -->
+      <div v-if="is_debug" class="columns is-centered">
+        <div class="column is-three-quarters-desktop">
+          <!-- START PROFILE -->
+          <div class="card" style="padding:20px;">
+            <p>DEBUG</p>
+            <!-- <p>{{ $v }}</p> -->
+          </div>
         </div>
       </div>
     </div>
@@ -755,9 +759,6 @@ main,
 footer {
   flex-shrink: 0;
 }
-main {
-  margin-top: 80px;
-}
 footer {
   margin-top: 30px;
 }
@@ -800,5 +801,76 @@ footer {
 }
 .socials .field {
   margin-right: 1.5rem;
+}
+.avatar-img {
+  width: 200px;
+  height: 200px;
+}
+.avatar-img-container {
+  width: 200px;
+}
+.form-item {
+  margin: 30px 0 15px 0;
+}
+
+@media only screen and (max-width: 600px) {
+  .is-size-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem;
+    margin: 0 0 0.3rem 0 !important;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+
+  .content {
+    font-size: 90%;
+  }
+
+  .content:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .card-content {
+    padding: 0.75rem;
+  }
+  input,
+  textarea {
+    font-size: 90%;
+    padding: 0.3rem;
+  }
+  .form-item {
+    margin: 15px 0 15px 0;
+  }
+  .label {
+    color: #888;
+    font-size: 0.9rem;
+  }
+  .content.is-small {
+    font-size: 0.7rem;
+  }
+  .submit-divider {
+    margin-top: 10px;
+  }
+  .dropbox {
+    padding: 10px 10px;
+    min-height: 120px; /* minimum height */
+    width: 120px;
+    margin-top: 5px;
+  }
+  .input-file {
+    height: 120px;
+  }
+  .dropbox p {
+    font-size: 0.85em;
+    text-align: center;
+    padding: 5px 0 0 0;
+  }
+  .avatar-img {
+    width: 120px;
+    height: 120px;
+  }
+  .column {
+    padding: 0;
+  }
 }
 </style>

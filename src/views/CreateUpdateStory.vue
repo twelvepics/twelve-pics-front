@@ -1,569 +1,573 @@
 <template>
   <main>
-    <div class="columns is-centered">
-      <!-- CENTER COLUMNN -->
-      <div class="column is-three-quarters-desktop">
-        <!-- TOAST USED FOR form errors and deleted -->
-        <transition name="fade">
-          <toast
-            v-show="show_toast"
-            :duration="toast_duration"
-            :type="toast_type"
-            :show="show_toast"
-            :closeToast="closeToast"
-          >{{ toast_message }}</toast>
-        </transition>
-        <!-- END TOAST -->
-        <!-- SERVER SIDE ERRORS AND AUTH -->
-        <page-loader v-if="is_loading"></page-loader>
-        <page-error v-else-if="is_error  || (story && !story.is_in)" :errorMessage="errorMessage"></page-error>
-        <!-- ENDS SERVER ERRORS AND AUTH -->
-        <!-- START FORM -->
-        <div class="card" v-else>
-          <!-- CARD CONTENT -->
-          <div class="card-content">
-            <form @submit.prevent="onSubmit">
-              <!-- API ERRORS -->
-              <div
-                v-if="is_api_error || is_form_error"
-                class="isError"
-                style="text-align:center;margin-bottom:12px;"
-              >
+    <div class="container is-fluid max-container">
+      <div class="columns is-centered">
+        <!-- CENTER COLUMNN -->
+        <div class="column is-three-quarters-desktop">
+          <!-- TOAST USED FOR form errors and deleted -->
+          <transition name="fade">
+            <toast
+              v-show="show_toast"
+              :duration="toast_duration"
+              :type="toast_type"
+              :show="show_toast"
+              :closeToast="closeToast"
+            >{{ toast_message }}</toast>
+          </transition>
+          <!-- END TOAST -->
+          <!-- SERVER SIDE ERRORS AND AUTH -->
+          <page-loader v-if="is_loading"></page-loader>
+          <page-error v-else-if="is_error  || (story && !story.is_in)" :errorMessage="errorMessage"></page-error>
+          <!-- ENDS SERVER ERRORS AND AUTH -->
+          <!-- START FORM -->
+          <div class="card" v-else>
+            <!-- CARD CONTENT -->
+            <div class="card-content">
+              <form @submit.prevent="onSubmit">
+                <!-- API ERRORS -->
                 <div
-                  v-if="['INVALID_CREATE_STORY_ERROR', 'INVALID_UPDATE_STORY_ERROR'].includes(apiErrorType)"
-                >
-                  <p>
-                    <b>VALIDATIONS ERRORS</b>
-                  </p>
-                  <ul id="apiErrors">
-                    <li v-for="(k, v, idx) in apiErrors" :key="idx">{{ k }}</li>
-                  </ul>
-                </div>
-                <!-- <div v-else-if="is_form_error">PLEASE FIX THE FORM ERRORS.</div> -->
-                <div
-                  v-else-if="apiErrorType === 'SERVER ERROR'"
-                >SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
-              </div>
-              <!-- ENDS API ERRORS -->
-              <p
-                class="title is-size-4"
-              >{{ $route.name === "create-story" ? 'Add a' : 'Edit' }} story</p>
-              <p class="subtitle is-size-6">
-                Build your story, 6 to 12 photos. An informative text is required. Your images must be your own. Do not post any photos from other photographers.
-                Do not hesitate to start the title of your story with [NSFW] if it is a mature or hard to view subject.
-                <br />Once saved, you can update/modify your post at any time through the top right menu > my stories.
-              </p>
-
-              <!-- SHOW STORY URL -->
-              <div v-if="story.page_url" style="margin-bottom:-.8rem; line-height:150%;">
-                <p
-                  class="is-size-5"
-                  :class="story.status === 'draft' ? 'page-link-title-draft' : 'page-link-title-published'"
-                >
-                  <b>PAGE URL</b>
-                </p>
-                <p class="content">
-                  This will be the public URL for your page, it will be linked on the site once you have decided to publish it.
-                  <br />
-                  <router-link
-                    :to="{ name: 'view-story', params: { slug: story.slug }}"
-                    class="is-size-5"
-                    :class="story.status === 'draft' ? 'page-link-title-draft' : 'page-link-title-published'"
-                  >{{ story.page_url}}</router-link>
-                </p>
-              </div>
-              <!-- ENDS SHOW STORY URL -->
-              <!-- TOP BOXES -->
-              <div
-                class="columns is-variable is-2-mobile is-3-tablet is-8-desktop is-8-widescreen is-8-fullhd"
-                style="margin-top:40px;"
-              >
-                <!-- LAYOUT BOX -->
-                <div class="column is-two-fifths">
-                  <article class="message is-small box-has-shadow">
-                    <div class="message-header">
-                      <p>LAYOUT</p>
-                    </div>
-                    <div
-                      class="message-body add-story-layout-icons-box p8"
-                      style="background-color:#999;"
-                    >
-                      <p class="content" style="margin-bottom:0;">
-                        <img
-                          class="icon-hover"
-                          style="width:48px; height:auto;"
-                          :src="story.layout === 'horizontal' ? '/img/layout-horizontal-on.png' : '/img/layout-horizontal-off.png'"
-                          @click="selectLayout('horizontal')"
-                        />
-                      </p>
-                      <p class="content" style="margin-bottom:0;">
-                        <img
-                          class="icon-hover"
-                          style="width:48px; height:auto;"
-                          :src="story.layout === 'tiles' ? '/img/layout-tiles-on.png' : '/img/layout-tiles-off.png'"
-                          @click="selectLayout('tiles')"
-                        />
-                      </p>
-
-                      <p class="content" style="margin-bottom:0;">
-                        <img
-                          class="icon-hover"
-                          style="width:48px; height:auto;"
-                          :src="story.layout === 'vertical' ? '/img/layout-vertical-on.png' : '/img/layout-vertical-off.png'"
-                          @click="selectLayout('vertical')"
-                        />
-                      </p>
-                      <p class="content" style="margin-bottom:0;">
-                        <img
-                          class="icon-hover"
-                          style="width:48px; height:auto;"
-                          :src="story.layout === 'carousel' ? '/img/layout-carousel-on.png' : '/img/layout-carousel-off.png'"
-                          @click="selectLayout('carousel')"
-                        />
-                      </p>
-                      <p
-                        class="content selected-layout"
-                        style="padding-top: .2rem"
-                      >{{ story.layout.toUpperCase() }}</p>
-                    </div>
-                  </article>
-                </div>
-                <!-- ENDS LAYOUT BOX -->
-                <!-- STATUS BOX -->
-                <!-- STATUS PUBLISHED -->
-                <div v-if="story.status === 'published'" class="column is-two-fifths">
-                  <article class="message is-success is-small box-has-shadow">
-                    <div class="message-header">
-                      <p>STATUS</p>
-                    </div>
-                    <div
-                      class="message-body pub-unpub-story-layout-box"
-                      style="padding:.75rem 1rem 1rem 1rem"
-                    >
-                      <p
-                        class="icon icon-hover has-text-success is-large"
-                        style="padding:0;margin:0;"
-                      >
-                        <span class="icon is-left">
-                          <font-awesome-icon class="fas fa-2x" icon="check-circle"></font-awesome-icon>
-                        </span>
-
-                        <span
-                          class="content has-text-success pub-unpub-story-txt"
-                          style="padding-left:.3rem; font-size: 140%;"
-                        >PUBLISHED</span>
-                      </p>
-                      <p>
-                        <button
-                          class="button is-success"
-                          style="font-size:.85rem"
-                          @click.prevent="setStatus('draft')"
-                        >UNPUBLISH</button>
-                      </p>
-                    </div>
-                  </article>
-                </div>
-                <!-- STATUS DRAFT -->
-                <div v-if="story.status === 'draft'" class="column is-two-fifths">
-                  <article class="message is-warning is-small box-has-shadow">
-                    <div class="message-header">
-                      <p>STATUS</p>
-                    </div>
-                    <div
-                      class="message-body pub-unpub-story-layout-box"
-                      style="padding:.75rem 1rem 1rem 1rem"
-                    >
-                      <p
-                        class="icon icon-hover has-text-warning is-large"
-                        style="padding:0;margin:0;"
-                      >
-                        <span class="icon is-left">
-                          <font-awesome-icon class="fas fa-2x" icon="ban"></font-awesome-icon>
-                        </span>
-
-                        <span
-                          class="content has-text-warning pub-unpub-story-txt"
-                          style="padding-left:.3rem; font-size:130%;"
-                        >DRAFT</span>
-                      </p>
-                      <p>
-                        <button
-                          class="button is-warning"
-                          style="font-size:.85rem;"
-                          @click.prevent="setStatus('published')"
-                        >PUBLISH</button>
-                      </p>
-                    </div>
-                  </article>
-                </div>
-                <!-- ENDS STATUS BOX -->
-                <!-- DELETE BOX -->
-                <div class="column">
-                  <article class="message is-danger is-small box-has-shadow">
-                    <div class="message-header">
-                      <p>DELETE</p>
-                    </div>
-                    <div class="message-body delete-story">
-                      <p class="icon icon-hover has-text-danger is-large" @click="deleteStory()">
-                        <font-awesome-icon class="fas fa-3x" icon="trash-alt"></font-awesome-icon>
-                      </p>
-                    </div>
-                  </article>
-                </div>
-              </div>
-              <!-- TOP BOXES -->
-              <!-- ENDS DELETE BOX -->
-              <!-- CATEGORY -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Category</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span class="isError" v-if="$v.story.category.$error">Please select a category</span>
-                  <span v-else>(Required) Please select the theme that better fits your photo story</span>
-                </p>
-                <div class="select" :class="{ 'is-danger': $v.story.category.$error }">
-                  <select v-model="story.category">
-                    <option disabled value="0">Select a theme</option>
-                    <option
-                      v-for="category in categoriesList"
-                      :key="category.id"
-                      :value="category.key"
-                    >{{ category.display }}</option>
-                  </select>
-                </div>
-              </div>
-              <!-- CATEGORY -->
-
-              <!-- TITLE -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Title</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    class="isError"
-                    v-if="$v.story.title.$error"
-                  >Title must be min 8 characters and max 128 characters</span>
-                  <span v-else>(Required) Title must be min 8 characters up to 128 characters</span>
-                </p>
-                <div class="control">
-                  <input
-                    class="input"
-                    type="text"
-                    placeholder="Title"
-                    v-model="story.title"
-                    :class="{ 'is-danger': $v.story.title.$error }"
-                    @blur="{$v.story.title.$touch()}"
-                    @input="resetApiErrors()"
-                    @keydown.enter.prevent
-                  />
-                </div>
-              </div>
-              <!-- TITLE -->
-
-              <!-- ABOUT MY STORY -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Describe your story</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    class="isError"
-                    v-if="$v.story.pitch.$error"
-                  >Must be at least 300 and at most 5000 Characters</span>
-                  <span
-                    v-else
-                  >(Required) May be some context, additional information, your thoughts about the subject. Min 300 to max 5000 characters.</span>
-                </p>
-                <div class="control">
-                  <textarea
-                    class="textarea"
-                    :class="{ 'is-danger': $v.story.pitch.$error }"
-                    placeholder="Pitch your story"
-                    v-model="story.pitch"
-                    @blur="{$v.story.pitch.$touch()}"
-                    @keyup.22="$v.story.pitch.$touch()"
-                  ></textarea>
-                </div>
-              </div>
-              <!-- ABOUT MY STORY -->
-
-              <!-- UPOLAD PICS -->
-              <div class="field m-30-0-15-0">
-                <p class="content is-marginless" :class="{isError: $v.pics_uploaded.$error}">
-                  <b>Upload your images</b>
-                </p>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    class="isError"
-                    v-if="$v.pics_uploaded.$error"
-                  >Minimum 6, Maximum 12 photos - Maximum caption length 256 characters</span>
-                  <span v-else>(required) Obviously :) Minimum 6, Maximum 12 photos - JPEG or PNG</span>
-                </p>
-
-                <!-- PIC UPLOAD BUTTON-->
-                <div class="file is-primary" style="margin:0;">
-                  <button class="button is-primary" @click.prevent="openUploadModal">
-                    <span class="icon">
-                      <font-awesome-icon class="fas" icon="upload"></font-awesome-icon>
-                    </span>
-                    <span>Add your images</span>
-                  </button>
-                </div>
-                <!-- END PIC UPLOAD BUTTON-->
-
-                <!-- UPLOADED PICS -->
-                <!-- LOOP PICS-->
-                <draggable
-                  :list="pics_uploaded"
-                  ghost-class="moving-card"
-                  handle=".handle"
-                  :animation="200"
-                  @change="draggableChange"
+                  v-if="is_api_error || is_form_error"
+                  class="isError"
+                  style="text-align:center;margin-bottom:12px;"
                 >
                   <div
-                    v-for="(pic, idx) in pics_uploaded"
-                    :key="idx"
-                    class="columns box uploadedImageBox"
-                    style="border: 1px solid #ccc"
-                    :class="{first: idx === 0}"
+                    v-if="['INVALID_CREATE_STORY_ERROR', 'INVALID_UPDATE_STORY_ERROR'].includes(apiErrorType)"
                   >
-                    <div class="controlIcons">
-                      <span class="icon icon-hover is-medium handle">
-                        <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
-                      </span>
-                      <span class="icon icon-hover has-text-danger is-medium">
-                        <font-awesome-icon
-                          class="fas fa-lg shadow"
-                          icon="trash-alt"
-                          @click="removePic(idx)"
-                        ></font-awesome-icon>
-                      </span>
-                    </div>
-                    <div class="pic column is-narrow handle">
-                      <img
-                        :src="pic.medium.web_path"
-                        :width="isHorizontal(pic.small) ? 270 : 160"
-                        height="auto"
-                      />
-                    </div>
-                    <div class="picInfo column">
-                      <div class="field">
-                        <label
-                          class="label"
-                          v-if="caption_errors.includes(idx)"
-                          style="color:red"
-                        >Caption must be max 256 characters</label>
-                        <label class="label" v-else>Caption</label>
-                        <!--- XOXO --->
-
-                        <!--- XOXO --->
-                        <div class="control">
-                          <textarea
-                            class="textarea"
-                            :class="{ 'is-danger': caption_errors.includes(idx) }"
-                            placeholder="Enter your caption"
-                            rows="2"
-                            :value="pic.caption"
-                            @input="setCaption(idx, $event)"
-                          ></textarea>
-                        </div>
-                      </div>
-
-                      <div class="field">
-                        <label
-                          class="label"
-                          v-if="description_errors.includes(idx)"
-                          style="color:red"
-                        >Description must be max 64 characters</label>
-                        <label class="label" v-else>Description (Alt tag)</label>
-                        <div class="control">
-                          <input
-                            class="input"
-                            :class="{ 'is-danger': description_errors.includes(idx) }"
-                            type="text"
-                            placeholder="A short description"
-                            style="max-width:30rem;"
-                            :value="pic.description"
-                            @input="setDescription(idx, $event)"
-                            @keydown.enter.prevent
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    <p>
+                      <b>VALIDATIONS ERRORS</b>
+                    </p>
+                    <ul id="apiErrors">
+                      <li v-for="(k, v, idx) in apiErrors" :key="idx">{{ k }}</li>
+                    </ul>
                   </div>
-                </draggable>
-                <!-- END LOOP PICS -->
-                <!-- END UPLOADED PICS -->
-              </div>
-              <!-- END UPOLAD PICS -->
-
-              <!-- MORE INFO -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Gear, technique, inspiration</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    class="isError"
-                    v-if="$v.story.inspiration.$error"
-                  >Must be at most 5000 Characters</span>
-                  <span v-else>Everything that is not directly related to your story may come here</span>
-                </p>
-                <div class="control">
-                  <textarea
-                    class="textarea"
-                    :class="{ 'is-danger': $v.story.inspiration.$error }"
-                    placeholder="A few worlds about you..."
-                    v-model="story.inspiration"
-                    @keyup="$v.story.inspiration.$touch()"
-                    @keyup.22="$v.story.inspiration.$touch()"
-                  ></textarea>
+                  <!-- <div v-else-if="is_form_error">PLEASE FIX THE FORM ERRORS.</div> -->
+                  <div
+                    v-else-if="apiErrorType === 'SERVER ERROR'"
+                  >SERVER ERROR, SORRY. TRY AGAIN LATER.</div>
                 </div>
-              </div>
-              <!-- MORE INFO -->
-
-              <!-- TAGS -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Add tags</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    class="isError"
-                    :class="{ 'is-danger': $v.tagsStr.$error }"
-                    v-if="$v.tagsStr.$error"
-                  >Comma separated list of words, max length 64 characters</span>
-                  <span
-                    v-else
-                  >Tags will be used amongst other criteria by users to search for and find you story - Coma separated list of single words</span>
+                <!-- ENDS API ERRORS -->
+                <p
+                  class="title is-size-4"
+                >{{ $route.name === "create-story" ? 'Add a' : 'Edit' }} story</p>
+                <p class="subtitle is-size-6">
+                  Build your story, 6 to 12 photos. An informative text is required. Your images must be your own. Do not post any photos from other photographers.
+                  Do not hesitate to start the title of your story with [NSFW] if it is a mature or hard to view subject.
+                  <br />Once saved, you can update/modify your post at any time through the top right menu > my stories.
                 </p>
-                <div class="control">
-                  <input
-                    class="input"
-                    type="tags"
-                    placeholder="Tag1,Tag2,Tag3"
-                    value
-                    v-model="tagsStr"
-                    @blur="$v.tagsStr.$touch()"
-                  />
+
+                <!-- SHOW STORY URL -->
+                <div v-if="story.page_url" style="margin-bottom:-.8rem; line-height:150%;">
+                  <p
+                    class="is-size-5"
+                    :class="story.status === 'draft' ? 'page-link-title-draft' : 'page-link-title-published'"
+                  >
+                    <b>PAGE URL</b>
+                  </p>
+                  <p class="content">
+                    This will be the public URL for your page, it will be linked on the site once you have decided to publish it.
+                    <br />
+                    <router-link
+                      :to="{ name: 'view-story', params: { slug: story.slug }}"
+                      class="is-size-5"
+                      :class="story.status === 'draft' ? 'page-link-title-draft' : 'page-link-title-published'"
+                    >{{ story.page_url}}</router-link>
+                  </p>
                 </div>
-              </div>
-              <!-- TAGS -->
+                <!-- ENDS SHOW STORY URL -->
+                <!-- TOP BOXES -->
+                <div
+                  class="columns is-variable is-2-mobile is-3-tablet is-8-desktop is-8-widescreen is-8-fullhd"
+                  style="margin-top:40px;"
+                >
+                  <!-- LAYOUT BOX -->
+                  <div class="column is-two-fifths">
+                    <article class="message is-small box-has-shadow">
+                      <div class="message-header">
+                        <p>LAYOUT</p>
+                      </div>
+                      <div
+                        class="message-body add-story-layout-icons-box p8"
+                        style="background-color:#999;"
+                      >
+                        <p class="content" style="margin-bottom:0;">
+                          <img
+                            class="icon-hover"
+                            style="width:48px; height:auto;"
+                            :src="story.layout === 'horizontal' ? '/img/layout-horizontal-on.png' : '/img/layout-horizontal-off.png'"
+                            @click="selectLayout('horizontal')"
+                          />
+                        </p>
+                        <p class="content" style="margin-bottom:0;">
+                          <img
+                            class="icon-hover"
+                            style="width:48px; height:auto;"
+                            :src="story.layout === 'tiles' ? '/img/layout-tiles-on.png' : '/img/layout-tiles-off.png'"
+                            @click="selectLayout('tiles')"
+                          />
+                        </p>
 
-              <!-- LOCATION -->
-              <div class="field m-30-0-15-0">
-                <label class="label is-marginless">Your story's location</label>
-                <p class="content is-small is-marginless pb-05">
-                  <span
-                    style="color:red;"
-                    v-if="$v.story.location.place_name.$error"
-                  >Max length is 128 characters.</span>
-                  <span v-else>Where was it?</span>
-                </p>
-                <div class="control" style="max-width: 500px;">
-                  <input
-                    autocomplete="off"
-                    class="input"
-                    :class="{ 'is-danger': $v.story.location.place_name.$error }"
-                    type="text"
-                    v-model="story.location.place_name"
-                    placeholder="Type on and select your location"
-                    list="locations"
-                    @input="searchLocation"
-                    @change="setSelectedSelection"
-                    @keyup="$v.story.location.place_name.$touch()"
-                    @keyup.22="$v.story.location.place_name.$touch()"
-                    @keydown.enter.prevent
-                  />
-                  <datalist id="locations">
-                    <select>
+                        <p class="content" style="margin-bottom:0;">
+                          <img
+                            class="icon-hover"
+                            style="width:48px; height:auto;"
+                            :src="story.layout === 'vertical' ? '/img/layout-vertical-on.png' : '/img/layout-vertical-off.png'"
+                            @click="selectLayout('vertical')"
+                          />
+                        </p>
+                        <p class="content" style="margin-bottom:0;">
+                          <img
+                            class="icon-hover"
+                            style="width:48px; height:auto;"
+                            :src="story.layout === 'carousel' ? '/img/layout-carousel-on.png' : '/img/layout-carousel-off.png'"
+                            @click="selectLayout('carousel')"
+                          />
+                        </p>
+                        <p
+                          class="content selected-layout"
+                          style="padding-top: .2rem"
+                        >{{ story.layout.toUpperCase() }}</p>
+                      </div>
+                    </article>
+                  </div>
+                  <!-- ENDS LAYOUT BOX -->
+                  <!-- STATUS BOX -->
+                  <!-- STATUS PUBLISHED -->
+                  <div v-if="story.status === 'published'" class="column is-two-fifths">
+                    <article class="message is-success is-small box-has-shadow">
+                      <div class="message-header">
+                        <p>STATUS</p>
+                      </div>
+                      <div
+                        class="message-body pub-unpub-story-layout-box"
+                        style="padding:.75rem 1rem 1rem 1rem"
+                      >
+                        <p
+                          class="icon icon-hover has-text-success is-large"
+                          style="padding:0;margin:0;"
+                        >
+                          <span class="icon is-left">
+                            <font-awesome-icon class="fas fa-2x" icon="check-circle"></font-awesome-icon>
+                          </span>
+
+                          <span
+                            class="content has-text-success pub-unpub-story-txt"
+                            style="padding-left:.3rem; font-size: 140%;"
+                          >PUBLISHED</span>
+                        </p>
+                        <p>
+                          <button
+                            class="button is-success"
+                            style="font-size:.85rem"
+                            @click.prevent="setStatus('draft')"
+                          >UNPUBLISH</button>
+                        </p>
+                      </div>
+                    </article>
+                  </div>
+                  <!-- STATUS DRAFT -->
+                  <div v-if="story.status === 'draft'" class="column is-two-fifths">
+                    <article class="message is-warning is-small box-has-shadow">
+                      <div class="message-header">
+                        <p>STATUS</p>
+                      </div>
+                      <div
+                        class="message-body pub-unpub-story-layout-box"
+                        style="padding:.75rem 1rem 1rem 1rem"
+                      >
+                        <p
+                          class="icon icon-hover has-text-warning is-large"
+                          style="padding:0;margin:0;"
+                        >
+                          <span class="icon is-left">
+                            <font-awesome-icon class="fas fa-2x" icon="ban"></font-awesome-icon>
+                          </span>
+
+                          <span
+                            class="content has-text-warning pub-unpub-story-txt"
+                            style="padding-left:.3rem; font-size:130%;"
+                          >DRAFT</span>
+                        </p>
+                        <p>
+                          <button
+                            class="button is-warning"
+                            style="font-size:.85rem;"
+                            @click.prevent="setStatus('published')"
+                          >PUBLISH</button>
+                        </p>
+                      </div>
+                    </article>
+                  </div>
+                  <!-- ENDS STATUS BOX -->
+                  <!-- DELETE BOX -->
+                  <div class="column">
+                    <article class="message is-danger is-small box-has-shadow">
+                      <div class="message-header">
+                        <p>DELETE</p>
+                      </div>
+                      <div class="message-body delete-story">
+                        <p class="icon icon-hover has-text-danger is-large" @click="deleteStory()">
+                          <font-awesome-icon class="fas fa-3x" icon="trash-alt"></font-awesome-icon>
+                        </p>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+                <!-- TOP BOXES -->
+                <!-- ENDS DELETE BOX -->
+                <!-- CATEGORY -->
+                <div class="field m-30-0-15-0">
+                  <label class="label is-marginless">Category</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span class="isError" v-if="$v.story.category.$error">Please select a category</span>
+                    <span
+                      v-else
+                    >(Required) Please select the theme that better fits your photo story</span>
+                  </p>
+                  <div class="select" :class="{ 'is-danger': $v.story.category.$error }">
+                    <select v-model="story.category">
+                      <option disabled value="0">Select a theme</option>
                       <option
-                        v-for="(option, idx) in mapboxOptions"
-                        :value="option.place_name"
-                        :key="idx"
-                      ></option>
+                        v-for="category in categoriesList"
+                        :key="category.id"
+                        :value="category.key"
+                      >{{ category.display }}</option>
                     </select>
-                  </datalist>
+                  </div>
                 </div>
-              </div>
-              <!-- LOCATION -->
+                <!-- CATEGORY -->
 
-              <!-- ALLOW COMMENTS -->
-              <div class="field m-30-0-15-0">
-                <div>
-                  <label class="label is-marginless">
-                    Allows users to comment my
-                    story
-                  </label>
-                  <p class="content is-small is-marginless pb-05">You may change your mind later</p>
+                <!-- TITLE -->
+                <div class="field m-30-0-15-0">
+                  <label class="label is-marginless">Title</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      class="isError"
+                      v-if="$v.story.title.$error"
+                    >Title must be min 8 characters and max 128 characters</span>
+                    <span v-else>(Required) Title must be min 8 characters up to 128 characters</span>
+                  </p>
+                  <div class="control">
+                    <input
+                      class="input"
+                      type="text"
+                      placeholder="Title"
+                      v-model="story.title"
+                      :class="{ 'is-danger': $v.story.title.$error }"
+                      @blur="{$v.story.title.$touch()}"
+                      @input="resetApiErrors()"
+                      @keydown.enter.prevent
+                    />
+                  </div>
                 </div>
-                <div></div>
-                <div class="field switch-btn-align">
-                  <input
-                    id="switch-contact"
-                    type="checkbox"
-                    name="witch-contact"
-                    class="switch is-success"
-                    :checked="story.allow_comments"
-                    v-model="story.allow_comments"
-                    @change="setAllowComments"
-                  />
-                  <label
-                    for="switch-contact"
-                  >Comments are {{ story.allow_comments ? "" : "not"}} allowed</label>
-                </div>
-              </div>
-              <!-- ALLOW COMMENTS-->
+                <!-- TITLE -->
 
-              <!-- SUBMIT -->
-              <div class="is-divider" style="margin-top:35px;"></div>
-              <div class="field is-grouped submit-buttons">
-                <div class="control">
-                  <button
-                    class="button is-primary"
-                    type="submit"
-                    @click.prevent="saveAndGoToList"
-                    :disabled="submit_pending"
-                  >Save</button>
+                <!-- ABOUT MY STORY -->
+                <div class="field m-30-0-15-0">
+                  <label class="label is-marginless">Describe your story</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      class="isError"
+                      v-if="$v.story.pitch.$error"
+                    >Must be at least 300 and at most 5000 Characters</span>
+                    <span
+                      v-else
+                    >(Required) May be some context, additional information, your thoughts about the subject. Min 300 to max 5000 characters.</span>
+                  </p>
+                  <div class="control">
+                    <textarea
+                      class="textarea"
+                      :class="{ 'is-danger': $v.story.pitch.$error }"
+                      placeholder="Pitch your story"
+                      v-model="story.pitch"
+                      @blur="{$v.story.pitch.$touch()}"
+                      @keyup.22="$v.story.pitch.$touch()"
+                    ></textarea>
+                  </div>
                 </div>
-                <div class="control">
-                  <button
-                    class="button is-primary"
-                    type="submit"
-                    :disabled="submit_pending"
-                  >Save and continue editing</button>
+                <!-- ABOUT MY STORY -->
+
+                <!-- UPOLAD PICS -->
+                <div class="field m-30-0-15-0">
+                  <p class="content is-marginless" :class="{isError: $v.pics_uploaded.$error}">
+                    <b>Upload your images</b>
+                  </p>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      class="isError"
+                      v-if="$v.pics_uploaded.$error"
+                    >Minimum 6, Maximum 12 photos - Maximum caption length 256 characters</span>
+                    <span v-else>(required) Obviously :) Minimum 6, Maximum 12 photos - JPEG or PNG</span>
+                  </p>
+
+                  <!-- PIC UPLOAD BUTTON-->
+                  <div class="file is-primary" style="margin:0;">
+                    <button class="button is-primary" @click.prevent="openUploadModal">
+                      <span class="icon">
+                        <font-awesome-icon class="fas" icon="upload"></font-awesome-icon>
+                      </span>
+                      <span>Add your images</span>
+                    </button>
+                  </div>
+                  <!-- END PIC UPLOAD BUTTON-->
+
+                  <!-- UPLOADED PICS -->
+                  <!-- LOOP PICS-->
+                  <draggable
+                    :list="pics_uploaded"
+                    ghost-class="moving-card"
+                    handle=".handle"
+                    :animation="200"
+                    @change="draggableChange"
+                  >
+                    <div
+                      v-for="(pic, idx) in pics_uploaded"
+                      :key="idx"
+                      class="columns box uploadedImageBox"
+                      style="border: 1px solid #ccc"
+                      :class="{first: idx === 0}"
+                    >
+                      <div class="controlIcons">
+                        <span class="icon icon-hover is-medium handle">
+                          <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
+                        </span>
+                        <span class="icon icon-hover has-text-danger is-medium">
+                          <font-awesome-icon
+                            class="fas fa-lg shadow"
+                            icon="trash-alt"
+                            @click="removePic(idx)"
+                          ></font-awesome-icon>
+                        </span>
+                      </div>
+                      <div class="pic column is-narrow handle">
+                        <img
+                          :src="pic.medium.web_path"
+                          :width="isHorizontal(pic.small) ? 270 : 160"
+                          height="auto"
+                        />
+                      </div>
+                      <div class="picInfo column">
+                        <div class="field">
+                          <label
+                            class="label"
+                            v-if="caption_errors.includes(idx)"
+                            style="color:red"
+                          >Caption must be max 256 characters</label>
+                          <label class="label" v-else>Caption</label>
+                          <!--- XOXO --->
+
+                          <!--- XOXO --->
+                          <div class="control">
+                            <textarea
+                              class="textarea"
+                              :class="{ 'is-danger': caption_errors.includes(idx) }"
+                              placeholder="Enter your caption"
+                              rows="2"
+                              :value="pic.caption"
+                              @input="setCaption(idx, $event)"
+                            ></textarea>
+                          </div>
+                        </div>
+
+                        <div class="field">
+                          <label
+                            class="label"
+                            v-if="description_errors.includes(idx)"
+                            style="color:red"
+                          >Description must be max 64 characters</label>
+                          <label class="label" v-else>Description (Alt tag)</label>
+                          <div class="control">
+                            <input
+                              class="input"
+                              :class="{ 'is-danger': description_errors.includes(idx) }"
+                              type="text"
+                              placeholder="A short description"
+                              style="max-width:30rem;"
+                              :value="pic.description"
+                              @input="setDescription(idx, $event)"
+                              @keydown.enter.prevent
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </draggable>
+                  <!-- END LOOP PICS -->
+                  <!-- END UPLOADED PICS -->
                 </div>
-                <div class="control" v-if="!isPublished">
-                  <button
-                    class="button is-success"
-                    @click.prevent="saveAndPublish"
-                    :disabled="submit_pending"
-                  >Save and publish</button>
+                <!-- END UPOLAD PICS -->
+
+                <!-- MORE INFO -->
+                <div class="field m-30-0-15-0">
+                  <label class="label is-marginless">Gear, technique, inspiration</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      class="isError"
+                      v-if="$v.story.inspiration.$error"
+                    >Must be at most 5000 Characters</span>
+                    <span v-else>Everything that is not directly related to your story may come here</span>
+                  </p>
+                  <div class="control">
+                    <textarea
+                      class="textarea"
+                      :class="{ 'is-danger': $v.story.inspiration.$error }"
+                      placeholder="A few worlds about you..."
+                      v-model="story.inspiration"
+                      @keyup="$v.story.inspiration.$touch()"
+                      @keyup.22="$v.story.inspiration.$touch()"
+                    ></textarea>
+                  </div>
                 </div>
-                <div class="control">
-                  <button class="button is-dark" @click.prevent="cancel">Cancel</button>
+                <!-- MORE INFO -->
+
+                <!-- TAGS -->
+                <div class="field m-30-0-15-0">
+                  <label class="label is-marginless">Add tags</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      class="isError"
+                      :class="{ 'is-danger': $v.tagsStr.$error }"
+                      v-if="$v.tagsStr.$error"
+                    >Comma separated list of words, max length 64 characters</span>
+                    <span
+                      v-else
+                    >Tags will be used amongst other criteria by users to search for and find you story - Coma separated list of single words</span>
+                  </p>
+                  <div class="control">
+                    <input
+                      class="input"
+                      type="tags"
+                      placeholder="Tag1,Tag2,Tag3"
+                      value
+                      v-model="tagsStr"
+                      @blur="$v.tagsStr.$touch()"
+                    />
+                  </div>
                 </div>
-              </div>
-              <!-- SUBMIT -->
-              <div style="margin-top:25px;"></div>
-            </form>
+                <!-- TAGS -->
+
+                <!-- LOCATION -->
+                <div class="field m-30-0-15-0">
+                  <label class="label is-marginless">Your story's location</label>
+                  <p class="content is-small is-marginless pb-05">
+                    <span
+                      style="color:red;"
+                      v-if="$v.story.location.place_name.$error"
+                    >Max length is 128 characters.</span>
+                    <span v-else>Where was it?</span>
+                  </p>
+                  <div class="control" style="max-width: 500px;">
+                    <input
+                      autocomplete="off"
+                      class="input"
+                      :class="{ 'is-danger': $v.story.location.place_name.$error }"
+                      type="text"
+                      v-model="story.location.place_name"
+                      placeholder="Type on and select your location"
+                      list="locations"
+                      @input="searchLocation"
+                      @change="setSelectedSelection"
+                      @keyup="$v.story.location.place_name.$touch()"
+                      @keyup.22="$v.story.location.place_name.$touch()"
+                      @keydown.enter.prevent
+                    />
+                    <datalist id="locations">
+                      <select>
+                        <option
+                          v-for="(option, idx) in mapboxOptions"
+                          :value="option.place_name"
+                          :key="idx"
+                        ></option>
+                      </select>
+                    </datalist>
+                  </div>
+                </div>
+                <!-- LOCATION -->
+
+                <!-- ALLOW COMMENTS -->
+                <div class="field m-30-0-15-0">
+                  <div>
+                    <label class="label is-marginless">
+                      Allows users to comment my
+                      story
+                    </label>
+                    <p class="content is-small is-marginless pb-05">You may change your mind later</p>
+                  </div>
+                  <div></div>
+                  <div class="field switch-btn-align">
+                    <input
+                      id="switch-contact"
+                      type="checkbox"
+                      name="witch-contact"
+                      class="switch is-success"
+                      :checked="story.allow_comments"
+                      v-model="story.allow_comments"
+                      @change="setAllowComments"
+                    />
+                    <label
+                      for="switch-contact"
+                    >Comments are {{ story.allow_comments ? "" : "not"}} allowed</label>
+                  </div>
+                </div>
+                <!-- ALLOW COMMENTS-->
+
+                <!-- SUBMIT -->
+                <div class="is-divider" style="margin-top:35px;"></div>
+                <div class="field is-grouped submit-buttons">
+                  <div class="control">
+                    <button
+                      class="button is-primary"
+                      type="submit"
+                      @click.prevent="saveAndGoToList"
+                      :disabled="submit_pending"
+                    >Save</button>
+                  </div>
+                  <div class="control">
+                    <button
+                      class="button is-primary"
+                      type="submit"
+                      :disabled="submit_pending"
+                    >Save and continue editing</button>
+                  </div>
+                  <div class="control" v-if="!isPublished">
+                    <button
+                      class="button is-success"
+                      @click.prevent="saveAndPublish"
+                      :disabled="submit_pending"
+                    >Save and publish</button>
+                  </div>
+                  <div class="control">
+                    <button class="button is-dark" @click.prevent="cancel">Cancel</button>
+                  </div>
+                </div>
+                <!-- SUBMIT -->
+                <div style="margin-top:25px;"></div>
+              </form>
+            </div>
+            <!-- END CARD CONTENT -->
           </div>
-          <!-- END CARD CONTENT -->
         </div>
       </div>
-    </div>
-    <!-- DEBUG -->
-    <div class="columns is-centered">
-      <div v-if="is_debug" class="column is-three-quarters-desktop">
-        <!-- START -->
-        <div class="card" style="padding:20px;">
-          <p>DEBUG</p>
-          <!-- <p>{{ $v }}</p> -->
-          <p>{{ $v }}</p>
+      <!-- DEBUG -->
+      <div class="columns is-centered">
+        <div v-if="is_debug" class="column is-three-quarters-desktop">
+          <!-- START -->
+          <div class="card" style="padding:20px;">
+            <p>DEBUG</p>
+            <!-- <p>{{ $v }}</p> -->
+            <p>{{ $v }}</p>
+          </div>
         </div>
       </div>
+      <!-- END DEBUG -->
+      <!-- Message composer modal -->
+      <pics-upload-modal
+        :isActive="uploadModalActive"
+        :maxUploads="maxUploads"
+        :remainingUploads="remainingUploads"
+        @uploadModalClosed="closeUploadModal"
+        @onPicUpload="picUploaded"
+      ></pics-upload-modal>
     </div>
-    <!-- END DEBUG -->
-    <!-- Message composer modal -->
-    <pics-upload-modal
-      :isActive="uploadModalActive"
-      :maxUploads="maxUploads"
-      :remainingUploads="remainingUploads"
-      @uploadModalClosed="closeUploadModal"
-      @onPicUpload="picUploaded"
-    ></pics-upload-modal>
   </main>
 </template>
 
@@ -1176,7 +1180,7 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 /************** layout ***********/
 html,
 body {

@@ -1,120 +1,122 @@
 <template>
   <main>
-    <div class="columns is-centered" style="margin:0;padding:0;">
-      <!-- CENTER COLUMNN -->
-      <div class="column is-three-quarters-desktop">
-        <toast v-show="showToast" :closeToast="closeToast" :toastType="toastType">
-          <template v-slot:default>
-            <div v-html="toastMessageJoined"></div>
-          </template>
-        </toast>
-        <!-- LOADER -->
-        <page-loader v-if="is_loading"></page-loader>
-        <!-- ERRORS  -->
-        <page-error v-if="is_api_error" :errorMessage="apiErrorMessage"></page-error>
+    <div class="container is-fluid max-container">
+      <div class="columns is-centered" style="margin:0;padding:0;">
+        <!-- CENTER COLUMNN -->
+        <div class="column is-three-quarters-desktop">
+          <toast v-show="showToast" :closeToast="closeToast" :toastType="toastType">
+            <template v-slot:default>
+              <div v-html="toastMessageJoined"></div>
+            </template>
+          </toast>
+          <!-- LOADER -->
+          <page-loader v-if="is_loading"></page-loader>
+          <!-- ERRORS  -->
+          <page-error v-if="is_api_error" :errorMessage="apiErrorMessage"></page-error>
 
-        <!-- START FORM -->
-        <div class="card">
-          <!-- CARD CONTENT -->
-          <div class="card-content">
-            <form @submit.prevent="onSubmit">
-              <fieldset :disabled="done">
-                <p class="title is-size-4">Contact us</p>
-                <p class="content">
-                  Any question, suggestion? You want to give us your feedback about the site? Do not
-                  hesitate to contact us.
-                </p>
-                <!-- EMAIL -->
-                <div class="field form-item">
-                  <label class="label is-marginless">Your Email</label>
-                  <p class="content is-small is-marginless pb-05">
-                    <span
-                      style="color:red;"
-                      v-if="$v.message.from_user_email.$error"
-                    >Enter a valid email address</span>
-                    <span v-else>(Required) - Please enter your email address</span>
+          <!-- START FORM -->
+          <div class="card">
+            <!-- CARD CONTENT -->
+            <div class="card-content">
+              <form @submit.prevent="onSubmit">
+                <fieldset :disabled="done">
+                  <p class="title is-size-4">Contact us</p>
+                  <p class="content">
+                    Any question, suggestion? You want to give us your feedback about the site? Do not
+                    hesitate to contact us.
                   </p>
-                  <div class="control" style="max-width: 500px;">
-                    <input
-                      class="input"
-                      type="email"
-                      :class="{ 'is-danger': $v.message.from_user_email.$error }"
-                      placeholder="Your email address"
-                      v-model="message.from_user_email"
-                      @blur="$v.message.from_user_email.$touch()"
-                      @keydown.enter.prevent
-                    />
+                  <!-- EMAIL -->
+                  <div class="field form-item">
+                    <label class="label is-marginless">Your Email</label>
+                    <p class="content is-small is-marginless pb-05">
+                      <span
+                        style="color:red;"
+                        v-if="$v.message.from_user_email.$error"
+                      >Enter a valid email address</span>
+                      <span v-else>(Required) - Please enter your email address</span>
+                    </p>
+                    <div class="control" style="max-width: 500px;">
+                      <input
+                        class="input"
+                        type="email"
+                        :class="{ 'is-danger': $v.message.from_user_email.$error }"
+                        placeholder="Your email address"
+                        v-model="message.from_user_email"
+                        @blur="$v.message.from_user_email.$touch()"
+                        @keydown.enter.prevent
+                      />
+                    </div>
                   </div>
-                </div>
-                <!-- EMAIL -->
+                  <!-- EMAIL -->
 
-                <!-- SUBJECT -->
-                <div class="field form-item">
-                  <label class="label is-marginless">Subject</label>
-                  <p class="content is-small is-marginless pb-05">
-                    <span
-                      style="color:red;"
-                      v-if="$v.message.subject.$error"
-                    >Subject is required and must be max 128 characters</span>
-                    <span v-else>(Required) The subject of your message - Max 128 characters</span>
-                  </p>
+                  <!-- SUBJECT -->
+                  <div class="field form-item">
+                    <label class="label is-marginless">Subject</label>
+                    <p class="content is-small is-marginless pb-05">
+                      <span
+                        style="color:red;"
+                        v-if="$v.message.subject.$error"
+                      >Subject is required and must be max 128 characters</span>
+                      <span v-else>(Required) The subject of your message - Max 128 characters</span>
+                    </p>
+                    <div class="control">
+                      <input
+                        class="input"
+                        type="text"
+                        :class="{ 'is-danger': $v.message.subject.$error }"
+                        placeholder="Subject"
+                        v-model="message.subject"
+                        @blur="$v.message.subject.$touch()"
+                        @keydown.enter.prevent
+                      />
+                    </div>
+                  </div>
+                  <!-- SUBJECT -->
+
+                  <!-- MSG BODY -->
+                  <div class="field form-item">
+                    <label class="label is-marginless">Your message</label>
+                    <p class="content is-small is-marginless pb-05">
+                      <span
+                        style="color:red;"
+                        v-if="$v.message.body.$error"
+                      >Message text is required and must be max 4096 Characters</span>
+                      <span v-else>(Required) The body of your message - Max 4096 characters</span>
+                    </p>
+                    <div class="control">
+                      <textarea
+                        class="textarea"
+                        placeholder="Your message"
+                        v-model="message.body"
+                        :class="{ 'is-danger': $v.message.body.$error }"
+                        @blur="$v.message.body.$touch()"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <!-- ABOUT ME -->
+                </fieldset>
+                <!-- SUBMIT -->
+                <div class="is-divider submit-divider"></div>
+                <div class="field is-grouped submit-buttons">
                   <div class="control">
-                    <input
-                      class="input"
-                      type="text"
-                      :class="{ 'is-danger': $v.message.subject.$error }"
-                      placeholder="Subject"
-                      v-model="message.subject"
-                      @blur="$v.message.subject.$touch()"
-                      @keydown.enter.prevent
-                    />
+                    <button
+                      class="button is-primary"
+                      :disabled="done || is_sending || $v.$invalid"
+                    >Send</button>
                   </div>
-                </div>
-                <!-- SUBJECT -->
-
-                <!-- MSG BODY -->
-                <div class="field form-item">
-                  <label class="label is-marginless">Your message</label>
-                  <p class="content is-small is-marginless pb-05">
-                    <span
-                      style="color:red;"
-                      v-if="$v.message.body.$error"
-                    >Message text is required and must be max 4096 Characters</span>
-                    <span v-else>(Required) The body of your message - Max 4096 characters</span>
-                  </p>
                   <div class="control">
-                    <textarea
-                      class="textarea"
-                      placeholder="Your message"
-                      v-model="message.body"
-                      :class="{ 'is-danger': $v.message.body.$error }"
-                      @blur="$v.message.body.$touch()"
-                    ></textarea>
+                    <button
+                      class="button is-dark"
+                      @click.prevent="goBack"
+                    >{{ done ? "Back" : "Cancel" }}</button>
                   </div>
                 </div>
-                <!-- ABOUT ME -->
-              </fieldset>
-              <!-- SUBMIT -->
-              <div class="is-divider submit-divider"></div>
-              <div class="field is-grouped submit-buttons">
-                <div class="control">
-                  <button
-                    class="button is-primary"
-                    :disabled="done || is_sending || $v.$invalid"
-                  >Send</button>
-                </div>
-                <div class="control">
-                  <button
-                    class="button is-dark"
-                    @click.prevent="goBack"
-                  >{{ done ? "Back" : "Cancel" }}</button>
-                </div>
-              </div>
-              <!-- SUBMIT -->
-              <div style="margin-top:25px;"></div>
-            </form>
+                <!-- SUBMIT -->
+                <div style="margin-top:25px;"></div>
+              </form>
+            </div>
+            <!-- END CARD CONTENT -->
           </div>
-          <!-- END CARD CONTENT -->
         </div>
       </div>
     </div>
@@ -347,6 +349,9 @@ footer {
   }
   .submit-divider {
     margin-top: 10px;
+  }
+  .column {
+    padding: 0;
   }
 }
 </style>

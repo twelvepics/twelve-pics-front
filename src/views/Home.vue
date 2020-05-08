@@ -1,7 +1,7 @@
 <template>
   <!-- START MAIN CONTENT -->
   <main>
-    <div class="container is-fluid" ref="stories-container">
+    <div class="container is-fluid max-container" ref="stories-container">
       <div class="columns">
         <div class="column auto">
           <!-- STORIES -->
@@ -244,4 +244,5 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

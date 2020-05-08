@@ -1,174 +1,189 @@
 <template>
   <main>
-    <!-- PROFILE COLUMN -->
-    <div class="columns is-centered" style="margin:0;padding:0;">
-      <!-- CENTER COLUMNN -->
-      <div class="column is-three-quarters-desktop">
-        <!-- EMAIL NOT CONFIRMED WARNINGS -->
-        <div class="notification is-warning" v-if="showShouldConfirmMessage && !is_loading">
-          <span v-if="!confirmEmailSent">
-            In order to send to or receive messages from other users of the site, you need to confirm your email address.
+    <div class="container is-fluid max-container">
+      <!-- PROFILE COLUMN -->
+      <div class="columns is-centered" style="margin:0;padding:0;">
+        <!-- CENTER COLUMNN -->
+        <div class="column is-three-quarters-desktop">
+          <!-- EMAIL NOT CONFIRMED WARNINGS -->
+          <div class="notification is-warning" v-if="showShouldConfirmMessage && !is_loading">
+            <span v-if="!confirmEmailSent">
+              In order to send to or receive messages from other users of the site, you need to confirm your email address.
+              <br />
+              <a @click.prevent="sendConfirmEmail">Resend confirmation email</a>
+            </span>
+            <span v-else>
+              We have sent you a confirmation request email. Please click on the link in it to confirm your
+              email address.
+              <br />&nbsp;
+            </span>
             <br />
-            <a @click.prevent="sendConfirmEmail">Resend confirmation email</a>
-          </span>
-          <span v-else>
-            We have sent you a confirmation request email. Please click on the link in it to confirm your
-            email address.
-            <br />&nbsp;
-          </span>
-          <br />
-        </div>
-        <!-- END EMAIL NOT CONFIRMED WARNINGS -->
-        <!-- START PROFILE_ALL -->
-        <page-loader v-if="is_loading"></page-loader>
-        <page-error v-if="is_error" :errorMessage="errorMessage"></page-error>
-
-        <div class="card" v-if="!!user && !is_loading">
-          <!-- CARD CONTENT -->
-          <div class="card-content">
-            <!-- START COLUMNS IS-MOBILE -->
-            <!-- VIEW PROFILE TOP -->
-            <component
-              :is="profileTopLayout"
-              :user="user"
-              :showMessageButton="showMessageButton"
-              :showEditButton="showEditButton"
-              :messagingEnabled="messagingEnabled"
-              @openMessageModal="openMessageModal"
-            ></component>
-            <!-- ENDS VIEW PROFILE TOP -->
-
-            <!-- START PROFILE_DETAIL -->
-            <!-- IF PROFILE EMPTY -->
-            <div class="profile-detail">
-              <div v-if="profileIsEmpty">
-                <p class="subtitle is-size-6">
-                  <b>{{ user.username }}</b> did not fill his profile yet.
-                </p>
-              </div>
-              <!-- ELSE IF PROFILE -->
-              <div v-else>
-                <!-- START PROFILE ITEMS -->
-                <p
-                  class="subtitle is-size-5"
-                  style="color: #555;"
-                  v-if="user.profile.intro"
-                >{{ user.profile.intro }}</p>
-
-                <!-- PIC -->
-                <div class="avatar-container" v-if="!!user.profile.avatar_path">
-                  <img :src="user.profile.avatar_path" class="avatar-img" />
-                </div>
-                <!-- PIC -->
-
-                <!-- ABOUT ME -->
-                <div class="field user-info ta-html" v-if="user.profile.about_me">
-                  <h5 class="has-text-weight-semibold is-2">A few worlds about me</h5>
-                  <p class="is-size-6" v-html="nl2p(user.profile.about_me)"></p>
-                </div>
-                <!-- ABOUT ME -->
-
-                <!-- TECH STUFF -->
-                <div class="field user-info ta-html" v-if="user.profile.inspiration">
-                  <h5 class="has-text-weight-semibold is-2">Gear, technique, inspiration</h5>
-                  <p class="is-size-6" v-html="nl2p(user.profile.inspiration)"></p>
-                </div>
-                <!-- TECH STUFF -->
-
-                <!-- LOCATION -->
-                <div class="field user-info" v-if="user.profile.location.place_name">
-                  <h5 class="has-text-weight-semibold is-2">
-                    Location:
-                    <span class="is-size-6 has-text-weight-normal">
-                      {{
-                      user.profile.location.place_name
-                      }}
-                    </span>
-                  </h5>
-                </div>
-                <!-- LOCATION -->
-
-                <!-- LINKS -->
-                <div class="field user-info ta-html" v-if="hasLinks">
-                  <h5 class="has-text-weight-semibold is-2">Links</h5>
-                  <div class="is-divider links-divider"></div>
-                  <div class="links">
-                    <span v-if="user.profile.links.website" style="padding-right:1rem;">
-                      <a :href="user.profile.links.website" target="_blank">
-                        <font-awesome-icon icon="file-code" size="2x" :style="{ color: '#348BF8' }"></font-awesome-icon>
-                      </a>
-                    </span>
-                    <span v-if="user.profile.links.instagram">
-                      <a :href="user.profile.links.instagram" target="_blank">
-                        <font-awesome-icon
-                          :icon="['fab', 'instagram']"
-                          size="2x"
-                          :style="{ color: '#348BF8' }"
-                        ></font-awesome-icon>
-                      </a>
-                    </span>
-                    <span v-if="user.profile.links.twitter">
-                      <a :href="user.profile.links.twitter" target="_blank">
-                        <font-awesome-icon
-                          :icon="['fab', 'twitter-square']"
-                          size="2x"
-                          :style="{ color: '#348BF8' }"
-                        ></font-awesome-icon>
-                      </a>
-                    </span>
-                    <span v-if="user.profile.links.facebook">
-                      <a :href="user.profile.links.facebook" target="_blank">
-                        <font-awesome-icon
-                          :icon="['fab', 'facebook-square']"
-                          size="2x"
-                          :style="{ color: '#348BF8' }"
-                        ></font-awesome-icon>
-                      </a>
-                    </span>
-                    <span v-if="user.profile.links.flickr">
-                      <a :href="user.profile.links.flickr" target="_blank">
-                        <font-awesome-icon
-                          :icon="['fab', 'flickr']"
-                          size="2x"
-                          :style="{ color: '#348BF8' }"
-                        ></font-awesome-icon>
-                      </a>
-                    </span>
-                  </div>
-                </div>
-                <!-- LINKS -->
-                <!-- ENDS PROFILE ITEMS -->
-              </div>
-            </div>
-            <!-- END PROFILE_DETAIL -->
-            <div style="margin-top:20px;"></div>
           </div>
+          <!-- END EMAIL NOT CONFIRMED WARNINGS -->
+          <!-- START PROFILE_ALL -->
+          <page-loader v-if="is_loading"></page-loader>
+          <page-error v-if="is_error" :errorMessage="errorMessage"></page-error>
+
+          <div class="card" v-if="!!user && !is_loading">
+            <!-- CARD CONTENT -->
+            <div class="card-content">
+              <!-- START COLUMNS IS-MOBILE -->
+              <!-- VIEW PROFILE TOP -->
+              <component
+                :is="profileTopLayout"
+                :user="user"
+                :showMessageButton="showMessageButton"
+                :showEditButton="showEditButton"
+                :messagingEnabled="messagingEnabled"
+                @openMessageModal="openMessageModal"
+              ></component>
+              <!-- ENDS VIEW PROFILE TOP -->
+
+              <!-- START PROFILE_DETAIL -->
+              <!-- IF PROFILE EMPTY -->
+              <div class="profile-detail">
+                <div v-if="profileIsEmpty">
+                  <p class="subtitle is-size-6">
+                    <b>{{ user.username }}</b> did not fill his profile yet.
+                  </p>
+                </div>
+                <!-- ELSE IF PROFILE -->
+                <div v-else>
+                  <!-- START PROFILE ITEMS -->
+                  <!-- PIC -->
+                  <!-- shameless reorder -->
+                  <div
+                    class="avatar-container"
+                    v-if="!!user.profile.avatar_path && isLayoutMobile()"
+                  >
+                    <img :src="user.profile.avatar_path" class="avatar-img" />
+                  </div>
+                  <!-- PIC -->
+                  <p
+                    class="subtitle is-size-5"
+                    style="color: #555;"
+                    v-if="user.profile.intro"
+                  >{{ user.profile.intro }}</p>
+                  <!-- PIC -->
+                  <div class="avatar-container" v-if="!!user.profile.avatar_path && isLayoutFull()">
+                    <img :src="user.profile.avatar_path" class="avatar-img" />
+                  </div>
+                  <!-- PIC -->
+
+                  <!-- ABOUT ME -->
+                  <div class="field user-info ta-html" v-if="user.profile.about_me">
+                    <h5 class="has-text-weight-semibold is-2">A few worlds about me</h5>
+                    <p class="is-size-6" v-html="nl2p(user.profile.about_me)"></p>
+                  </div>
+                  <!-- ABOUT ME -->
+
+                  <!-- TECH STUFF -->
+                  <div class="field user-info ta-html" v-if="user.profile.inspiration">
+                    <h5 class="has-text-weight-semibold is-2">Gear, technique, inspiration</h5>
+                    <p class="is-size-6" v-html="nl2p(user.profile.inspiration)"></p>
+                  </div>
+                  <!-- TECH STUFF -->
+
+                  <!-- LOCATION -->
+                  <div class="field user-info" v-if="user.profile.location.place_name">
+                    <h5 class="has-text-weight-semibold is-2">
+                      Location:
+                      <span class="is-size-6 has-text-weight-normal">
+                        {{
+                        user.profile.location.place_name
+                        }}
+                      </span>
+                    </h5>
+                  </div>
+                  <!-- LOCATION -->
+
+                  <!-- LINKS -->
+                  <div class="field user-info ta-html" v-if="hasLinks">
+                    <h5 class="has-text-weight-semibold is-2">Links</h5>
+                    <div class="is-divider links-divider"></div>
+                    <div class="links">
+                      <span v-if="user.profile.links.website" style="padding-right:1rem;">
+                        <a :href="user.profile.links.website" target="_blank">
+                          <font-awesome-icon
+                            icon="file-code"
+                            size="2x"
+                            :style="{ color: '#348BF8' }"
+                          ></font-awesome-icon>
+                        </a>
+                      </span>
+                      <span v-if="user.profile.links.instagram">
+                        <a :href="user.profile.links.instagram" target="_blank">
+                          <font-awesome-icon
+                            :icon="['fab', 'instagram']"
+                            size="2x"
+                            :style="{ color: '#348BF8' }"
+                          ></font-awesome-icon>
+                        </a>
+                      </span>
+                      <span v-if="user.profile.links.twitter">
+                        <a :href="user.profile.links.twitter" target="_blank">
+                          <font-awesome-icon
+                            :icon="['fab', 'twitter-square']"
+                            size="2x"
+                            :style="{ color: '#348BF8' }"
+                          ></font-awesome-icon>
+                        </a>
+                      </span>
+                      <span v-if="user.profile.links.facebook">
+                        <a :href="user.profile.links.facebook" target="_blank">
+                          <font-awesome-icon
+                            :icon="['fab', 'facebook-square']"
+                            size="2x"
+                            :style="{ color: '#348BF8' }"
+                          ></font-awesome-icon>
+                        </a>
+                      </span>
+                      <span v-if="user.profile.links.flickr">
+                        <a :href="user.profile.links.flickr" target="_blank">
+                          <font-awesome-icon
+                            :icon="['fab', 'flickr']"
+                            size="2x"
+                            :style="{ color: '#348BF8' }"
+                          ></font-awesome-icon>
+                        </a>
+                      </span>
+                    </div>
+                  </div>
+                  <!-- LINKS -->
+                  <!-- ENDS PROFILE ITEMS -->
+                </div>
+              </div>
+              <!-- END PROFILE_DETAIL -->
+            </div>
+          </div>
+          <!-- END PROFILE_ALL -->
         </div>
-        <!-- END PROFILE_ALL -->
       </div>
-    </div>
-    <!-- ENDS PROFILE COLUMN -->
+      <!-- ENDS PROFILE COLUMN -->
 
-    <!-- Message composer modal -->
-    <message-composer-modal
-      :isActive="messageModalActive"
-      :username="user && (user.profile.display_name || user.username)"
-      :to_user_key="user && user._key"
-      @messageModalClosed="closeMessageModal"
-    ></message-composer-modal>
+      <!-- Message composer modal -->
+      <message-composer-modal
+        :isActive="messageModalActive"
+        :username="user && (user.profile.display_name || user.username)"
+        :to_user_key="user && user._key"
+        @messageModalClosed="closeMessageModal"
+      ></message-composer-modal>
 
-    <!-- DEBUG -->
-    <div v-if="is_debug" class="columns is-centered">
-      <!-- CENTER COLUMNN -->
-      <div class="column is-three-quarters-desktop">
-        <!-- START PROFILE -->
-        <div class="card" style="padding:20px;">
+      <!-- DEBUG -->
+      <div v-if="is_debug" class="columns is-centered" style="margin:0;padding:0">
+        <!-- CENTER COLUMNN -->
+        <div class="column is-three-quarters-desktop">
+          <!-- START PROFILE -->
+          <div class="card" style="padding:20px;">
+            <!-- 
           <router-link :to="{ name: 'user', params: { username: 'sboobi' } }">Sboobi</router-link>
           <br />
           <router-link :to="{ name: 'user', params: { username: 'empty' } }">Empty</router-link>
           <br />
           <router-link :to="{ name: 'user', params: { username: 'emptou' } }">Emptou</router-link>
-          <br />
+            <br />-->
+            Email confirmed: {{ userEmailConfirmed }}
+          </div>
         </div>
       </div>
     </div>
@@ -276,11 +291,15 @@ export default {
       return this.layout === LAYOUT_MOBILE;
     },
     isLayoutFull() {
-      return this.layout == LAYOUT_FULL;
+      return this.layout === LAYOUT_FULL;
     }
   },
   computed: {
     ...mapGetters(["isAuthenticated", "authenticatedUser"]),
+    // works not, try something else, later...
+    userEmailConfirmed() {
+      return this.isAuthenticated && this.authenticatedUser.email_confirmed;
+    },
     profileTopLayout() {
       if (this.layout === LAYOUT_FULL) {
         return ViewProfileFullTop;
@@ -468,47 +487,40 @@ div.ta-html br {
 .user-info {
   margin: 30px 0 15px 0;
 }
-
+.card-content {
+  padding-bottom: 4rem;
+}
 @media only screen and (max-width: 600px) {
-  /* .is-size-4 {
-    font-size: 1.1rem !important;
-    line-height: 1.4rem;
-    margin: 0 0 0.3rem 0 !important;
+  .card-content {
+    margin: 0;
+    padding: 0 0.75rem 4rem 0.75rem;
+  }
+  .avatar-img {
+    width: 100px;
+    height: 100px;
   }
   .is-size-5 {
-    font-size: 1rem !important;
+    font-size: 1.1rem !important;
   }
-  .subtitle.is-size-5 {
-    margin-top: 0.7rem;
-    color: #555;
+  .avatar-container {
+    margin: 10px 0 6px 0;
   }
-  .subtitle:not(:last-child) {
-    margin-bottom: 1rem;
-  }
-  h5 {
-    margin: 0 0 0.3rem 0;
+  .user-info {
+    margin: 10px 0 0 0;
     padding: 0;
   }
-  .title:not(:last-child) {
-    margin-bottom: 0.4rem;
-  }
   .is-size-6 {
-    font-size: 90% !important;
+    font-size: 0.93rem !important;
   }
-  .content:not(:last-child) {
-    margin-bottom: 0.5rem;
+  .subtitle:not(:last-child) {
+    margin-bottom: 0.7rem;
   }
-  .card-content {
-    padding: 0.75rem;
+  .notification {
+    font-size: 90%;
+    padding: 0.75rem 1.25rem 0.75rem 1.25rem;
   }
-  .bottom-quote {
-    font-size: 100%;
+  .column {
+    padding: 0;
   }
-  .field {
-    margin: 15px 0 15px 0;
-  }
-  .has-text-weight-semibold {
-    font-weight: 400 !important;
-  } */
 }
 </style>

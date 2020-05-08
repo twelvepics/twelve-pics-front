@@ -1,58 +1,79 @@
 <template>
   <main>
-    <!-- STORIES COLUMN -->
-    <div class="columns is-centered" style="margin:0;padding:0;">
-      <!-- CENTER COLUMNN -->
-      <div class="column is-three-quarters-desktop">
-        <!-- START LOADER / SERVER ERRORS-->
-        <page-loader v-if="is_loading"></page-loader>
-        <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
-        <!-- ENDS LOADER / SERVER ERRORS-->
-        <!-- START STORIES -->
-        <div v-else class="card">
-          <!-- CARD CONTENT -->
-          <div class="card-content">
-            <p class="title is-size-4" style="border-bottom: 1px solid #aaa;padding-bottom:.8rem;">
-              Stories by
-              <router-link :to="{ name: 'user', params: { username: user_info.username } }">
-                {{
-                user_info.display_name || user_info.username
-                }}
-              </router-link>
-            </p>
-            <!-- STORIES -->
-            <user-story
-              v-for="(story, idx) in stories"
-              :key="idx"
-              :story="story"
-              :user_info="user_info"
-            ></user-story>
-            <!-- END STORIES -->
+    <div class="container is-fluid max-container">
+      <!-- STORIES COLUMN -->
+      <div class="columns is-centered" style="margin:0;padding:0;">
+        <!-- CENTER COLUMNN -->
+        <div class="column is-three-quarters-desktop">
+          <!-- START LOADER / SERVER ERRORS-->
+          <page-loader v-if="is_loading"></page-loader>
+          <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
+          <!-- ENDS LOADER / SERVER ERRORS-->
+          <!-- START STORIES -->
+          <div v-else class="card">
+            <!-- CARD CONTENT -->
+            <div class="card-content">
+              <p
+                class="title is-size-4"
+                style="border-bottom: 1px solid #aaa;padding-bottom:.8rem;"
+              >
+                Stories by
+                <router-link :to="{ name: 'user', params: { username: user_info.username } }">
+                  {{
+                  user_info.display_name || user_info.username
+                  }}
+                </router-link>
+              </p>
+              <!-- STORIES -->
+              <component
+                v-for="(story, idx) in stories"
+                :key="idx"
+                :story="story"
+                :user_info="user_info"
+                :is="storyBrief"
+              ></component>
+              <!-- <user-story
+                v-for="(story, idx) in stories"
+                :key="idx"
+                :story="story"
+                :user_info="user_info"
+              ></user-story>-->
+              <!-- END STORIES -->
+            </div>
           </div>
+          <!-- ENDS STORIES -->
         </div>
-        <!-- ENDS STORIES -->
       </div>
+      <!-- ENDS STORIES COLUMN -->
     </div>
-    <!-- ENDS STORIES COLUMN -->
   </main>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import axiosBase from "../services/axiosBase";
-import UserStory from "../components/UserStory.vue";
+import UserStoryFull from "../components/userstory/UserStoryFull.vue";
+import UserStoryMobile from "../components/userstory/UserStoryMobile.vue";
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
 import * as Sentry from "@sentry/browser";
 
+let _mql = null;
+const LAYOUT_FULL = 0;
+const LAYOUT_MOBILE = 1;
+const LAYOUT_SWITCH = 600;
+
 export default {
   components: {
-    UserStory,
+    UserStoryFull,
+    UserStoryMobile,
     PageLoader,
     PageError
   },
   data() {
     return {
+      storyBrief: null,
+      layout: null,
       is_debug: true,
       is_loading: false,
       // fetch errors
@@ -70,6 +91,25 @@ export default {
     ...mapGetters(["isAuthenticated", "authenticatedUser"])
   },
   methods: {
+    handleWindowChange(event) {
+      if (event.matches) {
+        // < LAYOUT_SWITCH
+        console.log(`CHANGE < ${LAYOUT_SWITCH}`);
+        this.layout = LAYOUT_MOBILE;
+        this.storyBrief = UserStoryMobile;
+      } else {
+        // >= LAYOUT_SWITCH
+        console.log(`CHANGE >= ${LAYOUT_SWITCH}`);
+        this.layout = LAYOUT_FULL;
+        this.storyBrief = UserStoryFull;
+      }
+    },
+    isLayoutMobile() {
+      return this.layout === LAYOUT_MOBILE;
+    },
+    isLayoutFull() {
+      return this.layout == LAYOUT_FULL;
+    },
     async fetchData() {
       try {
         console.log("fetch data");
@@ -109,7 +149,27 @@ export default {
     }
   },
   created() {
+    _mql = window.matchMedia(`(max-width: ${LAYOUT_SWITCH}px)`);
+    console.log(_mql.matches);
+    if (_mql.matches) {
+      // < LAYOUT_SWITCH
+      console.log(`INITIAL < ${LAYOUT_SWITCH}`);
+      this.layout = LAYOUT_MOBILE;
+      this.storyBrief = UserStoryMobile;
+    } else {
+      // >= LAYOUT_SWITCH
+      console.log(`INITIAL >= ${LAYOUT_SWITCH}`);
+      this.layout = LAYOUT_FULL;
+      this.storyBrief = UserStoryFull;
+    }
+    console.log(_mql);
+    // initial state here
+    _mql.addListener(this.handleWindowChange);
+    // --
     this.fetchData();
+  },
+  beforeDestroy() {
+    _mql.removeListener(this.handleWindowChange);
   },
   watch: {
     // eslint-disable-next-line

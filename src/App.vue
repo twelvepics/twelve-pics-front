@@ -65,6 +65,10 @@ main {
 .isError {
   color: red;
 }
+/* limit max width **/
+.max-container {
+  max-width: 1248px !important;
+}
 
 @media only screen and (max-width: 600px) {
   main {
