@@ -1,39 +1,27 @@
 <template>
   <div>
-    <!-- PIC LANDSCAPE BOX -->
+    <!-- DRAFT -->
     <div v-if="is_draft && show_drafts" class="box story-item-draft" style="position: relative;">
-      <button
-        v-if="showEditButton"
-        class="button is-primary"
-        @click.prevent="goToEditStory(story._key)"
-        style="position: absolute; top:.7rem; right:.7rem;"
-      >Edit</button>
-
-      <p class="title is-5" style="margin-bottom:.6em;padding-right:4rem;">
+      <p class="title">
         <a @click.prevent="storyClicked">[DRAFT] {{ story.title }}</a>
       </p>
       <p class="pitch">{{ story.pitch }}</p>
       <div class="is-divider story-divider"></div>
       <p class="bottom-line">
+        <button
+          v-if="showEditButton"
+          class="button edit-button is-primary is-small"
+          @click.prevent="goToEditStory(story._key)"
+        >Edit</button>
         <span class="cat">[{{ category_display }}]</span>
         - Created {{ elapsed() }}
       </p>
     </div>
-    <!-- END PIC LANDSCAPE BOX-->
+    <!-- END DRAFT -->
 
     <!-- PIC LANDSCAPE BOX -->
-    <div
-      v-if="is_published && is_thumb_horizontal"
-      class="box story-item-pic-landscape"
-      style="position: relative; border: 1px solid #ddd;"
-    >
-      <button
-        v-if="showEditButton"
-        class="button is-primary"
-        @click.prevent="goToEditStory(story._key)"
-        style="position: absolute; top:.7rem; right:.7rem;"
-      >Edit</button>
-      <p class="title is-5" style="margin-bottom:.6em;padding-right:4rem;">
+    <div v-if="is_published" class="box">
+      <p class="title">
         <a @click.prevent="storyClicked">{{ story.title }}</a>
       </p>
       <p class="pic">
@@ -41,75 +29,38 @@
           <img
             :src="story_thumb.web_path"
             :alt="story_thumb.description"
-            :width="story_thumb.width"
-            :height="story_thumb.height"
+            :width="is_thumb_horizontal ? story_thumb.width : story_thumb.width - 50"
+            :height="story_thumb.height - 50"
           />
         </a>
+      </p>
+      <div class="is-divider story-divider"></div>
+      <p class="bottom-line">
+        <button
+          v-if="showEditButton"
+          class="button edit-button is-primary is-small"
+          @click.prevent="goToEditStory(story._key)"
+        >Edit</button>
+        <span
+          v-else
+          class="icon is-left star"
+          :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
+          data-tooltip="Please authenticate to star a story"
+          @click="starMe"
+        >
+          <font-awesome-icon icon="star"></font-awesome-icon>
+        </span>
+        <span class="cat">[{{ category_display }}]</span>
+        - Posted {{ elapsed() }}
+        <!-- 
+        -
+        {{ story.comments_count || "No" }}
+        {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
+        -->
       </p>
       <p class="pitch">{{ story.pitch }}</p>
-      <div class="is-divider story-divider"></div>
-      <p class="bottom-line">
-        <span
-          class="icon is-left star"
-          :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
-          data-tooltip="Please authenticate to star a story"
-          @click="starMe"
-        >
-          <font-awesome-icon icon="star"></font-awesome-icon>
-        </span>
-        <span class="cat">[{{ category_display }}]</span>
-        - Posted {{ elapsed() }} -
-        {{ story.comments_count || "No" }}
-        {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
-      </p>
     </div>
     <!-- END PIC LANDSCAPE BOX-->
-
-    <!-- PIC PORTRAIT BOX-->
-    <div
-      v-if="is_published && is_thumb_vertical"
-      class="box story-item-pic-portrait"
-      style="position: relative;border: 1px solid #ddd;"
-    >
-      <button
-        v-if="showEditButton"
-        class="button is-primary"
-        @click.prevent="goToEditStory(story._key)"
-        style="position: absolute; top:.7rem; right:.7rem;"
-      >Edit</button>
-      <div class="title-pitch">
-        <p class="title is-5" style="margin-bottom:.6em;padding-right:4rem;">
-          <a @click.prevent="storyClicked">{{ story.title }}</a>
-        </p>
-        <p class="pitch">{{ story.pitch }}</p>
-      </div>
-      <p class="pic" style="padding-top:.3rem;">
-        <a @click.prevent="storyClicked">
-          <img
-            :src="story_thumb.web_path"
-            :alt="story_thumb.description"
-            :width="story_thumb.width"
-            :height="story_thumb.height"
-          />
-        </a>
-      </p>
-      <div class="is-divider story-divider"></div>
-      <p class="bottom-line">
-        <span
-          class="icon is-left star"
-          :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
-          data-tooltip="Please authenticate to star a story"
-          @click="starMe"
-        >
-          <font-awesome-icon icon="star"></font-awesome-icon>
-        </span>
-        <span class="cat">[{{ category_display }}]</span>
-        - Posted {{ elapsed() }} -
-        {{ story.comments_count || "No" }}
-        {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
-      </p>
-    </div>
-    <!-- END PIC PORTRAIT BOX-->
   </div>
 </template>
 
@@ -189,7 +140,7 @@ export default {
       );
     },
     story_thumb() {
-      return this.story.pics[0].small;
+      return this.story.pics[0].medium;
     },
     is_thumb_horizontal() {
       return this.story_thumb.width >= this.story_thumb.height;
@@ -219,11 +170,29 @@ export default {
 <style scoped>
 /**************** STORIES BOXES STYLES *****************/
 .box {
-  margin-bottom: 1.5rem;
+  margin-top: 1.2rem;
+}
+.box {
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  /* margin-bottom: 1.2rem; */
+}
+.title {
+  line-height: 1.3em;
+  margin: 0 0 0.8rem 0 !important;
+  font-weight: 400;
+  font-size: 1rem;
 }
 .story-item-draft {
   background-color: #ffc610;
+  border: 1px solid #d4a920;
 }
+
+.story-item-draft .title {
+  margin-bottom: 0 !important;
+}
+
 .story-item-draft a,
 .story-item-draft .cat {
   color: #333;
@@ -234,72 +203,48 @@ export default {
 .story-item-draft .story-divider {
   border-top: 0.1px solid #666;
 }
-
-.story-item-pic-landscape {
-  display: grid;
-  grid-template-columns: 200px 15px 1fr;
+.pitch {
+  font-size: 90%;
+  margin-top: 0.3rem;
+  --lh: 1.3rem;
+  line-height: var(--lh);
+  --max-lines: 3;
+  max-height: calc(var(--lh) * var(--max-lines));
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-
-.story-item-pic-landscape .title {
-  grid-column: 1 / -1;
-}
-
-.story-item-pic-landscape .pitch {
-  grid-column: 3 / -1;
-}
-
-.story-item-pic-portrait {
-  display: grid;
-  grid-template-columns: 122px 15px 1fr;
-  grid-auto-rows: min-content;
-}
-
-.story-item-pic-portrait .pic {
-  grid-column: 1 / 2;
-  grid-row: 1 / span 2;
-}
-
-.story-item-pic-portrait .title-pitch {
-  grid-column: 3 / -1;
-  grid-row: 1 / span 2;
-}
-
-.bottom-line {
-  grid-column: 1 / -1;
-}
-
 .story-divider {
-  grid-column: 1 / -1;
   margin-bottom: 0.3rem;
   border-top: 0.1px solid #dbdbdb;
 }
-
-/**** types ******/
-.title {
-  line-height: 1.2em;
-}
-.cat {
-  color: #aaa;
+.bottom-line {
+  font-size: 85%;
 }
 .star {
   display: inline-block;
   color: #aaa;
-  padding: 0 0.3rem 0 0;
+  padding: 0 0.1rem 0 0;
   height: 0rem;
   width: none;
   cursor: pointer;
+  font-size: 120%;
 }
 .upvoted {
   color: orange;
 }
-.pitch {
-  --lh: 1.4rem;
-  line-height: var(--lh);
-  --max-lines: 6;
-  max-height: calc(var(--lh) * var(--max-lines));
-  display: -webkit-box;
-  -webkit-line-clamp: 6;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.cat {
+  color: #aaa;
+}
+.pic {
+  text-align: center;
+}
+.button {
+  padding: 0 0.5rem 0 0.5rem;
+  border-radius: 0;
+  margin-right: 0.4rem;
+  height: auto;
+  border-radius: 2px;
 }
 </style>

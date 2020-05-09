@@ -13,10 +13,7 @@
           <div v-else class="card">
             <!-- CARD CONTENT -->
             <div class="card-content">
-              <p
-                class="title is-size-4"
-                style="border-bottom: 1px solid #aaa;padding-bottom:.8rem;"
-              >
+              <p class="title is-size-4 page-title">
                 Stories by
                 <router-link :to="{ name: 'user', params: { username: user_info.username } }">
                   {{
@@ -32,12 +29,6 @@
                 :user_info="user_info"
                 :is="storyBrief"
               ></component>
-              <!-- <user-story
-                v-for="(story, idx) in stories"
-                :key="idx"
-                :story="story"
-                :user_info="user_info"
-              ></user-story>-->
               <!-- END STORIES -->
             </div>
           </div>
@@ -207,5 +198,42 @@ footer {
 
 footer {
   margin-top: 30px;
+}
+.page-title {
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 0.8rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .is-size-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem;
+    margin: 0 0 0.3rem 0 !important;
+    font-weight: 400;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+  .is-size-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem;
+    margin: 0 0 0.3rem 0 !important;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+  .content {
+    font-size: 90%;
+  }
+
+  .content:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .card-content {
+    padding: 0.75rem;
+  }
+  .column {
+    padding: 0;
+  }
 }
 </style>

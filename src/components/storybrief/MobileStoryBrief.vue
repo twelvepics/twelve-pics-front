@@ -152,14 +152,12 @@ export default {
   cursor: pointer;
   font-size: 120%;
 }
-
 .upvoted {
   color: orange;
 }
 .pic {
   text-align: center;
 }
-
 .pitch {
   font-size: 90%;
   margin-top: 0.3rem;
