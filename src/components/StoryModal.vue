@@ -3,17 +3,17 @@
   <div
     id="story-modal"
     class="story-modal"
-    style="display: block"
+    style="display: block;"
     v-on:click.stop.self="closeStory"
   >
     <!-- STICKY HEADER -->
     <div class="heady">
-      <div class="columns is-mobile">
+      <div class="columns is-mobile" style="margin:0;padding:0;">
         <div
           v-if="story"
           class="column"
           style="padding-left:35px;"
-        >Author: {{story.author_info.display_name || story.author_info.username}} - {{ elapsed() }}</div>
+        >{{story.author_info.display_name || story.author_info.username}} - {{ elapsed() }}</div>
         <div v-if="story" class="column is-narrow has-text-right" style="padding-right:35px;">
           <span style="font-weight:medium;padding-right:3px;">
             <a @click.prevent="closeStory()">CLOSE</a>

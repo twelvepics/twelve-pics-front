@@ -1,9 +1,10 @@
 <template>
   <main>
-    <div class="columns is-centered">
+    <div class="columns is-centered" style="margin:0;padding:0;">
       <!-- CENTER COLUMNN -->
       <div
-        class="column is-full-tablet is-four-fifths-desktop is-four-fifths-widescreen is-four-fifths-fullhd"
+        class="column is-full-tablet is-full-desktop is-four-fifths-widescreen is-four-fifths-fullhd"
+        style="max-width:1200px;"
       >
         <!-- START LOADER / SERVER ERRORS-->
         <page-loader v-if="is_loading"></page-loader>
@@ -84,7 +85,7 @@ export default {
   }
 };
 </script>
-<style>
+<style scoped>
 /************** layout ***********/
 html,
 body {
@@ -105,6 +106,7 @@ main,
 footer {
   flex-shrink: 0;
 }
+
 footer {
   margin-top: 30px;
 }

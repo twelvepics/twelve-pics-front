@@ -27,7 +27,7 @@
               class="content isError is-small is-marginless pb-05"
             >Max length 5000 Characters</p>
           </div>
-          <div class="control">
+          <div class="control max-width-ized-plus">
             <textarea class="textarea" placeholder="Your comment" v-model="comment" rows="3"></textarea>
           </div>
         </div>
@@ -61,12 +61,12 @@
           >- Max length 5000 Characters</span>
         </div>
         <div class="content comment" v-if="comment_edit_idx !== idx">
-          <p class="comment">{{ comment.comment }}</p>
+          <p class="comment max-width-ized">{{ comment.comment }}</p>
         </div>
         <!-- -->
         <div class="comment-edit" v-if="comment_edit_idx === idx">
-          <div style="margin-top:.5rem">
-            <textarea class="textarea" rows="2" v-model="comments[idx].comment" ref="new_comments"></textarea>
+          <div class="max-width-ized-plus" style="margin-top:.5rem;">
+            <textarea class="textarea" rows="3" v-model="comments[idx].comment" ref="new_comments"></textarea>
           </div>
           <button
             class="button is-primary is-small mt10p20"
@@ -272,7 +272,12 @@ export default {
 .isError {
   color: red;
 }
-
+.max-width-ized {
+  max-width: 900px;
+}
+.max-width-ized-plus {
+  max-width: 930px;
+}
 @media only screen and (max-width: 600px) {
   .is-size-4 {
     font-size: 1.1rem !important;

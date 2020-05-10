@@ -2,7 +2,8 @@
   <div class="card">
     <!-- START CONTENT -->
     <div class="card-content">
-      <p class="title is-size-4">{{ story.title }}</p>
+      <!-- XOXO MAXWIDTHIZED -->
+      <p class="title is-size-4 max-width-ized">{{ story.title }}</p>
       <div class="content">
         <div>
           <b>Author:&nbsp;</b>
@@ -21,14 +22,16 @@
           <span class="greyish">{{ getTags() }}</span>
         </div>
       </div>
-      <p class="content">{{ story.pitch }}</p>
+      <!-- XOXO MAXWIDTHIZED -->
+      <p class="content max-width-ized">{{ story.pitch }}</p>
       <component
         :is="storyLayout"
         :pics="story.pics"
         :tiles="story.layout === 'tiles' ? story.pics_tiles_layout : null"
         @pics-loaded="picsLoaded"
       ></component>
-      <p class="content">{{ story.inspiration }}</p>
+      <!-- XOXO MAXWIDTHIZED -->
+      <p class="content max-width-ized">{{ story.inspiration }}</p>
     </div>
     <!-- END CONTENT -->
   </div>
@@ -148,6 +151,9 @@ export default {
 <style scoped>
 .greyish {
   color: #999;
+}
+.max-width-ized {
+  max-width: 900px;
 }
 @media only screen and (max-width: 600px) {
   .is-size-4 {
