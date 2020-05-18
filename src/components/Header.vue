@@ -30,7 +30,7 @@
 import MobileNavbar from "./navbar/MobileNavbar";
 import FullNavbar from "./navbar/FullNavbar";
 
-import Toast from "../components/Toast.vue";
+import Toast from "./Toast.vue";
 
 import LoginModal from "./LoginModal.vue";
 import SignupModal from "./SignupModal.vue";
@@ -178,6 +178,7 @@ export default {
       }
       this.showToast = false;
       this.toastMessageType = "";
+      this.toastMessage = [];
     }
   },
   created: function() {

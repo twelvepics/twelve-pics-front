@@ -237,6 +237,7 @@ export default {
       }
       this.showToast = false;
       this.toastMessageType = "";
+      this.toastMessage = [];
     }
   },
   computed: {

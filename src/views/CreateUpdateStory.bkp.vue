@@ -5,11 +5,15 @@
         <!-- CENTER COLUMNN -->
         <div class="column is-three-quarters-desktop">
           <!-- TOAST USED FOR form errors and deleted -->
-          <toast v-show="showToast" :closeToast="closeToast" :toastType="toastType">
-            <template v-slot:default>
-              <div v-html="toastMessageJoined"></div>
-            </template>
-          </toast>
+          <transition name="fade">
+            <toast
+              v-show="show_toast"
+              :duration="toast_duration"
+              :type="toast_type"
+              :show="show_toast"
+              :closeToast="closeToast"
+            >{{ toast_message }}</toast>
+          </transition>
           <!-- END TOAST -->
           <!-- SERVER SIDE ERRORS AND AUTH -->
           <page-loader v-if="is_loading"></page-loader>
@@ -71,14 +75,144 @@
                 </div>
                 <!-- ENDS SHOW STORY URL -->
                 <!-- TOP BOXES -->
-                <component
-                  :is="topBoxes"
-                  :story="story"
-                  @selectLayout="selectLayout"
-                  @setStatus="setStatus"
-                  @deleteStory="deleteStory"
-                />
-                <!-- END TOP BOXES -->
+                <div
+                  class="columns is-variable is-2-mobile is-3-tablet is-8-desktop is-8-widescreen is-8-fullhd"
+                  style="margin-top:40px;"
+                >
+                  <!-- LAYOUT BOX -->
+                  <div class="column is-two-fifths">
+                    <article class="message is-small box-has-shadow">
+                      <div class="message-header">
+                        <p>LAYOUT</p>
+                      </div>
+                      <div
+                        class="message-body add-story-layout-icons-box p8"
+                        style="background-color:#999;"
+                      >
+                        <p class="content" style="margin-bottom:0;">
+                          <img
+                            class="icon-hover"
+                            style="width:48px; height:auto;"
+                            :src="story.layout === 'horizontal' ? '/img/layout-horizontal-on.png' : '/img/layout-horizontal-off.png'"
+                            @click="selectLayout('horizontal')"
+                          />
+                        </p>
+                        <p class="content" style="margin-bottom:0;">
+                          <img
+                            class="icon-hover"
+                            style="width:48px; height:auto;"
+                            :src="story.layout === 'tiles' ? '/img/layout-tiles-on.png' : '/img/layout-tiles-off.png'"
+                            @click="selectLayout('tiles')"
+                          />
+                        </p>
+
+                        <p class="content" style="margin-bottom:0;">
+                          <img
+                            class="icon-hover"
+                            style="width:48px; height:auto;"
+                            :src="story.layout === 'vertical' ? '/img/layout-vertical-on.png' : '/img/layout-vertical-off.png'"
+                            @click="selectLayout('vertical')"
+                          />
+                        </p>
+                        <p class="content" style="margin-bottom:0;">
+                          <img
+                            class="icon-hover"
+                            style="width:48px; height:auto;"
+                            :src="story.layout === 'carousel' ? '/img/layout-carousel-on.png' : '/img/layout-carousel-off.png'"
+                            @click="selectLayout('carousel')"
+                          />
+                        </p>
+                        <p
+                          class="content selected-layout"
+                          style="padding-top: .2rem"
+                        >{{ story.layout.toUpperCase() }}</p>
+                      </div>
+                    </article>
+                  </div>
+                  <!-- ENDS LAYOUT BOX -->
+                  <!-- STATUS BOX -->
+                  <!-- STATUS PUBLISHED -->
+                  <div v-if="story.status === 'published'" class="column is-two-fifths">
+                    <article class="message is-success is-small box-has-shadow">
+                      <div class="message-header">
+                        <p>STATUS</p>
+                      </div>
+                      <div
+                        class="message-body pub-unpub-story-layout-box"
+                        style="padding:.75rem 1rem 1rem 1rem"
+                      >
+                        <p
+                          class="icon icon-hover has-text-success is-large"
+                          style="padding:0;margin:0;"
+                        >
+                          <span class="icon is-left">
+                            <font-awesome-icon class="fas fa-2x" icon="check-circle"></font-awesome-icon>
+                          </span>
+
+                          <span
+                            class="content has-text-success pub-unpub-story-txt"
+                            style="padding-left:.3rem; font-size: 140%;"
+                          >PUBLISHED</span>
+                        </p>
+                        <p>
+                          <button
+                            class="button is-success"
+                            style="font-size:.85rem"
+                            @click.prevent="setStatus('draft')"
+                          >UNPUBLISH</button>
+                        </p>
+                      </div>
+                    </article>
+                  </div>
+                  <!-- STATUS DRAFT -->
+                  <div v-if="story.status === 'draft'" class="column is-two-fifths">
+                    <article class="message is-warning is-small box-has-shadow">
+                      <div class="message-header">
+                        <p>STATUS</p>
+                      </div>
+                      <div
+                        class="message-body pub-unpub-story-layout-box"
+                        style="padding:.75rem 1rem 1rem 1rem"
+                      >
+                        <p
+                          class="icon icon-hover has-text-warning is-large"
+                          style="padding:0;margin:0;"
+                        >
+                          <span class="icon is-left">
+                            <font-awesome-icon class="fas fa-2x" icon="ban"></font-awesome-icon>
+                          </span>
+
+                          <span
+                            class="content has-text-warning pub-unpub-story-txt"
+                            style="padding-left:.3rem; font-size:130%;"
+                          >DRAFT</span>
+                        </p>
+                        <p>
+                          <button
+                            class="button is-warning"
+                            style="font-size:.85rem;"
+                            @click.prevent="setStatus('published')"
+                          >PUBLISH</button>
+                        </p>
+                      </div>
+                    </article>
+                  </div>
+                  <!-- ENDS STATUS BOX -->
+                  <!-- DELETE BOX -->
+                  <div class="column">
+                    <article class="message is-danger is-small box-has-shadow">
+                      <div class="message-header">
+                        <p>DELETE</p>
+                      </div>
+                      <div class="message-body delete-story">
+                        <p class="icon icon-hover has-text-danger is-large" @click="deleteStory()">
+                          <font-awesome-icon class="fas fa-3x" icon="trash-alt"></font-awesome-icon>
+                        </p>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+                <!-- TOP BOXES -->
                 <!-- ENDS DELETE BOX -->
                 <!-- CATEGORY -->
                 <div class="field m-30-0-15-0">
@@ -441,8 +575,6 @@
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
 import Toast from "../components/Toast.vue";
-import StoryTopBoxesFull from "../components/createupdatestory/StoryTopBoxesFull.vue";
-import StoryTopBoxesMobile from "../components/createupdatestory/StoryTopBoxesMobile.vue";
 import axiosBase from "../services/axiosBase";
 import Draggable from "vuedraggable";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
@@ -452,10 +584,6 @@ import PicsUploadModal from "../components/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 import { categoriesList } from "../utils/categories";
 import { isHorizontal, isVertical } from "../utils/pics";
-
-let _mql = null;
-const LAYOUT_FULL = 0;
-const LAYOUT_MOBILE = 1;
 
 const MAX_PICS = 12;
 const MIN_PICS = 6;
@@ -477,16 +605,10 @@ export default {
     Draggable,
     PageLoader,
     PageError,
-    Toast,
-    StoryTopBoxesFull
+    Toast
   },
   data() {
     return {
-      // page layout
-      page_layout: null,
-      // top boxes component
-      topBoxes: null,
-
       is_debug: false,
       is_loading: false,
       // action: "",
@@ -536,87 +658,13 @@ export default {
       caption_errors: [],
       description_errors: [],
       // toast
-      // toast_message: "",
-      // toast_type: "",
-      // toast_duration: 4000,
-      // show_toast: false
-      showToast: false,
-      showToastTimeout: null,
-      toastMessage: [],
-      toastType: ""
+      toast_message: "",
+      toast_type: "",
+      toast_duration: 4000,
+      show_toast: false
     };
   },
   methods: {
-    /////////////////////////////////////////////////
-    // SET PAGE LAYOUT
-    /////////////////////////////////////////////////
-    handleWindowChange(event) {
-      if (event.matches) {
-        // < 999
-        console.log("CHANGE < 999");
-        this.page_layout = LAYOUT_MOBILE;
-        this.topBoxes = StoryTopBoxesMobile;
-      } else {
-        // >= 999
-        console.log("CHANGE >= 999");
-        this.page_layout = LAYOUT_FULL;
-        this.topBoxes = StoryTopBoxesFull;
-      }
-    },
-    isLayoutMobile() {
-      return this.layout === LAYOUT_MOBILE;
-    },
-    isLayoutFull() {
-      return this.layout == LAYOUT_FULL;
-    },
-    // END SET PAGE LAYOUTß ////////////////////////////////////////
-
-    /////////////////////////////////////////////////
-    // SET TOP BOXES
-    /////////////////////////////////////////////////
-    selectLayout(layout) {
-      // console.log(`selectLayout(${layout}`);
-      this.story.layout = layout;
-    },
-    async setStatus(status) {
-      // console.log(`selectLayout(${status}`);
-      // reset all errors
-      this.is_error = false;
-      this.is_api_error = false;
-      this.is_form_error = false;
-      // check I'm valid
-      if (!this.formIsValid()) return;
-      // go and change status if im good
-      this.story.status = status;
-      await this.onSubmit(false);
-    },
-    async deleteStory() {
-      console.log("deleteStory()");
-      const resp = window.confirm("Really, delete?");
-      // console.log(resp);
-      if (resp) {
-        window.scrollTo(0, 0);
-        this.is_loading = true;
-        this.$store.commit("clearCreateFormCache");
-        // delete Server side only if already saved
-        if (this.story._key) {
-          // this.onSubmit();
-          try {
-            await axiosBase.delete(`/stories/${this.story._key}`);
-          } catch (err) {
-            // ERR TODO
-            // 401 403 404 500 handled server side
-            this.is_error = true;
-            console.log(err);
-            Sentry.captureException(err);
-          }
-        }
-        this.resetAll();
-        this.toastStoryDeleted();
-      }
-    },
-    // END SET TOP BOXES ////////////////////////////////////////
-
     persistStory() {
       console.log("persisting story to store");
       // copy pics to story
@@ -779,6 +827,10 @@ export default {
     removePic(idx) {
       this.pics_uploaded.splice(idx, 1);
     },
+    selectLayout(layout) {
+      // console.log(`selectLayout(${layout}`);
+      this.story.layout = layout;
+    },
     // ERRORS TODO
     async searchLocation(e) {
       // this.resetApiErrors();
@@ -876,8 +928,46 @@ export default {
       console.log("saveAndPublish");
       this.setStatus("published");
     },
+    async setStatus(status) {
+      // console.log(`selectLayout(${status}`);
+      // reset all errors
+      this.is_error = false;
+      this.is_api_error = false;
+      this.is_form_error = false;
+      // check I'm valid
+      if (!this.formIsValid()) return;
+      // go and change status if im good
+      this.story.status = status;
+      await this.onSubmit(false);
+    },
+
     // user cannot access story if its not his own or not found
     // properly handled server side, so it's fine
+    async deleteStory() {
+      console.log("deleteStory()");
+      const resp = window.confirm("Really, delete?");
+      // console.log(resp);
+      if (resp) {
+        window.scrollTo(0, 0);
+        this.is_loading = true;
+        this.$store.commit("clearCreateFormCache");
+        // delete Server side only if already saved
+        if (this.story._key) {
+          // this.onSubmit();
+          try {
+            await axiosBase.delete(`/stories/${this.story._key}`);
+          } catch (err) {
+            // ERR TODO
+            // 401 403 404 500 handled server side
+            this.is_error = true;
+            console.log(err);
+            Sentry.captureException(err);
+          }
+        }
+        this.resetAll();
+        this.toastStoryDeleted();
+      }
+    },
     cancel() {
       console.log("goBack");
       // this.resetAll();
@@ -927,56 +1017,25 @@ export default {
     //////////////////////////////////
     // Toaster
     //////////////////////////////////
-    toastIt(messageObj, duration = 3000) {
-      // console.log("toastIt I was called");
-      // console.log(messageObj.message.join('<br />'));
-      this.showToast = true;
-      this.toastMessage = messageObj.message;
-      this.toastType = messageObj.messageType;
-      this.showToastTimeout = setTimeout(() => {
-        this.closeToast();
-      }, duration);
-    },
     closeToast() {
-      if (this.showToastTimeout) {
-        clearTimeout(this.showToastTimeout);
-      }
-      this.showToast = false;
-      this.toastMessageType = "";
-      this.toasrMessage = "";
+      this.show_toast = false;
+      this.toast_message = "";
+      this.toast_type = "";
     },
-    // closeToast() {
-    //   this.show_toast = false;
-    //   this.toast_message = "";
-    //   this.toast_type = "";
-    // },
-
     toastSaveSuccess() {
-      //   this.show_toast = true;
-      //   this.toast_message = "The story has been saved";
-      //   this.toast_type = "is-success";
-      this.toastIt({
-        message: ["The story has been saved"],
-        messageType: "toast-top-centered is-success"
-      });
+      this.show_toast = true;
+      this.toast_message = "The story has been saved";
+      this.toast_type = "is-success";
     },
     toastFormErrors() {
-      // this.show_toast = true;
-      // this.toast_message = "Please fix the form errors";
-      // this.toast_type = "is-danger";
-      this.toastIt({
-        message: ["Please fix the form errors"],
-        messageType: "toast-top-centered is-danger"
-      });
+      this.show_toast = true;
+      this.toast_message = "Please fix the form errors";
+      this.toast_type = "is-danger";
     },
     toastStoryDeleted() {
-      // this.show_toast = true;
-      // this.toast_message = "This Story has been deleted";
-      // this.toast_type = "is-warning";
-      this.toastIt({
-        message: ["This Story has been deleted"],
-        messageType: "toast-top-centered is-warning"
-      });
+      this.show_toast = true;
+      this.toast_message = "This Story has been deleted";
+      this.toast_type = "is-warning";
     },
     ///////////////////////////
 
@@ -1028,9 +1087,6 @@ export default {
       "authenticatedUser",
       "getCreateFormCache"
     ]),
-    toastMessageJoined() {
-      return this.toastMessage.join("<br />");
-    },
     user: function() {
       return this.authenticatedUser;
     },
@@ -1055,33 +1111,6 @@ export default {
     next();
   },
   created() {
-    /////////////////////////////////////////////////////////
-    // components on change
-    /////////////////////////////////////////////////////////
-    console.log(process.env.NODE_ENV);
-    console.log("#--- created ---#");
-    _mql = window.matchMedia("(max-width: 999px)");
-    console.log(_mql.matches);
-    if (_mql.matches) {
-      // < 999
-      console.log("INITIAL < 999");
-      this.layout = LAYOUT_MOBILE;
-      this.topBoxes = StoryTopBoxesMobile;
-    } else {
-      // >= 999
-      console.log("INITIAL >= 999");
-      this.layout = LAYOUT_FULL;
-      this.topBoxes = StoryTopBoxesFull;
-    }
-    console.log(_mql);
-    // initial state here
-    _mql.addListener(this.handleWindowChange);
-
-    ///////////////////////////////////////////////////////
-    // LOAD INTIAL DATA
-    // TODO TRY TO REPLACE THIS CACHE THING BY A CHANGE URL
-    // LOAD PAGE BY STORY ID ETC...
-    ///////////////////////////////////////////////////////
     const cache = this.$store.getters.getCreateFormCache;
     // console.log(cache);
     if (this.$route.name === "edit-story" && !cache.story) {
@@ -1093,11 +1122,6 @@ export default {
       this.pics_uploaded = cache.story.pics;
       this.tagsStr = cache.story.tags.join(", ");
     }
-  },
-  beforeDestroy: function() {
-    console.log("#--- beforeDestroy ---#");
-    _mql.removeListener(this.handleWindowChange);
-    // _mql = null; // ?
   },
   validations: {
     story: {
@@ -1185,6 +1209,9 @@ footer {
 .m-40-0-15-0 {
   margin: 40px 0 15px 0;
 }
+.p8 {
+  padding: 9px;
+}
 /************** misc ***********/
 .pics-box {
   border: 2px dashed gray;
@@ -1192,6 +1219,9 @@ footer {
 }
 .text-has-shadow {
   text-shadow: 2px 2px 8px #333;
+}
+.box-has-shadow {
+  box-shadow: 2px 2px 8px #aaa;
 }
 /************** images ***********/
 .image-h {
@@ -1205,6 +1235,39 @@ footer {
 .image-s {
   width: 170px;
   height: 170px;
+}
+.icon-hover {
+  cursor: pointer;
+}
+/************** grids ***********/
+.add-story-layout-icons-box {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
+  justify-items: center;
+  align-items: start;
+}
+.selected-layout {
+  grid-column: 1 / span 4;
+  justify-self: center;
+  color: yellow;
+  font-weight: bold;
+}
+.pub-unpub-story-layout-box {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+  align-items: center;
+}
+.pub-unpub-story-txt {
+  /* grid-column: 2 / span 4; */
+  /* justify-self: start; */
+  font-weight: bold;
+}
+.delete-story {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
 }
 /***** Uploaded images ******/
 .uploadedImageBox {
