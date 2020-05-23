@@ -1,41 +1,42 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import axiosBase from '../services/axiosBase'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import axiosBase from '../services/axiosBase';
 ////////////////////////////////////////////////////////////
 
-import { setHomeLayout, resetHomeLayout, resetGenericLayout } from '../utils/utils'
-import { categoriesList } from '../utils/categories'
+import {
+  setHomeLayout,
+  resetHomeLayout,
+  resetGenericLayout,
+} from '../utils/utils';
+import { categoriesList } from '../utils/categories';
 
 ////////////////////////////////////////////////////////////
 // modularize and namespace later when it's too messy
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     storyComponentMounted: false,
     jwtToken: null, // localStorage.getItem('token'),
     user: null, // JSON.parse(localStorage.getItem('user')),
-    categories: categoriesList.map(cat =>
-      cat.key
-    ),
+    categories: categoriesList.map((cat) => cat.key),
     userInited: false,
-    createFormCache: {},
   },
   getters: {
-    isStoryComponentMounted: state => {
+    isStoryComponentMounted: (state) => {
       return state.isStoryComponentMounted;
     },
-    isAuthenticated: state => {
+    isAuthenticated: (state) => {
       return state.jwtToken != null;
     },
-    isUserInited: state => {
+    isUserInited: (state) => {
       return state.userInited;
     },
-    authenticatedUser: state => {
+    authenticatedUser: (state) => {
       return state.user;
     },
-    getToken: state => {
+    getToken: (state) => {
       return state.jwtToken;
     },
     getCategories: (state, getters) => {
@@ -51,12 +52,9 @@ export default new Vuex.Store({
       if (getters.isAuthenticated) {
         return state.user.profile;
       } else {
-        return { profile: {} }
+        return { profile: {} };
       }
     },
-    getCreateFormCache: state => {
-      return state.createFormCache;
-    }
   },
   mutations: {
     // STORY
@@ -85,7 +83,7 @@ export default new Vuex.Store({
       state.user = userData.user;
       state.userInited = true;
     },
-    clearAuthData: state => {
+    clearAuthData: (state) => {
       state.jwtToken = null;
       state.user = null;
       localStorage.removeItem('jwtToken');
@@ -118,7 +116,7 @@ export default new Vuex.Store({
       }
     },
     initialiseStore: (state) => {
-      console.log("INITIALIZING STORE")
+      console.log('INITIALIZING STORE');
       // console.log("JWT TOKEN => " + localStorage.getItem('jwtToken'));
       // console.log("USER => " + JSON.parse(localStorage.getItem('user')));
       if (localStorage.getItem('jwtToken')) {
@@ -128,14 +126,6 @@ export default new Vuex.Store({
         state.user = JSON.parse(localStorage.getItem('user'));
       }
     },
-    // create form cache
-    // this.$store.commit('setCreateFormCache', story)
-    setCreateFormCache: (state, payload) => {
-      state.createFormCache = { story: payload }
-    },
-    clearCreateFormCache: (state) => {
-      state.createFormCache = {};
-    }
   },
   actions: {
     ///////////////////////////////////////////////////////////////////
@@ -146,8 +136,8 @@ export default new Vuex.Store({
       // refetch user in case he was updated from smwhere else
       //////////////////////////////////////////////////////////////
       if (getters.isAuthenticated) {
-        console.log("REFRESHING USER")
-        const user_key = getters.authenticatedUser._key
+        console.log('REFRESHING USER');
+        const user_key = getters.authenticatedUser._key;
         // console.log(user_key)
         const user = await axiosBase.get(`users/${user_key}`);
         const user_data = user.data;
@@ -172,12 +162,12 @@ export default new Vuex.Store({
         username: userData.username,
         email: userData.email,
         password: userData.password,
-        repeat_password: userData.repeat_password
-      })
+        repeat_password: userData.repeat_password,
+      });
       const data = response.data;
       localStorage.setItem('jwtToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      commit('userToState', { token: data.token, user: data.user })
+      commit('userToState', { token: data.token, user: data.user });
     },
 
     login: async ({ commit }, userData) => {
@@ -185,7 +175,7 @@ export default new Vuex.Store({
         login: userData.login,
         password: userData.password,
         rememberMe: userData.rememberMe,
-      })
+      });
       const data = response.data;
       localStorage.setItem('jwtToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -194,9 +184,8 @@ export default new Vuex.Store({
     },
     logout: async ({ commit }) => {
       // delete token server side
-      await axiosBase.post('auth/logout')
+      await axiosBase.post('auth/logout');
       // console.log(deleted);
-      await commit('clearCreateFormCache');
       await commit('clearAuthData');
     },
     // eslint-disable-next-line
@@ -207,9 +196,12 @@ export default new Vuex.Store({
       if (getters.isAuthenticated) {
         // console.log('User is authenticated, saving categories')
         // eslint-disable-next-line
-        const update = await axiosBase.put(`users/${getters.authenticatedUser._key}`, {
-          categories
-        })
+        const update = await axiosBase.put(
+          `users/${getters.authenticatedUser._key}`,
+          {
+            categories,
+          }
+        );
         // console.log(update)
       }
     },
@@ -217,10 +209,13 @@ export default new Vuex.Store({
       // if user is authenticated update categories in db
       if (getters.isAuthenticated) {
         // console.log('User is authenticated, saving profile')
-        const updated = await axiosBase.put(`users/${getters.authenticatedUser._key}`, {
-          profile
-        })
-        const newProfile = updated.data.user.profile
+        const updated = await axiosBase.put(
+          `users/${getters.authenticatedUser._key}`,
+          {
+            profile,
+          }
+        );
+        const newProfile = updated.data.user.profile;
         // console.log(newProfile);
         await commit('setProfile', newProfile);
       }
@@ -231,14 +226,14 @@ export default new Vuex.Store({
       if (getters.isAuthenticated) {
         // console.log('User is authenticated, saving avatar')
         // eslint-disable-next-line
-        const update = await axiosBase.put(`users/${getters.authenticatedUser._key}/avatar`, {
-          avatar_path
-        })
+        const update = await axiosBase.put(
+          `users/${getters.authenticatedUser._key}/avatar`,
+          {
+            avatar_path,
+          }
+        );
         // console.log(update)
       }
     },
-    clearCreateFormCache: async ({ commit }) => {
-      await commit('clearCreateFormCache');
-    }
   },
-})
+});

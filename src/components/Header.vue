@@ -123,7 +123,6 @@ export default {
     },
     goToCreateStory: async function() {
       console.log("goToCreateStory");
-      await this.$store.dispatch("clearCreateFormCache");
       this.$router.push({
         name: "create-story"
       });

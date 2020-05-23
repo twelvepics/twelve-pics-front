@@ -4,8 +4,6 @@
   <!-- TOP BOXES MOBILE -->
   <!-- CHANGE BOTTOM BUTTONS -->
   <!-- SAVE DRAFT WITHOUT VALIDATION -->
-  <!-- ON DELETE STORY REDIRECT TO MY_STORIES -->
-  <!-- UPDATE MY_STORIES/STORY FOR NOT VIEWABLE/ INCOMPLETE STORY -->
 
   <main>
     <div class="container is-fluid max-container">
@@ -32,7 +30,7 @@
           <div class="card" v-else>
             <!-- CARD CONTENT -->
             <div class="card-content">
-              <form>
+              <form @submit.prevent="onSubmit">
                 <!-- -->
                 <!-- API ERRORS -->
                 <div
@@ -69,10 +67,7 @@
 
                 <!-- -->
                 <!-- SHOW STORY URL -->
-                <div
-                  v-if="story.page_url && (canDisplay || story.is_viewable)"
-                  style="margin-bottom:-.8rem; line-height:150%;"
-                >
+                <div v-if="story.page_url" style="margin-bottom:-.8rem; line-height:150%;">
                   <p
                     class="is-size-5"
                     :class="story.status === 'draft' ? 'page-link-title-draft' : 'page-link-title-published'"
@@ -96,7 +91,7 @@
                 <component
                   :is="topBoxes"
                   :story="story"
-                  @selectLayout="selectPicsLayout"
+                  @selectLayout="selectLayout"
                   @setStatus="setStatus"
                   @deleteStory="deleteStory"
                 />
@@ -360,7 +355,7 @@
                       placeholder="Type on and select your location"
                       list="locations"
                       @input="searchLocation"
-                      @change="setSelectedLocation"
+                      @change="setSelectedSelection"
                       @keyup="$v.story.location.place_name.$touch()"
                       @keyup.22="$v.story.location.place_name.$touch()"
                       @keydown.enter.prevent
@@ -412,28 +407,25 @@
                 <div class="field is-grouped submit-buttons">
                   <div class="control">
                     <button
-                      class="button"
-                      :class="{'is-warning': isDraft, 'is-primary': isPublished}"
+                      class="button is-primary"
                       type="submit"
+                      @click.prevent="saveAndGoToList"
                       :disabled="submit_pending"
-                      @click.prevent="saveStory('save')"
                     >Save</button>
                   </div>
                   <div class="control">
                     <button
-                      class="button"
-                      :class="{'is-warning': isDraft, 'is-primary': isPublished}"
+                      class="button is-primary"
                       type="submit"
-                      @click.prevent="saveStory('view')"
                       :disabled="submit_pending"
-                    >View</button>
+                    >Save and continue editing</button>
                   </div>
                   <div class="control" v-if="!isPublished">
                     <button
                       class="button is-success"
-                      @click.prevent="saveStory('publish')"
+                      @click.prevent="saveAndPublish"
                       :disabled="submit_pending"
-                    >Publish</button>
+                    >Save and publish</button>
                   </div>
                   <div class="control">
                     <button class="button is-dark" @click.prevent="cancel">Cancel</button>
@@ -521,38 +513,28 @@ export default {
   },
   data() {
     return {
-      is_debug: false,
-      is_loading: false,
-
-      // create or update
-      is_create: false,
-      is_edit: false,
-
-      // validations -----------------------
-      validate_for_draft: false,
-
-      // layout/dyn components -------------
       // page layout
       page_layout: null,
       // top boxes component
       topBoxes: null,
 
-      // server side auth 404 --------------
+      is_debug: false,
+      is_loading: false,
+      // action: "",
+      // fetch auth / not found errors, hide the rest of the page
       is_error: false,
       errorMessage: "",
-
-      // api errors ------------------------
+      // api submit validation errors
+      // don't block the page
       is_api_error: false,
       apiErrors: "",
       apiErrorType: "",
-
-      // form errors -----------------------
-      // form errors
+      // --=
+      // this form errors
       is_form_error: false,
       // form submitted
       submit_pending: false,
 
-      // story -----------------------------
       categoriesList,
       tagsStr: "",
       story: {
@@ -572,22 +554,23 @@ export default {
         pics_tiles_layout: [],
         use_white_borders: false
       },
-      // location -------------------------
+      // location
       mapboxOptions: [],
       deepMapboxOptions: [],
       selectedLocationPlace: "",
       selectedLocationObj: null,
-
-      // pics modal -----------------------
+      // pics modal
       uploadModalActive: false,
-
-      // pics uploaded --------------------
+      // pics uploaded
       pics_uploaded: [],
       maxUploads: MAX_PICS,
       caption_errors: [],
       description_errors: [],
-
-      // toast -----------------------------
+      // toast
+      // toast_message: "",
+      // toast_type: "",
+      // toast_duration: 4000,
+      // show_toast: false
       showToast: false,
       showToastTimeout: null,
       toastMessage: [],
@@ -595,41 +578,39 @@ export default {
     };
   },
   methods: {
-    //////////////////////////////////////////////////
-    // API v2
-    //////////////////////////////////////////////////
-
-    // page layout --------------------------------------
-    // handleWindowChange
+    /////////////////////////////////////////////////
+    // SET PAGE LAYOUT
+    /////////////////////////////////////////////////
     handleWindowChange(event) {
       if (event.matches) {
         // < 999
-        // console.log("CHANGE < 999");
+        console.log("CHANGE < 999");
         this.page_layout = LAYOUT_MOBILE;
         this.topBoxes = StoryTopBoxesMobile;
       } else {
         // >= 999
-        // console.log("CHANGE >= 999");
+        console.log("CHANGE >= 999");
         this.page_layout = LAYOUT_FULL;
         this.topBoxes = StoryTopBoxesFull;
       }
     },
-    // isLayoutMobile
     isLayoutMobile() {
       return this.layout === LAYOUT_MOBILE;
     },
-    // isLayoutFull
     isLayoutFull() {
       return this.layout == LAYOUT_FULL;
     },
-    // top boxes ---------------------------------------
-    //  selectPicsLayout
-    selectPicsLayout(layout) {
-      // console.log(`selectPicsLayout(${layout}`);
+    // END SET PAGE LAYOUTß ////////////////////////////////////////
+
+    /////////////////////////////////////////////////
+    // SET TOP BOXES
+    /////////////////////////////////////////////////
+    selectLayout(layout) {
+      // console.log(`selectLayout(${layout}`);
       this.story.layout = layout;
     },
-    // setStatus
     async setStatus(status) {
+      // console.log(`selectLayout(${status}`);
       // reset all errors
       this.is_error = false;
       this.is_api_error = false;
@@ -640,7 +621,6 @@ export default {
       this.story.status = status;
       await this.onSubmit(false);
     },
-    // deleteStory
     async deleteStory() {
       console.log("deleteStory()");
       const resp = window.confirm("Really, delete?");
@@ -648,6 +628,7 @@ export default {
       if (resp) {
         window.scrollTo(0, 0);
         this.is_loading = true;
+        this.$store.commit("clearCreateFormCache");
         // delete Server side only if already saved
         if (this.story._key) {
           // this.onSubmit();
@@ -665,9 +646,223 @@ export default {
         this.toastStoryDeleted();
       }
     },
+    // END SET TOP BOXES ////////////////////////////////////////
 
-    // fetch initial data ------------------------------
-    // fetchAndSetData
+    persistStory() {
+      console.log("persisting story to store");
+      // copy pics to story
+      this.story.pics = [];
+      for (let pic of this.pics_uploaded) {
+        this.story.pics.push(pic);
+      }
+      // tags to Array
+      this.story.tags = this.tagsStr.trim().length
+        ? this.tagsStr
+            .split(",")
+            .map(t => t.trim())
+            .filter(t => t.length)
+        : [];
+      this.$store.commit("setCreateFormCache", this.story);
+    },
+    formIsValid() {
+      this.is_form_error = false;
+      this.submit_pending = true;
+      this.$v.$touch();
+      if (this.$v.$invalid || this.hasPicsError()) {
+        this.is_form_error = true;
+        this.submit_pending = false;
+        window.scrollTo(0, 0);
+        this.toastFormErrors();
+        return false;
+      }
+      return true;
+    },
+    async onSubmit(check_form = true) {
+      if (check_form) {
+        if (!this.formIsValid()) return;
+      }
+      try {
+        console.log("onSubmit");
+        let action;
+        if (this.story._key) {
+          action = "update";
+        } else {
+          action = "create";
+        }
+        let response = null;
+        this.resetApiErrors();
+        // copy pics to story
+        this.story.pics = [];
+        for (let pic of this.pics_uploaded) {
+          this.story.pics.push(pic);
+        }
+        // tags to Array
+        this.story.tags = this.tagsStr.trim().length
+          ? this.tagsStr
+              .split(",")
+              .map(x => x.trim())
+              .filter(t => t.length)
+          : [];
+        if (action === "update") {
+          console.log("I am an update");
+          response = await axiosBase.put(`/stories/${this.story._key}`, {
+            story: this.story
+          });
+        } else {
+          console.log("I am a create");
+          response = await axiosBase.post("/stories", {
+            story: this.story
+          });
+        }
+        const data = response.data;
+        // console.log(data);
+        // this.story.page_url = data.story.page_url
+        this.story = Object.assign({}, data.story);
+        this.pics_uploaded = this.story.pics;
+        this.tagsStr = this.story.tags.join(", ");
+      } catch (error) {
+        this.is_api_error = true;
+        // at this point bother only for validation errors
+        // all the rest goes as 500 whatever
+        if (error.response) {
+          if (
+            [
+              "INVALID_CREATE_STORY_ERROR",
+              "INVALID_UPDATE_STORY_ERROR"
+            ].includes(error.response.data.error_type)
+          ) {
+            this.apiErrors = error.response.data.errors;
+            this.apiErrorType = error.response.data.error_type;
+          } else {
+            this.apiErrorType = "SERVER ERROR";
+          }
+        } else {
+          // vue error
+          console.log(error);
+          Sentry.captureException(error);
+        }
+      } finally {
+        window.scrollTo(0, 0);
+        this.submit_pending = false;
+      }
+    },
+    async saveAndGoToList() {
+      await this.onSubmit();
+      // if no errors go to list
+      if (!this.is_error && !this.is_api_error && !this.is_form_error) {
+        this.$router.push({
+          name: "user-stories",
+          params: { username: this.authenticatedUser.username }
+        });
+      }
+    },
+    isHorizontal,
+    isVertical,
+    openUploadModal() {
+      lockBgScroll();
+      this.uploadModalActive = true;
+    },
+    closeUploadModal() {
+      unlockBgScroll();
+      this.uploadModalActive = false;
+    },
+    picUploaded(pic) {
+      // console.log(pic);
+      this.pics_uploaded.push({
+        original: pic.original,
+        small: pic.small,
+        medium: pic.medium,
+        large: pic.large
+      });
+    },
+    setCaption(idx, event) {
+      // console.log(`setCaption ${idx}`);
+      this.pics_uploaded[idx].caption = event.target.value;
+      if (this.pics_uploaded[idx].caption.length > CAPTION_MAXLEN) {
+        // add error
+        if (!this.caption_errors.includes(idx)) {
+          this.caption_errors.push(idx);
+        }
+      } else {
+        // remove error if any
+        const index = this.caption_errors.indexOf(idx);
+        if (index > -1) {
+          this.caption_errors.splice(index, 1);
+        }
+      }
+    },
+    setDescription(idx, event) {
+      // console.log(`setDescription ${idx}`);
+      this.pics_uploaded[idx].description = event.target.value;
+      if (this.pics_uploaded[idx].description.length > DESCRIPTION_MAXLEN) {
+        // add error
+        if (!this.description_errors.includes(idx)) {
+          this.description_errors.push(idx);
+        }
+      } else {
+        // remove error if any
+        const index = this.description_errors.indexOf(idx);
+        if (index > -1) {
+          this.description_errors.splice(index, 1);
+        }
+      }
+    },
+    removePic(idx) {
+      this.pics_uploaded.splice(idx, 1);
+    },
+    // ERRORS TODO
+    async searchLocation(e) {
+      // this.resetApiErrors();
+      try {
+        if (e.target.value.length > 1 && e.inputType === "insertText") {
+          const foundLocations = await axiosBase.get(
+            `/stories/${
+              this.authenticatedUser._key
+            }/locate?location=${encodeURIComponent(e.target.value)}`
+          );
+          this.mapboxOptions = foundLocations.data.found;
+          this.deepMapboxOptions = foundLocations.data.found;
+        } else {
+          this.mapboxOptions = [];
+        }
+      } catch (err) {
+        if (err.response) {
+          console.log(err.response);
+        }
+        console.log(err);
+        Sentry.captureException(err);
+      }
+    },
+    async setSelectedSelection(e) {
+      try {
+        this.selectedLocationPlace = e.target.value;
+        this.selectedLocationObj = await this.deepMapboxOptions.filter(l => {
+          return l.place_name == this.selectedLocationPlace;
+        });
+        if (this.selectedLocationObj.length > 0) {
+          this.story.location = this.selectedLocationObj[0];
+        } else {
+          this.story.location = {
+            place_name: e.target.value,
+            latitude: null,
+            longitude: null
+          };
+        }
+        this.mapboxOptions = [];
+      } catch (e) {
+        console.log(e);
+        Sentry.captureException(e);
+      }
+    },
+    setAllowComments(e) {
+      // console.log(e.target.checked);
+      this.story.allow_comments = e.target.checked;
+    },
+    resetApiErrors() {
+      this.is_api_error = false;
+      this.apiErrors = "";
+      this.apiErrorType = "";
+    },
     async fetchAndSetData() {
       // USE only for update story load initial data
       try {
@@ -708,299 +903,18 @@ export default {
         this.is_loading = false;
       }
     },
-
-    // save story ---------------------------------------
-    // saveStory
-    async saveStory(action) {
-      // save, view, publish
-      // console.log(`Action => ${action}`);
-
-      // if (this.isDraft) {
-      //   console.log("Save draft");
-      // } else {
-      //   console.log("Save published");
-      // }
-      ////////////////////////////////////////
-      // what validation should I use?
-      ////////////////////////////////////////
-      // validate_for_draft: false,
-      // validate_for_publication: false,
-
-      // is_draft && save -> validate_for_draft
-      // is_draft && (view || publish) -> validate_for_publication
-
-      // is_published -> validate_for_publication
-      /////////////////////////////////////////
-      try {
-        this.submit_pending = true;
-        if (this.isDraft && action === "save") {
-          this.validate_for_draft = true;
-        } else {
-          this.validate_for_draft = false;
-        }
-        if (!this.formIsValid()) return;
-
-        let response;
-        this.resetApiErrors();
-
-        // copy pics to story
-        this.story.pics = [];
-        for (let pic of this.pics_uploaded) {
-          this.story.pics.push(pic);
-        }
-
-        // tags to Array
-        this.story.tags = this.tagsStr.trim().length
-          ? this.tagsStr
-              .split(",")
-              .map(x => x.trim())
-              .filter(t => t.length)
-          : [];
-
-        const data = {
-          story: this.story,
-          validate_for: this.validate_for_draft === true ? "draft" : "published"
-        };
-        if (this.is_edit) {
-          // update
-          console.log("I am an update");
-          response = await axiosBase.put(`/stories/${this.story._key}`, data);
-          // console.log(data);
-          // this.story.page_url = data.story.page_url
-        } else {
-          //if (this.is_create) {
-          // save and replace url
-          console.log("I am a create");
-          response = await axiosBase.post("/stories", data);
-        }
-        const response_data = response.data;
-        this.story = Object.assign({}, response_data.story);
-        this.pics_uploaded = this.story.pics;
-        this.tagsStr = this.story.tags.join(", ");
-        if (this.is_create) {
-          this.$router.replace({
-            name: "edit-story",
-            params: { key: response_data.story._key }
-          });
-        }
-      } catch (error) {
-        this.is_api_error = true;
-        // at this point bother only for validation errors
-        // all the rest goes as 500 whatever
-        if (error.response) {
-          if (
-            [
-              "INVALID_CREATE_STORY_ERROR",
-              "INVALID_UPDATE_STORY_ERROR"
-            ].includes(error.response.data.error_type)
-          ) {
-            this.apiErrors = error.response.data.errors;
-            this.apiErrorType = error.response.data.error_type;
-          } else {
-            this.apiErrorType = "SERVER ERROR";
-          }
-        } else {
-          // vue error
-          console.log(error);
-          Sentry.captureException(error);
-        }
-      } finally {
-        this.submit_pending = false;
-        window.scrollTo(0, 0);
-      }
-    },
-    // refactor and delete
-    async saveAndGoToList() {
-      await this.onSubmit();
-      // if no errors go to list
-      if (!this.is_error && !this.is_api_error && !this.is_form_error) {
-        this.$router.push({
-          name: "user-stories",
-          params: { username: this.authenticatedUser.username }
-        });
-      }
-    },
-    // refactor and delete
     async saveAndPublish() {
       console.log("saveAndPublish");
       this.setStatus("published");
     },
-
-    // form valid -------------------------------------
-    // formIsValid
-    formIsValid() {
-      this.is_form_error = false;
-      // this.submit_pending = true;
-      this.$v.$touch();
-      if (this.$v.$invalid || this.hasPicsError()) {
-        this.is_form_error = true;
-        // this.submit_pending = false;
-        // window.scrollTo(0, 0);
-        this.toastFormErrors();
-        return false;
-      }
-      return true;
+    // user cannot access story if its not his own or not found
+    // properly handled server side, so it's fine
+    cancel() {
+      console.log("goBack");
+      // this.resetAll();
+      this.$store.commit("clearCreateFormCache");
+      this.$router.go(-1);
     },
-
-    // pics -------------------------------------------
-    // openUploadModal
-    openUploadModal() {
-      lockBgScroll();
-      this.uploadModalActive = true;
-    },
-    // closeUploadModal
-    closeUploadModal() {
-      unlockBgScroll();
-      this.uploadModalActive = false;
-    },
-    //  isHorizontal
-    isHorizontal,
-    //  isVertical
-    isVertical,
-    //  picUploaded
-    picUploaded(pic) {
-      // console.log(pic);
-      this.pics_uploaded.push({
-        original: pic.original,
-        small: pic.small,
-        medium: pic.medium,
-        large: pic.large
-      });
-    },
-    //  setCaption
-    setCaption(idx, event) {
-      // console.log(`setCaption ${idx}`);
-      this.pics_uploaded[idx].caption = event.target.value;
-      if (this.pics_uploaded[idx].caption.length > CAPTION_MAXLEN) {
-        // add error
-        if (!this.caption_errors.includes(idx)) {
-          this.caption_errors.push(idx);
-        }
-      } else {
-        // remove error if any
-        const index = this.caption_errors.indexOf(idx);
-        if (index > -1) {
-          this.caption_errors.splice(index, 1);
-        }
-      }
-    },
-    //  setDescription
-    setDescription(idx, event) {
-      // console.log(`setDescription ${idx}`);
-      this.pics_uploaded[idx].description = event.target.value;
-      if (this.pics_uploaded[idx].description.length > DESCRIPTION_MAXLEN) {
-        // add error
-        if (!this.description_errors.includes(idx)) {
-          this.description_errors.push(idx);
-        }
-      } else {
-        // remove error if any
-        const index = this.description_errors.indexOf(idx);
-        if (index > -1) {
-          this.description_errors.splice(index, 1);
-        }
-      }
-    },
-    //  removePic
-    removePic(idx) {
-      this.pics_uploaded.splice(idx, 1);
-    },
-    //  hasPicsError
-    hasPicsError() {
-      return (
-        this.caption_errors.length !== 0 || this.description_errors.length !== 0
-      );
-    },
-
-    // location ------------------------------------------------
-    // searchLocation
-    async searchLocation(e) {
-      // this.resetApiErrors();
-      try {
-        if (e.target.value.length > 1 && e.inputType === "insertText") {
-          const foundLocations = await axiosBase.get(
-            `/stories/${
-              this.authenticatedUser._key
-            }/locate?location=${encodeURIComponent(e.target.value)}`
-          );
-          this.mapboxOptions = foundLocations.data.found;
-          this.deepMapboxOptions = foundLocations.data.found;
-        } else {
-          this.mapboxOptions = [];
-        }
-      } catch (err) {
-        if (err.response) {
-          console.log(err.response);
-        }
-        console.log(err);
-        Sentry.captureException(err);
-      }
-    },
-    // setSelectedLocation
-    async setSelectedLocation(e) {
-      try {
-        this.selectedLocationPlace = e.target.value;
-        this.selectedLocationObj = await this.deepMapboxOptions.filter(l => {
-          return l.place_name == this.selectedLocationPlace;
-        });
-        if (this.selectedLocationObj.length > 0) {
-          this.story.location = this.selectedLocationObj[0];
-        } else {
-          this.story.location = {
-            place_name: e.target.value,
-            latitude: null,
-            longitude: null
-          };
-        }
-        this.mapboxOptions = [];
-      } catch (e) {
-        console.log(e);
-        Sentry.captureException(e);
-      }
-    },
-
-    // allow comments -------------------------------------------
-    // setAllowComments
-    setAllowComments(e) {
-      // console.log(e.target.checked);
-      this.story.allow_comments = e.target.checked;
-    },
-
-    // reset errors ---------------------------------------------
-    // resetApiErrors
-    resetApiErrors() {
-      this.is_api_error = false;
-      this.apiErrors = "";
-      this.apiErrorType = "";
-    },
-    // resetPicsErrors
-    resetPicsErrors() {
-      // console.log(this.caption_errors);
-      // console.log(this.pics_uploaded.length);
-
-      this.caption_errors = [];
-      this.description_errors = [];
-
-      for (let i = 0; i < this.pics_uploaded.length; i++) {
-        // console.log(i);
-        // console.log(this.pics_uploaded[i]);
-        if (
-          this.pics_uploaded[i].caption &&
-          this.pics_uploaded[i].caption.length > CAPTION_MAXLEN
-        ) {
-          // add error
-          this.caption_errors.push(i);
-        }
-        if (
-          this.pics_uploaded[i].description &&
-          this.pics_uploaded[i].description.length > DESCRIPTION_MAXLEN
-        ) {
-          // add error
-          this.description_errors.push(i);
-        }
-      }
-    },
-    // resetAll
     resetAll() {
       this.is_loading = false;
       this.is_error = false;
@@ -1038,17 +952,12 @@ export default {
       this.pics_uploaded = [];
       this.submit_pending = false;
     },
-
-    // cancel ----------------------------------------------------
-    // cancel
-    cancel() {
-      // console.log("goBack");
-      // this.resetAll();
-      this.$router.go(-1);
+    dismissDeletedNotif() {
+      this.showDeletedNotif = false;
     },
-
-    // toast -----------------------------------------------------
-    // toastIt
+    //////////////////////////////////
+    // Toaster
+    //////////////////////////////////
     toastIt(messageObj, duration = 3000) {
       // console.log("toastIt I was called");
       // console.log(messageObj.message.join('<br />'));
@@ -1059,7 +968,6 @@ export default {
         this.closeToast();
       }, duration);
     },
-    // closeToast
     closeToast() {
       if (this.showToastTimeout) {
         clearTimeout(this.showToastTimeout);
@@ -1068,7 +976,12 @@ export default {
       this.toastMessageType = "";
       this.toasrMessage = "";
     },
-    // toastSaveSuccess
+    // closeToast() {
+    //   this.show_toast = false;
+    //   this.toast_message = "";
+    //   this.toast_type = "";
+    // },
+
     toastSaveSuccess() {
       //   this.show_toast = true;
       //   this.toast_message = "The story has been saved";
@@ -1078,7 +991,6 @@ export default {
         messageType: "toast-top-centered is-success"
       });
     },
-    // toastFormErrors
     toastFormErrors() {
       // this.show_toast = true;
       // this.toast_message = "Please fix the form errors";
@@ -1088,7 +1000,6 @@ export default {
         messageType: "toast-top-centered is-danger"
       });
     },
-    // toastStoryDeleted
     toastStoryDeleted() {
       // this.show_toast = true;
       // this.toast_message = "This Story has been deleted";
@@ -1098,19 +1009,56 @@ export default {
         messageType: "toast-top-centered is-warning"
       });
     },
+    ///////////////////////////
 
-    // drag n drop ----------------------------------------------
-    // draggableChange
+    ///////////////////////////
+    // draggable events
+    ///////////////////////////
     draggableChange() {
       // console.log("draggable change");
       // console.log(evt);
       // console.log(this);
       console.log(this.caption_errors);
       this.resetPicsErrors();
+    },
+    resetPicsErrors() {
+      // console.log(this.caption_errors);
+      // console.log(this.pics_uploaded.length);
+
+      this.caption_errors = [];
+      this.description_errors = [];
+
+      for (let i = 0; i < this.pics_uploaded.length; i++) {
+        // console.log(i);
+        // console.log(this.pics_uploaded[i]);
+        if (
+          this.pics_uploaded[i].caption &&
+          this.pics_uploaded[i].caption.length > CAPTION_MAXLEN
+        ) {
+          // add error
+          this.caption_errors.push(i);
+        }
+        if (
+          this.pics_uploaded[i].description &&
+          this.pics_uploaded[i].description.length > DESCRIPTION_MAXLEN
+        ) {
+          // add error
+          this.description_errors.push(i);
+        }
+      }
+    },
+    hasPicsError() {
+      return (
+        this.caption_errors.length !== 0 || this.description_errors.length !== 0
+      );
     }
   },
   computed: {
-    ...mapGetters(["isAuthenticated", "authenticatedUser"]),
+    ...mapGetters([
+      "isAuthenticated",
+      "authenticatedUser",
+      "getCreateFormCache"
+    ]),
     toastMessageJoined() {
       return this.toastMessage.join("<br />");
     },
@@ -1122,17 +1070,6 @@ export default {
     },
     isPublished() {
       return this.story.status === "published";
-    },
-    isDraft() {
-      return this.story.status === "draft";
-    },
-    canDisplay() {
-      // this.story.pics_tiles_layout.length means we have enough pics to display this story
-      return (
-        this.story.pitch.length &&
-        this.story.pics_tiles_layout.length &&
-        parseInt(this.story.category, 10) !== 0
-      );
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -1140,24 +1077,14 @@ export default {
       if (!vm.isAuthenticated) {
         vm.is_error = true;
         vm.errorMessage = "PLEASE AUTHENTICATE";
-      } else {
-        vm.is_create = to.name === "create-story" ? true : false;
-        vm.is_edit = to.name === "edit-story" ? true : false;
       }
       vm.is_loading = false;
     });
   },
-  beforeRouteUpdate(to, from, next) {
-    console.log(to, from, next);
-    // called when the route that renders this component has changed,
-    // but this component is reused in the new route.
-    // For example, for a route with dynamic params `/foo/:id`, when we
-    // navigate between `/foo/1` and `/foo/2`, the same `Foo` component instance
-    // will be reused, and this hook will be called when that happens.
-    // has access to `this` component instance.
+  beforeRouteLeave(to, from, next) {
+    this.persistStory();
+    next();
   },
-  // beforeRouteLeave(to, from, next) {
-  // },
   created() {
     /////////////////////////////////////////////////////////
     // components on change
@@ -1180,9 +1107,22 @@ export default {
     console.log(_mql);
     // initial state here
     _mql.addListener(this.handleWindowChange);
-    if (this.$route.name === "edit-story") {
+
+    ///////////////////////////////////////////////////////
+    // LOAD INTIAL DATA
+    // TODO TRY TO REPLACE THIS CACHE THING BY A CHANGE URL
+    // LOAD PAGE BY STORY ID ETC...
+    ///////////////////////////////////////////////////////
+    const cache = this.$store.getters.getCreateFormCache;
+    // console.log(cache);
+    if (this.$route.name === "edit-story" && !cache.story) {
       this.is_loading = true;
       return this.fetchAndSetData();
+    }
+    if (cache.story) {
+      this.story = cache.story;
+      this.pics_uploaded = cache.story.pics;
+      this.tagsStr = cache.story.tags.join(", ");
     }
   },
   beforeDestroy: function() {
@@ -1190,74 +1130,60 @@ export default {
     _mql.removeListener(this.handleWindowChange);
     // _mql = null; // ?
   },
-  validations() {
-    if (this.validate_for_draft) {
-      return {
-        story: {
-          category: {},
-          title: {
-            required,
-            minLen: minLength(8),
-            maxLen: maxLength(128)
-          },
-          pitch: {
-            minLen: minLength(300),
-            maxLen: maxLength(5000)
-          },
-          inspiration: {
-            maxLen: maxLength(5000)
-          },
-          location: {
-            place_name: {
-              maxLen: maxLength(128)
-            }
-          }
-        },
-        tagsStr: {
-          maxLen: maxLength(64),
-          isTagsList
-        },
-        pics_uploaded: {
-          maxLength: maxLength(MAX_PICS)
+  validations: {
+    story: {
+      category: {
+        required,
+        notZero
+      },
+      title: {
+        required,
+        minLen: minLength(8),
+        maxLen: maxLength(128)
+      },
+      pitch: {
+        required,
+        minLen: minLength(300),
+        maxLen: maxLength(5000)
+      },
+      inspiration: {
+        maxLen: maxLength(5000)
+      },
+      location: {
+        place_name: {
+          maxLen: maxLength(128)
         }
-      };
-    } else {
-      return {
-        story: {
-          category: {
-            required,
-            notZero
-          },
-          title: {
-            required,
-            minLen: minLength(8),
-            maxLen: maxLength(128)
-          },
-          pitch: {
-            required,
-            minLen: minLength(300),
-            maxLen: maxLength(5000)
-          },
-          inspiration: {
-            maxLen: maxLength(5000)
-          },
-          location: {
-            place_name: {
-              maxLen: maxLength(128)
-            }
-          }
-        },
-        tagsStr: {
-          maxLen: maxLength(64),
-          isTagsList
-        },
-        pics_uploaded: {
-          required,
-          minLength: minLength(MIN_PICS),
-          maxLength: maxLength(MAX_PICS)
-        }
-      };
-    }
+      }
+    },
+    tagsStr: {
+      maxLen: maxLength(64),
+      isTagsList
+    },
+    pics_uploaded: {
+      required,
+      minLength: minLength(MIN_PICS),
+      maxLength: maxLength(MAX_PICS)
+      // $each: {
+      //   original: {
+      //     required
+      //   },
+      //   small: {
+      //     required
+      //   },
+      //   medium: {
+      //     required
+      //   },
+      //   large: {
+      //     required
+      //   },
+      //   caption: {
+      //     maxLength: maxLength(256)
+      //   },
+      //   description: {
+      //     maxLength: maxLength(64)
+      //   }
+      // }
+    } // TODO
   }
 };
 </script>

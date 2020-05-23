@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+  TODO ASYNC CLIENT SIDE VALIDATION FOR USERNAME AND EMAIL 
+  https://vuelidate.js.org/#sub-asynchronous-validation
+  -->
   <!-- SIGNUP MODAL -->
   <div class="modal" id="signup-modal" :class="{ 'is-active': isActive }">
     <div class="modal-background"></div>

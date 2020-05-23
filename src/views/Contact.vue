@@ -241,11 +241,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      "isAuthenticated",
-      "authenticatedUser",
-      "getCreateFormCache"
-    ]),
+    ...mapGetters(["isAuthenticated", "authenticatedUser"]),
     toastMessageJoined() {
       return this.toastMessage.join("<br />");
     }

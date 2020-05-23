@@ -118,7 +118,6 @@ export default {
     },
     // CLEAN  EDIT / CREATE STORY FORM BEFORE LOADING IT
     async goToEditStory(key) {
-      await this.$store.dispatch("clearCreateFormCache");
       this.$router.push({
         name: "edit-story",
         params: { key }
