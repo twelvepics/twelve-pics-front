@@ -191,58 +191,72 @@ export default {
   methods: {
     // !!!!!!!!!!!!!!!!!!!!!!!!
     // Make this fucking REALLY async
+    // getImagePreviews() {
+    //   const vm = this;
+    //   let i = 0;
+    //   const files = this.selectedFiles;
+    //   function readAndPreview(file) {
+    //     if (!vm.previews[file.name] && /\.(jpe?g|png)$/i.test(file.name)) {
+    //       const reader = new FileReader();
+    //       reader.addEventListener(
+    //         "load",
+    //         function() {
+    //           var image = new Image();
+    //           image.width = 70;
+    //           // console.log(image);
+    //           image.src = reader.result;
+    //           vm.$refs["pic" + parseInt(i++)][0].src = image.src;
+    //           vm.previews[file.name] = image.src;
+    //         },
+    //         false
+    //       );
+    //       reader.readAsDataURL(file);
+    //     }
+    //   }
+    //   [].forEach.call(files, readAndPreview);
+    // },
+    // getImagePreviews() {
+    //   const vm = this;
+    //   let i = 0;
+    //   const files = this.selectedFiles;
+    //   function readAndPreview(file) {
+    //     if (!vm.previews[file.name] && /\.(jpe?g|png)$/i.test(file.name)) {
+    //       const reader = new FileReader();
+    //       reader.addEventListener(
+    //         "load",
+    //         function() {
+    //           var image = new Image();
+    //           image.width = 70;
+    //           // console.log(image);
+    //           image.src = reader.result;
+    //           vm.$refs["pic" + parseInt(i++)][0].src = image.src;
+    //           vm.previews[file.name] = image.src;
+    //         },
+    //         false
+    //       );
+    //       reader.readAsDataURL(file);
+    //     }
+    //   }
+    //   [].forEach.call(files, readAndPreview);
+    // },
     getImagePreviews() {
       const vm = this;
       let i = 0;
       const files = this.selectedFiles;
       function readAndPreview(file) {
         if (!vm.previews[file.name] && /\.(jpe?g|png)$/i.test(file.name)) {
-          const reader = new FileReader();
-          reader.addEventListener(
-            "load",
-            function() {
-              var image = new Image();
-              image.width = 70;
-              // console.log(image);
-              image.src = reader.result;
-              vm.$refs["pic" + parseInt(i++)][0].src = image.src;
-              vm.previews[file.name] = image.src;
-            },
-            false
-          );
-          reader.readAsDataURL(file);
+          const image = new Image();
+          image.width = 70;
+          image.src = window.URL.createObjectURL(file);
+          vm.$refs["pic" + parseInt(i++)][0].src = image.src;
+          vm.previews[file.name] = image.src;
         }
       }
-      [].forEach.call(files, readAndPreview);
+      this.$nextTick(() => {
+        [].forEach.call(files, readAndPreview);
+      });
     },
-    // alternate keep in case, to be removed
-    getImagePreviewsAlt() {
-      for (let i = 0; i < this.selectedFiles.length; i++) {
-        if (
-          !this.previews[this.selectedFiles[i].name] &&
-          /\.(jpe?g|png)$/i.test(this.selectedFiles[i].name)
-        ) {
-          let reader = new FileReader();
-          reader.addEventListener(
-            "load",
-            function() {
-              var image = new Image();
-              image.width = 70;
-              // console.log(image);
-              image.src = reader.result;
-              this.$refs["pic" + parseInt(i)][0].src = image.src;
-              this.previews[this.selectedFiles[i].name] = image.src;
-            }.bind(this),
-            false
-          );
-          // await reader.readAsText(this.selectedFiles[i]);
-          // await reader.readAsArrayBuffer(this.selectedFiles[i]);
-          // const bytes = new Uint8Array(reader.result);
-          // image.src = "data:image/jpeg;base64," + this.encode(bytes);
-          reader.readAsDataURL(this.selectedFiles[i]);
-        }
-      }
-    },
+
     closeUploadModal() {
       this.reset();
       this.$emit("uploadModalClosed");
@@ -262,6 +276,8 @@ export default {
       for (let i = 0; i < sel.length; i++) {
         this.selectedFiles.push(sel[i]);
       }
+      // console.log(this.$refs);
+      // console.log(this.selectedFiles);
       // load images and make mini thumbs with a file reader
       this.getImagePreviews();
     },

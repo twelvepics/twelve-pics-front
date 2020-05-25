@@ -1,6 +1,5 @@
 <template>
   <!-- TODO -->
-  <!-- DELETE TOAST ON LIST STORIES PAGE -->
   <!-- LATER - MESSAGE FOR UNSAVED DATA ON LEAVE PAGE -->
   <!-- LATER - TOP BOXES MOBILE -->
 
@@ -227,7 +226,7 @@
                         <span class="icon icon-hover is-medium handle">
                           <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
                         </span>
-                        <span class="icon icon-hover has-text-danger is-medium">
+                        <span class="icon icon-hover has-text-danger is-medium trash">
                           <font-awesome-icon
                             class="fas fa-lg shadow"
                             icon="trash-alt"
@@ -812,9 +811,7 @@ export default {
         }
       } finally {
         this.submit_pending = false;
-        if (action !== "view") {
-          window.scrollTo(0, 0);
-        }
+        window.scrollTo(0, 0);
       }
     },
     // form valid -------------------------------------
@@ -1373,6 +1370,9 @@ footer {
 }
 .handle {
   cursor: move;
+}
+.trash {
+  cursor: pointer;
 }
 /************** misc ***********/
 .page-link-title-draft {
