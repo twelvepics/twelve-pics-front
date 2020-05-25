@@ -165,8 +165,9 @@ export default {
   watch: {
     // eslint-disable-next-line
     $route(to, from) {
-      if (to.name === "user-stories")
+      if (to.name === "user-stories") {
         this.username = this.$route.params.username;
+      }
       // react to route changes...
       this.fetchData();
     }

@@ -13,8 +13,8 @@
           class="button edit-button is-primary is-small"
           @click.prevent="goToEditStory(story._key)"
         >Edit</button>
-        <span class="cat">[{{ category_display }}]</span>
-        - Created {{ elapsed() }}
+        <span class="cat" v-if="category_display">[{{ category_display }}] -</span>
+        Created {{ elapsed() }}
       </p>
     </div>
     <!-- END DRAFT -->
@@ -121,6 +121,34 @@ export default {
       this.$router.push({
         name: "edit-story",
         params: { key }
+      });
+    },
+    // toast -----------------------------------------------------
+    // toastIt
+    toastIt(messageObj, duration = 3000) {
+      // console.log("toastIt I was called");
+      // console.log(messageObj.message.join('<br />'));
+      this.showToast = true;
+      this.toastMessage = messageObj.message;
+      this.toastType = messageObj.messageType;
+      this.showToastTimeout = setTimeout(() => {
+        this.closeToast();
+      }, duration);
+    },
+    // closeToast
+    closeToast() {
+      if (this.showToastTimeout) {
+        clearTimeout(this.showToastTimeout);
+      }
+      this.showToast = false;
+      this.toastMessageType = "";
+      this.toasrMessage = "";
+    },
+    // toastStoryDeleted
+    toastStoryDeleted() {
+      this.toastIt({
+        message: ["This Story has been deleted"],
+        messageType: "toast-top-centered is-warning"
       });
     }
   },

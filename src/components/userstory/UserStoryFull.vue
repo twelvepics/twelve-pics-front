@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- PIC LANDSCAPE BOX -->
+    <!-- DRAFT BOX-->
     <div v-if="is_draft && show_drafts" class="box story-item-draft" style="position: relative;">
       <button
         v-if="showEditButton"
@@ -15,11 +15,11 @@
       <p class="pitch">{{ story.pitch }}</p>
       <div class="is-divider story-divider"></div>
       <p class="bottom-line">
-        <span class="cat">[{{ category_display }}]</span>
-        - Created {{ elapsed() }}
+        <span class="cat" v-if="category_display">[{{ category_display }}] -</span>
+        Created {{ elapsed() }}
       </p>
     </div>
-    <!-- END PIC LANDSCAPE BOX-->
+    <!-- END DRAFT BOX-->
 
     <!-- PIC LANDSCAPE BOX -->
     <div

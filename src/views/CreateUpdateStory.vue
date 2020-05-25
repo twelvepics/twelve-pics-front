@@ -1,11 +1,11 @@
 <template>
   <!-- TODO -->
-  <!-- TOP BOXES MOBILE -->
-  <!-- UPDATE MY_STORIES/STORY FOR NOT VIEWABLE/ INCOMPLETE STORY -->
   <!-- DELETE TOAST ON LIST STORIES PAGE -->
-  <!-- MESSAGE FOR UNSAVED DATA ON LEAVE PAGE -->
+  <!-- LATER - MESSAGE FOR UNSAVED DATA ON LEAVE PAGE -->
+  <!-- LATER - TOP BOXES MOBILE -->
 
   <!-- DONE -->
+  <!-- DONE UPDATE MY_STORIES/STORY FOR NOT VIEWABLE/ INCOMPLETE STORY -->
   <!-- DONE ON DELETE STORY REDIRECT TO MY_STORIES -->
   <!-- DONE SIMPLIFY BACK NAV CACHE VS REPLACE URL -->
   <!-- DONE SAVE DRAFT WITH MINIMUM VALIDATION -->
@@ -648,7 +648,7 @@ export default {
       // console.log(resp);
       if (resp) {
         window.scrollTo(0, 0);
-        this.is_loading = true;
+        // this.is_loading = true;
         // delete Server side only if already saved
         if (this.story._key) {
           // this.onSubmit();
@@ -663,11 +663,13 @@ export default {
           }
         }
         this.resetAll();
-        // this.toastStoryDeleted();
-        this.$router.replace({
-          name: "user-stories",
-          params: { username: this.user.username }
-        });
+        this.toastStoryDeleted();
+        setTimeout(() => {
+          this.$router.push({
+            name: "user-stories",
+            params: { username: this.user.username }
+          });
+        }, 1500);
       }
     },
 
@@ -830,7 +832,6 @@ export default {
       }
       return true;
     },
-
     // pics -------------------------------------------
     // openUploadModal
     openUploadModal() {
@@ -900,7 +901,6 @@ export default {
         this.caption_errors.length !== 0 || this.description_errors.length !== 0
       );
     },
-
     // location ------------------------------------------------
     // searchLocation
     async searchLocation(e) {
@@ -1098,15 +1098,15 @@ export default {
       });
     },
     // toastStoryDeleted
-    // toastStoryDeleted() {
-    //   // this.show_toast = true;
-    //   // this.toast_message = "This Story has been deleted";
-    //   // this.toast_type = "is-warning";
-    //   this.toastIt({
-    //     message: ["This Story has been deleted"],
-    //     messageType: "toast-top-centered is-warning"
-    //   });
-    // },
+    toastStoryDeleted() {
+      this.toastIt(
+        {
+          message: ["This Story has been deleted"],
+          messageType: "toast-top-centered is-warning"
+        },
+        1500
+      );
+    },
 
     // drag n drop ----------------------------------------------
     // draggableChange
