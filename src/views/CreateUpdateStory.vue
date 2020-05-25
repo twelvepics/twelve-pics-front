@@ -1,11 +1,16 @@
 <template>
   <!-- TODO -->
-  <!-- SIMPLIFY BACK NAV CACHE VS REPLACE URL -->
   <!-- TOP BOXES MOBILE -->
-  <!-- CHANGE BOTTOM BUTTONS -->
-  <!-- SAVE DRAFT WITHOUT VALIDATION -->
-  <!-- ON DELETE STORY REDIRECT TO MY_STORIES -->
   <!-- UPDATE MY_STORIES/STORY FOR NOT VIEWABLE/ INCOMPLETE STORY -->
+  <!-- DELETE TOAST ON LIST STORIES PAGE -->
+  <!-- MESSAGE FOR UNSAVED DATA ON LEAVE PAGE -->
+
+  <!-- DONE -->
+  <!-- DONE ON DELETE STORY REDIRECT TO MY_STORIES -->
+  <!-- DONE SIMPLIFY BACK NAV CACHE VS REPLACE URL -->
+  <!-- DONE SAVE DRAFT WITH MINIMUM VALIDATION -->
+  <!-- DONE CHANGE BOTTOM BUTTONS -->
+  <!-- DONE MORE VERBOSE TOASTS -->
 
   <main>
     <div class="container is-fluid max-container">
@@ -97,7 +102,7 @@
                   :is="topBoxes"
                   :story="story"
                   @selectLayout="selectPicsLayout"
-                  @setStatus="setStatus"
+                  @saveStory="saveStory"
                   @deleteStory="deleteStory"
                 />
                 <!-- ENDS DELETE BOX -->
@@ -105,7 +110,7 @@
 
                 <!-- -->
                 <!-- CATEGORY -->
-                <div class="field m-30-0-15-0">
+                <div class="field">
                   <label class="label is-marginless">Category</label>
                   <p class="content is-small is-marginless pb-05">
                     <span class="isError" v-if="$v.story.category.$error">Please select a category</span>
@@ -435,6 +440,13 @@
                       :disabled="submit_pending"
                     >Publish</button>
                   </div>
+                  <div class="control" v-else>
+                    <button
+                      class="button is-warning"
+                      @click.prevent="saveStory('unpublish')"
+                      :disabled="submit_pending"
+                    >Unpublish</button>
+                  </div>
                   <div class="control">
                     <button class="button is-dark" @click.prevent="cancel">Cancel</button>
                   </div>
@@ -570,7 +582,8 @@ export default {
         author_key: "",
         author_info: {},
         pics_tiles_layout: [],
-        use_white_borders: false
+        use_white_borders: false,
+        is_viewable: null
       },
       // location -------------------------
       mapboxOptions: [],
@@ -628,18 +641,6 @@ export default {
       // console.log(`selectPicsLayout(${layout}`);
       this.story.layout = layout;
     },
-    // setStatus
-    async setStatus(status) {
-      // reset all errors
-      this.is_error = false;
-      this.is_api_error = false;
-      this.is_form_error = false;
-      // check I'm valid
-      if (!this.formIsValid()) return;
-      // go and change status if im good
-      this.story.status = status;
-      await this.onSubmit(false);
-    },
     // deleteStory
     async deleteStory() {
       console.log("deleteStory()");
@@ -662,7 +663,11 @@ export default {
           }
         }
         this.resetAll();
-        this.toastStoryDeleted();
+        // this.toastStoryDeleted();
+        this.$router.replace({
+          name: "user-stories",
+          params: { username: this.user.username }
+        });
       }
     },
 
@@ -712,33 +717,24 @@ export default {
     // save story ---------------------------------------
     // saveStory
     async saveStory(action) {
-      // save, view, publish
-      // console.log(`Action => ${action}`);
-
-      // if (this.isDraft) {
-      //   console.log("Save draft");
-      // } else {
-      //   console.log("Save published");
-      // }
+      // action -> one of: save, view, publish, unpublish
       ////////////////////////////////////////
       // what validation should I use?
       ////////////////////////////////////////
       // validate_for_draft: false,
       // validate_for_publication: false,
 
-      // is_draft && save -> validate_for_draft
-      // is_draft && (view || publish) -> validate_for_publication
+      // is_draft && save or action: unpublish -> validate_for_draft
+      // else -> validate_for_publication
 
-      // is_published -> validate_for_publication
-      /////////////////////////////////////////
       try {
         this.submit_pending = true;
-        if (this.isDraft && action === "save") {
+        if ((this.isDraft && action === "save") || action === "unpublish") {
           this.validate_for_draft = true;
         } else {
           this.validate_for_draft = false;
         }
-        if (!this.formIsValid()) return;
+        if (!this.formIsValid(action)) return;
 
         let response;
         this.resetApiErrors();
@@ -759,7 +755,8 @@ export default {
 
         const data = {
           story: this.story,
-          validate_for: this.validate_for_draft === true ? "draft" : "published"
+          // save, view, publish, unpublish
+          action
         };
         if (this.is_edit) {
           // update
@@ -783,6 +780,13 @@ export default {
             params: { key: response_data.story._key }
           });
         }
+        if (action === "view") {
+          this.$router.push({
+            name: "view-story",
+            params: { slug: response_data.story.slug }
+          });
+        }
+        this.toastSaveSuccess(action);
       } catch (error) {
         this.is_api_error = true;
         // at this point bother only for validation errors
@@ -806,29 +810,14 @@ export default {
         }
       } finally {
         this.submit_pending = false;
-        window.scrollTo(0, 0);
+        if (action !== "view") {
+          window.scrollTo(0, 0);
+        }
       }
     },
-    // refactor and delete
-    async saveAndGoToList() {
-      await this.onSubmit();
-      // if no errors go to list
-      if (!this.is_error && !this.is_api_error && !this.is_form_error) {
-        this.$router.push({
-          name: "user-stories",
-          params: { username: this.authenticatedUser.username }
-        });
-      }
-    },
-    // refactor and delete
-    async saveAndPublish() {
-      console.log("saveAndPublish");
-      this.setStatus("published");
-    },
-
     // form valid -------------------------------------
     // formIsValid
-    formIsValid() {
+    formIsValid(action) {
       this.is_form_error = false;
       // this.submit_pending = true;
       this.$v.$touch();
@@ -836,7 +825,7 @@ export default {
         this.is_form_error = true;
         // this.submit_pending = false;
         // window.scrollTo(0, 0);
-        this.toastFormErrors();
+        this.toastFormErrors(action);
         return false;
       }
       return true;
@@ -1069,35 +1058,55 @@ export default {
       this.toasrMessage = "";
     },
     // toastSaveSuccess
-    toastSaveSuccess() {
-      //   this.show_toast = true;
-      //   this.toast_message = "The story has been saved";
-      //   this.toast_type = "is-success";
+    toastSaveSuccess(action) {
+      // action -> one of: save, view, publish, unpublish
+      console.log(action);
+      if (action === "view") {
+        return;
+      }
+      let message = [];
+      let messageType = "toast-top-centered is-success";
+      if (action === "save") {
+        message = ["The story has been saved"];
+      } else if (action === "publish") {
+        message = ["The story has been saved and published"];
+      } else if (action === "unpublish") {
+        message = ["The story has been unpublished"];
+        messageType = "toast-top-centered is-warning";
+      }
       this.toastIt({
-        message: ["The story has been saved"],
-        messageType: "toast-top-centered is-success"
+        message,
+        messageType
       });
     },
     // toastFormErrors
-    toastFormErrors() {
-      // this.show_toast = true;
-      // this.toast_message = "Please fix the form errors";
-      // this.toast_type = "is-danger";
+    toastFormErrors(action) {
+      // action -> one of: save, view, publish, unpublish
+      let message = [];
+      console.log(action);
+      if (action === "save") {
+        message.push("Coud not save the story.");
+      } else if (action === "view") {
+        message.push("You need a valid story to view it.");
+      } else if (action === "publish") {
+        message.push("Invalid story");
+      }
+      message.push("Please fix the form errors");
       this.toastIt({
-        message: ["Please fix the form errors"],
+        message,
         messageType: "toast-top-centered is-danger"
       });
     },
     // toastStoryDeleted
-    toastStoryDeleted() {
-      // this.show_toast = true;
-      // this.toast_message = "This Story has been deleted";
-      // this.toast_type = "is-warning";
-      this.toastIt({
-        message: ["This Story has been deleted"],
-        messageType: "toast-top-centered is-warning"
-      });
-    },
+    // toastStoryDeleted() {
+    //   // this.show_toast = true;
+    //   // this.toast_message = "This Story has been deleted";
+    //   // this.toast_type = "is-warning";
+    //   this.toastIt({
+    //     message: ["This Story has been deleted"],
+    //     messageType: "toast-top-centered is-warning"
+    //   });
+    // },
 
     // drag n drop ----------------------------------------------
     // draggableChange

@@ -1,7 +1,7 @@
 <template>
   <div
     class="columns is-variable is-2-mobile is-3-tablet is-8-desktop is-8-widescreen is-8-fullhd"
-    style="margin-top:40px;"
+    style="margin-top:25px;"
   >
     <!-- LAYOUT BOX -->
     <div class="column is-two-fifths">
@@ -73,7 +73,7 @@
             <button
               class="button is-success"
               style="font-size:.85rem"
-              @click.prevent="setStatus('draft')"
+              @click.prevent="saveStory('unpublish')"
             >UNPUBLISH</button>
           </p>
         </div>
@@ -100,7 +100,7 @@
             <button
               class="button is-warning"
               style="font-size:.85rem;"
-              @click.prevent="setStatus('published')"
+              @click.prevent="saveStory('publish')"
             >PUBLISH</button>
           </p>
         </div>
@@ -124,7 +124,7 @@
 </template>
 <script>
 export default {
-  name: "StoryLayoutFullFull",
+  name: "StoryLayoutFull",
   props: { story: Object },
   methods: {
     selectLayout(layoutType) {
@@ -133,8 +133,8 @@ export default {
     deleteStory() {
       this.$emit("deleteStory");
     },
-    setStatus(status) {
-      this.$emit("setStatus", status);
+    saveStory(status) {
+      this.$emit("saveStory", status);
     }
   }
 };
