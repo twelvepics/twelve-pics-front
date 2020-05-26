@@ -69,7 +69,7 @@
             </div>
             <div class="control">
               <button
-                class="button is-dark"
+                class="button is-light"
                 @click.prevent="closeMessageModal"
                 :disabled="done"
               >Cancel</button>

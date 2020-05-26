@@ -47,7 +47,7 @@
               <button class="button is-primary" :disabled="$v.$invalid">Submit</button>
             </div>
             <div class="control">
-              <button class="button is-dark" @click.prevent="closeRecoverModal">Cancel</button>
+              <button class="button is-light" @click.prevent="closeRecoverModal">Cancel</button>
             </div>
           </div>
           <!-- <div>{{ $v }}</div> -->

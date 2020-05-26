@@ -23,7 +23,7 @@
                   class="input-file"
                 />
                 <p v-if="selectFiles">
-                  Drag your file here
+                  Drag your files here
                   <br />or click to browse
                 </p>
               </div>
@@ -189,56 +189,6 @@ export default {
     };
   },
   methods: {
-    // !!!!!!!!!!!!!!!!!!!!!!!!
-    // Make this fucking REALLY async
-    // getImagePreviews() {
-    //   const vm = this;
-    //   let i = 0;
-    //   const files = this.selectedFiles;
-    //   function readAndPreview(file) {
-    //     if (!vm.previews[file.name] && /\.(jpe?g|png)$/i.test(file.name)) {
-    //       const reader = new FileReader();
-    //       reader.addEventListener(
-    //         "load",
-    //         function() {
-    //           var image = new Image();
-    //           image.width = 70;
-    //           // console.log(image);
-    //           image.src = reader.result;
-    //           vm.$refs["pic" + parseInt(i++)][0].src = image.src;
-    //           vm.previews[file.name] = image.src;
-    //         },
-    //         false
-    //       );
-    //       reader.readAsDataURL(file);
-    //     }
-    //   }
-    //   [].forEach.call(files, readAndPreview);
-    // },
-    // getImagePreviews() {
-    //   const vm = this;
-    //   let i = 0;
-    //   const files = this.selectedFiles;
-    //   function readAndPreview(file) {
-    //     if (!vm.previews[file.name] && /\.(jpe?g|png)$/i.test(file.name)) {
-    //       const reader = new FileReader();
-    //       reader.addEventListener(
-    //         "load",
-    //         function() {
-    //           var image = new Image();
-    //           image.width = 70;
-    //           // console.log(image);
-    //           image.src = reader.result;
-    //           vm.$refs["pic" + parseInt(i++)][0].src = image.src;
-    //           vm.previews[file.name] = image.src;
-    //         },
-    //         false
-    //       );
-    //       reader.readAsDataURL(file);
-    //     }
-    //   }
-    //   [].forEach.call(files, readAndPreview);
-    // },
     getImagePreviews() {
       const vm = this;
       let i = 0;
@@ -395,7 +345,7 @@ export default {
         this.submitted = false;
         setTimeout(() => {
           this.closeUploadModal();
-        }, 1500);
+        }, 1000);
       } catch (error) {
         // TODO VUE ERRORS NOT CARED OF
         if (error.response) {
@@ -504,8 +454,6 @@ export default {
   border-radius: 0;
   height: 3px;
 }
-.columns {
-}
 .column.uploadFileInfo {
   padding: 0.25rem 0 0.75rem 0;
 }
@@ -556,5 +504,35 @@ img.isHorizontal {
 /***** Errors ******/
 .isError {
   color: red;
+}
+
+.modal-content {
+  max-height: 90%;
+}
+.maxOnSelected {
+  max-height: calc(100vh);
+}
+
+@media only screen and (max-width: 600px) {
+  .modal {
+    justify-content: start;
+  }
+  .modal-content {
+    max-height: 100%;
+  }
+  .uploadFileInfo {
+    font-size: 80%;
+  }
+  .column.uploadFileInfo {
+    padding: 0;
+    margin: 0;
+  }
+  .maxOnSelected {
+    max-height: calc(100vh);
+  }
+  .selectedImages {
+    // padding: -1rem;
+    margin: 0 -0.8rem 0 -0.8rem;
+  }
 }
 </style>

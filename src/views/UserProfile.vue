@@ -426,31 +426,6 @@ export default {
 
 <style scoped>
 /************** layout ***********/
-html,
-body {
-  width: 100%;
-  height: 100%;
-}
-
-#app {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-main {
-  flex-grow: 1;
-}
-
-navbar,
-main,
-footer {
-  flex-shrink: 0;
-}
-footer {
-  margin-top: 30px;
-}
 
 /************** spacing ***********/
 .content h5 {
@@ -489,6 +464,12 @@ div.ta-html br {
 }
 .card-content {
   padding-bottom: 4rem;
+}
+.column {
+  padding: 0;
+}
+.card {
+  margin-bottom: 2rem;
 }
 @media only screen and (max-width: 600px) {
   .card-content {

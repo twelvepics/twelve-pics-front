@@ -25,7 +25,7 @@
               <button type="submit" class="button is-primary">Save</button>
             </div>
             <div class="control">
-              <button class="button is-dark" @click.prevent="closeCategoriesModal">Cancel</button>
+              <button class="button is-light" @click.prevent="closeCategoriesModal">Cancel</button>
             </div>
           </div>
         </div>

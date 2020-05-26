@@ -25,7 +25,7 @@
 
           <!-- END STORIES -->
         </div>
-        <div class="is-divider-vertical"></div>
+        <!-- <div class="is-divider-vertical"></div> -->
         <!-- right col -->
         <home-right-col />
         <!-- end right col -->

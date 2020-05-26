@@ -1,16 +1,6 @@
 <template>
   <!-- TODO -->
   <!-- LATER - MESSAGE FOR UNSAVED DATA ON LEAVE PAGE -->
-  <!-- LATER - TOP BOXES MOBILE -->
-
-  <!-- DONE -->
-  <!-- DONE UPDATE MY_STORIES/STORY FOR NOT VIEWABLE/ INCOMPLETE STORY -->
-  <!-- DONE ON DELETE STORY REDIRECT TO MY_STORIES -->
-  <!-- DONE SIMPLIFY BACK NAV CACHE VS REPLACE URL -->
-  <!-- DONE SAVE DRAFT WITH MINIMUM VALIDATION -->
-  <!-- DONE CHANGE BOTTOM BUTTONS -->
-  <!-- DONE MORE VERBOSE TOASTS -->
-
   <main>
     <div class="container is-fluid max-container">
       <div class="columns is-centered">
@@ -42,7 +32,7 @@
                 <div
                   v-if="is_api_error || is_form_error"
                   class="isError"
-                  style="text-align:center;margin-bottom:12px;"
+                  style="text-align:center;"
                 >
                   <div
                     v-if="['INVALID_CREATE_STORY_ERROR', 'INVALID_UPDATE_STORY_ERROR'].includes(apiErrorType)"
@@ -68,12 +58,13 @@
                 <p class="subtitle is-size-6">
                   Build your story, 6 to 12 photos. An informative text is required. Your images must be your own. Do not post any photos from other photographers.
                   Do not hesitate to start the title of your story with [NSFW] if it is a mature or hard to view subject.
-                  <br />Once saved, you can update/modify your post at any time through the top right menu > my stories.
+                  <br />Once saved, you can update your post at any time through the top right menu > my stories.
                 </p>
 
                 <!-- -->
                 <!-- SHOW STORY URL -->
                 <div
+                  class="hide-if-mobile"
                   v-if="story.page_url && (canDisplay || story.is_viewable)"
                   style="margin-bottom:-.8rem; line-height:150%;"
                 >
@@ -97,8 +88,14 @@
 
                 <!-- -->
                 <!-- TOP BOXES -->
-                <component
+                <!-- <component
                   :is="topBoxes"
+                  :story="story"
+                  @selectLayout="selectPicsLayout"
+                  @saveStory="saveStory"
+                  @deleteStory="deleteStory"
+                />-->
+                <story-top-boxes
                   :story="story"
                   @selectLayout="selectPicsLayout"
                   @saveStory="saveStory"
@@ -113,9 +110,7 @@
                   <label class="label is-marginless">Category</label>
                   <p class="content is-small is-marginless pb-05">
                     <span class="isError" v-if="$v.story.category.$error">Please select a category</span>
-                    <span
-                      v-else
-                    >(Required) Please select the theme that better fits your photo story</span>
+                    <span v-else>(Required) Please select the theme that better fits your story</span>
                   </p>
                   <div class="select" :class="{ 'is-danger': $v.story.category.$error }">
                     <select v-model="story.category">
@@ -132,7 +127,7 @@
 
                 <!-- -->
                 <!-- TITLE -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <label class="label is-marginless">Title</label>
                   <p class="content is-small is-marginless pb-05">
                     <span
@@ -158,7 +153,7 @@
 
                 <!-- -->
                 <!-- ABOUT MY STORY -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <label class="label is-marginless">Describe your story</label>
                   <p class="content is-small is-marginless pb-05">
                     <span
@@ -184,8 +179,11 @@
 
                 <!-- -->
                 <!-- UPOLAD PICS -->
-                <div class="field m-30-0-15-0">
-                  <p class="content is-marginless" :class="{isError: $v.pics_uploaded.$error}">
+                <div class="field form-item">
+                  <p
+                    class="content is-marginless images-txt"
+                    :class="{isError: $v.pics_uploaded.$error}"
+                  >
                     <b>Upload your images</b>
                   </p>
                   <p class="content is-small is-marginless pb-05">
@@ -193,7 +191,7 @@
                       class="isError"
                       v-if="$v.pics_uploaded.$error"
                     >Minimum 6, Maximum 12 photos - Maximum caption length 256 characters</span>
-                    <span v-else>(required) Obviously :) Minimum 6, Maximum 12 photos - JPEG or PNG</span>
+                    <span v-else>(required) Minimum 6, Maximum 12 photos - JPEG or PNG</span>
                   </p>
 
                   <!-- PIC UPLOAD BUTTON-->
@@ -208,93 +206,14 @@
                   <!-- END PIC UPLOAD BUTTON-->
                   <!-- UPLOADED PICS -->
                   <!-- LOOP PICS-->
-                  <draggable
-                    :list="pics_uploaded"
-                    ghost-class="moving-card"
-                    handle=".handle"
-                    :animation="200"
-                    @change="draggableChange"
-                  >
-                    <div
-                      v-for="(pic, idx) in pics_uploaded"
-                      :key="idx"
-                      class="columns box uploadedImageBox"
-                      style="border: 1px solid #ccc"
-                      :class="{first: idx === 0}"
-                    >
-                      <div class="controlIcons">
-                        <span class="icon icon-hover is-medium handle">
-                          <font-awesome-icon class="fas fa-lg shadow" icon="arrows-alt"></font-awesome-icon>
-                        </span>
-                        <span class="icon icon-hover has-text-danger is-medium trash">
-                          <font-awesome-icon
-                            class="fas fa-lg shadow"
-                            icon="trash-alt"
-                            @click="removePic(idx)"
-                          ></font-awesome-icon>
-                        </span>
-                      </div>
-                      <div class="pic column is-narrow handle">
-                        <img
-                          :src="pic.medium.web_path"
-                          :width="isHorizontal(pic.small) ? 270 : 160"
-                          height="auto"
-                        />
-                      </div>
-                      <div class="picInfo column">
-                        <div class="field">
-                          <label
-                            class="label"
-                            v-if="caption_errors.includes(idx)"
-                            style="color:red"
-                          >Caption must be max 256 characters</label>
-                          <label class="label" v-else>Caption</label>
-                          <!--- XOXO --->
-
-                          <!--- XOXO --->
-                          <div class="control">
-                            <textarea
-                              class="textarea"
-                              :class="{ 'is-danger': caption_errors.includes(idx) }"
-                              placeholder="Enter your caption"
-                              rows="2"
-                              :value="pic.caption"
-                              @input="setCaption(idx, $event)"
-                            ></textarea>
-                          </div>
-                        </div>
-
-                        <div class="field">
-                          <label
-                            class="label"
-                            v-if="description_errors.includes(idx)"
-                            style="color:red"
-                          >Description must be max 64 characters</label>
-                          <label class="label" v-else>Description (Alt tag)</label>
-                          <div class="control">
-                            <input
-                              class="input"
-                              :class="{ 'is-danger': description_errors.includes(idx) }"
-                              type="text"
-                              placeholder="A short description"
-                              style="max-width:30rem;"
-                              :value="pic.description"
-                              @input="setDescription(idx, $event)"
-                              @keydown.enter.prevent
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </draggable>
-                  <!-- END LOOP PICS -->
+                  <component :is="picsUploadedComponent" :pics_uploaded="pics_uploaded"></component>
                   <!-- END UPLOADED PICS -->
                 </div>
                 <!-- END UPOLAD PICS -->
 
                 <!-- -->
                 <!-- MORE INFO -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <label class="label is-marginless">Gear, technique, inspiration</label>
                   <p class="content is-small is-marginless pb-05">
                     <span
@@ -318,7 +237,7 @@
 
                 <!-- -->
                 <!-- TAGS -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <label class="label is-marginless">Add tags</label>
                   <p class="content is-small is-marginless pb-05">
                     <span
@@ -345,7 +264,7 @@
 
                 <!-- -->
                 <!-- LOCATION -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <label class="label is-marginless">Your story's location</label>
                   <p class="content is-small is-marginless pb-05">
                     <span
@@ -384,7 +303,7 @@
 
                 <!-- -->
                 <!-- ALLOW COMMENTS -->
-                <div class="field m-30-0-15-0">
+                <div class="field form-item">
                   <div>
                     <label class="label is-marginless">
                       Allows users to comment my
@@ -412,7 +331,7 @@
 
                 <!-- -->
                 <!-- SUBMIT -->
-                <div class="is-divider" style="margin-top:35px;"></div>
+                <div class="is-divider submit-top"></div>
                 <div class="field is-grouped submit-buttons">
                   <div class="control">
                     <button
@@ -432,14 +351,14 @@
                       :disabled="submit_pending"
                     >View</button>
                   </div>
-                  <div class="control" v-if="!isPublished">
+                  <div class="control hide-if-mobile" v-if="!isPublished">
                     <button
                       class="button is-success"
                       @click.prevent="saveStory('publish')"
                       :disabled="submit_pending"
                     >Publish</button>
                   </div>
-                  <div class="control" v-else>
+                  <div class="control hide-if-mobile" v-else>
                     <button
                       class="button is-warning"
                       @click.prevent="saveStory('unpublish')"
@@ -447,7 +366,14 @@
                     >Unpublish</button>
                   </div>
                   <div class="control">
-                    <button class="button is-dark" @click.prevent="cancel">Cancel</button>
+                    <button class="button is-light" @click.prevent="cancel">Cancel</button>
+                  </div>
+                  <div class="control hide-if-full">
+                    <button
+                      class="button is-light"
+                      type="submit"
+                      @click.prevent="deleteStory()"
+                    >Delete</button>
                   </div>
                 </div>
                 <!-- SUBMIT -->
@@ -490,17 +416,16 @@
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
 import Toast from "../components/Toast.vue";
-import StoryTopBoxesFull from "../components/createupdatestory/StoryTopBoxesFull.vue";
-import StoryTopBoxesMobile from "../components/createupdatestory/StoryTopBoxesMobile.vue";
+import StoryTopBoxes from "../components/createupdatestory/StoryTopBoxes.vue";
+import PicsUploadedMobile from "../components/createupdatestory/PicsUploadedMobile.vue";
+import PicsUploadedFull from "../components/createupdatestory/PicsUploadedFull.vue";
 import axiosBase from "../services/axiosBase";
-import Draggable from "vuedraggable";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 import * as Sentry from "@sentry/browser";
 import { mapGetters } from "vuex";
 import PicsUploadModal from "../components/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 import { categoriesList } from "../utils/categories";
-import { isHorizontal, isVertical } from "../utils/pics";
 
 let _mql = null;
 const LAYOUT_FULL = 0;
@@ -508,8 +433,6 @@ const LAYOUT_MOBILE = 1;
 
 const MAX_PICS = 12;
 const MIN_PICS = 6;
-const CAPTION_MAXLEN = 256;
-const DESCRIPTION_MAXLEN = 64;
 
 // custom validators
 const notZero = value => value !== "0";
@@ -523,12 +446,12 @@ export default {
   name: "CreateUpdateStory",
   components: {
     PicsUploadModal,
-    Draggable,
     PageLoader,
     PageError,
     Toast,
-    StoryTopBoxesFull,
-    StoryTopBoxesMobile
+    StoryTopBoxes,
+    PicsUploadedMobile,
+    PicsUploadedFull
   },
   data() {
     return {
@@ -543,10 +466,8 @@ export default {
       validate_for_draft: false,
 
       // layout/dyn components -------------
-      // page layout
+      picsUploadedComponent: null,
       page_layout: null,
-      // top boxes component
-      topBoxes: null,
 
       // server side auth 404 --------------
       is_error: false,
@@ -596,8 +517,6 @@ export default {
       // pics uploaded --------------------
       pics_uploaded: [],
       maxUploads: MAX_PICS,
-      caption_errors: [],
-      description_errors: [],
 
       // toast -----------------------------
       showToast: false,
@@ -610,30 +529,6 @@ export default {
     //////////////////////////////////////////////////
     // API v2
     //////////////////////////////////////////////////
-
-    // page layout --------------------------------------
-    // handleWindowChange
-    handleWindowChange(event) {
-      if (event.matches) {
-        // < 999
-        // console.log("CHANGE < 999");
-        this.page_layout = LAYOUT_MOBILE;
-        this.topBoxes = StoryTopBoxesMobile;
-      } else {
-        // >= 999
-        // console.log("CHANGE >= 999");
-        this.page_layout = LAYOUT_FULL;
-        this.topBoxes = StoryTopBoxesFull;
-      }
-    },
-    // isLayoutMobile
-    isLayoutMobile() {
-      return this.layout === LAYOUT_MOBILE;
-    },
-    // isLayoutFull
-    isLayoutFull() {
-      return this.layout == LAYOUT_FULL;
-    },
     // top boxes ---------------------------------------
     //  selectPicsLayout
     selectPicsLayout(layout) {
@@ -820,7 +715,9 @@ export default {
       this.is_form_error = false;
       // this.submit_pending = true;
       this.$v.$touch();
-      if (this.$v.$invalid || this.hasPicsError()) {
+      // TODO TODO PUT BACK NEXT LINE WITH PICS ERRORS
+      // if (this.$v.$invalid || this.hasPicsError()) {
+      if (this.$v.$invalid) {
         this.is_form_error = true;
         // this.submit_pending = false;
         // window.scrollTo(0, 0);
@@ -840,10 +737,6 @@ export default {
       unlockBgScroll();
       this.uploadModalActive = false;
     },
-    //  isHorizontal
-    isHorizontal,
-    //  isVertical
-    isVertical,
     //  picUploaded
     picUploaded(pic) {
       // console.log(pic);
@@ -854,50 +747,7 @@ export default {
         large: pic.large
       });
     },
-    //  setCaption
-    setCaption(idx, event) {
-      // console.log(`setCaption ${idx}`);
-      this.pics_uploaded[idx].caption = event.target.value;
-      if (this.pics_uploaded[idx].caption.length > CAPTION_MAXLEN) {
-        // add error
-        if (!this.caption_errors.includes(idx)) {
-          this.caption_errors.push(idx);
-        }
-      } else {
-        // remove error if any
-        const index = this.caption_errors.indexOf(idx);
-        if (index > -1) {
-          this.caption_errors.splice(index, 1);
-        }
-      }
-    },
-    //  setDescription
-    setDescription(idx, event) {
-      // console.log(`setDescription ${idx}`);
-      this.pics_uploaded[idx].description = event.target.value;
-      if (this.pics_uploaded[idx].description.length > DESCRIPTION_MAXLEN) {
-        // add error
-        if (!this.description_errors.includes(idx)) {
-          this.description_errors.push(idx);
-        }
-      } else {
-        // remove error if any
-        const index = this.description_errors.indexOf(idx);
-        if (index > -1) {
-          this.description_errors.splice(index, 1);
-        }
-      }
-    },
-    //  removePic
-    removePic(idx) {
-      this.pics_uploaded.splice(idx, 1);
-    },
-    //  hasPicsError
-    hasPicsError() {
-      return (
-        this.caption_errors.length !== 0 || this.description_errors.length !== 0
-      );
-    },
+
     // location ------------------------------------------------
     // searchLocation
     async searchLocation(e) {
@@ -958,33 +808,6 @@ export default {
       this.is_api_error = false;
       this.apiErrors = "";
       this.apiErrorType = "";
-    },
-    // resetPicsErrors
-    resetPicsErrors() {
-      // console.log(this.caption_errors);
-      // console.log(this.pics_uploaded.length);
-
-      this.caption_errors = [];
-      this.description_errors = [];
-
-      for (let i = 0; i < this.pics_uploaded.length; i++) {
-        // console.log(i);
-        // console.log(this.pics_uploaded[i]);
-        if (
-          this.pics_uploaded[i].caption &&
-          this.pics_uploaded[i].caption.length > CAPTION_MAXLEN
-        ) {
-          // add error
-          this.caption_errors.push(i);
-        }
-        if (
-          this.pics_uploaded[i].description &&
-          this.pics_uploaded[i].description.length > DESCRIPTION_MAXLEN
-        ) {
-          // add error
-          this.description_errors.push(i);
-        }
-      }
     },
     // resetAll
     resetAll() {
@@ -1107,12 +930,25 @@ export default {
 
     // drag n drop ----------------------------------------------
     // draggableChange
-    draggableChange() {
-      // console.log("draggable change");
-      // console.log(evt);
-      // console.log(this);
-      console.log(this.caption_errors);
-      this.resetPicsErrors();
+
+    handleWindowChange(event) {
+      if (event.matches) {
+        // < 999
+        console.log("CHANGE < 999");
+        this.page_layout = LAYOUT_MOBILE;
+        this.picsUploadedComponent = PicsUploadedMobile;
+      } else {
+        // >= 999
+        console.log("CHANGE >= 999");
+        this.page_layout = LAYOUT_FULL;
+        this.picsUploadedComponent = PicsUploadedFull;
+      }
+    },
+    isLayoutMobile() {
+      return this.page_layout === LAYOUT_MOBILE;
+    },
+    isLayoutFull() {
+      return this.page_layout == LAYOUT_FULL;
     }
   },
   computed: {
@@ -1165,27 +1001,25 @@ export default {
   // beforeRouteLeave(to, from, next) {
   // },
   created() {
-    /////////////////////////////////////////////////////////
-    // components on change
-    /////////////////////////////////////////////////////////
-    console.log(process.env.NODE_ENV);
-    console.log("#--- created ---#");
     _mql = window.matchMedia("(max-width: 999px)");
     console.log(_mql.matches);
     if (_mql.matches) {
       // < 999
       console.log("INITIAL < 999");
-      this.layout = LAYOUT_MOBILE;
-      this.topBoxes = StoryTopBoxesMobile;
+      this.page_layout = LAYOUT_MOBILE;
+      this.picsUploadedComponent = PicsUploadedMobile;
     } else {
       // >= 999
       console.log("INITIAL >= 999");
-      this.layout = LAYOUT_FULL;
-      this.topBoxes = StoryTopBoxesFull;
+      this.page_layout = LAYOUT_FULL;
+      this.picsUploadedComponent = PicsUploadedFull;
     }
     console.log(_mql);
     // initial state here
     _mql.addListener(this.handleWindowChange);
+    /////////////////////////////////////////////////////////
+    // components on change
+    /////////////////////////////////////////////////////////
     if (this.$route.name === "edit-story") {
       this.is_loading = true;
       return this.fetchAndSetData();
@@ -1268,34 +1102,6 @@ export default {
 };
 </script>
 <style scoped>
-/************** layout ***********/
-html,
-body {
-  width: 100%;
-  height: 100%;
-}
-#app {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-main {
-  flex-grow: 1;
-}
-navbar,
-main,
-footer {
-  flex-shrink: 0;
-}
-
-footer {
-  margin-top: 30px;
-}
-/************** spacing ***********/
-.m-40-0-15-0 {
-  margin: 40px 0 15px 0;
-}
 /************** misc ***********/
 .pics-box {
   border: 2px dashed gray;
@@ -1317,19 +1123,50 @@ footer {
   width: 170px;
   height: 170px;
 }
-/***** Uploaded images ******/
-.uploadedImageBox {
-  margin: 12px 0 0 0;
-  padding: 0;
-  border-radius: 0;
-  position: relative;
+
+/* @media only screen and (max-width: 768px) {
+  .picInfo {
+    margin-top: 0;
+  }
+  .picInfo.column {
+    padding-top: 0;
+    margin-top: 0;
+  }
+  .pic.column {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+} */
+
+/************** misc ***********/
+.page-link-title-draft {
+  color: #f8aa0f;
 }
-.uploadedImageBox.first {
-  margin: 15px 0 0 0;
+a.page-link-title-draft {
+  color: #f8aa0f;
 }
-.picInfo {
-  margin-top: 13px;
+.page-link-title-published {
+  color: #1ecf3c;
 }
+a.page-link-title-published {
+  color: #1ecf3c;
+}
+.form-item {
+  margin: 30px 0 15px 0;
+}
+.submit-top {
+  margin-top: 35px;
+}
+.title {
+  margin-bottom: 2.2rem !important;
+}
+.hide-if-full {
+  display: none !important;
+}
+.images-txt {
+  color: #363636;
+}
+
 @media only screen and (max-width: 768px) {
   .picInfo {
     margin-top: 0;
@@ -1343,48 +1180,83 @@ footer {
     margin-bottom: 0;
   }
 }
-.picInfo label {
-  margin: 0 !important;
-  padding: 0 !important;
-  font-size: 90%;
-}
-.uploadedImageBox .controlIcons {
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  text-align: right;
-  margin: 0;
-  padding: 0;
-}
-/* icons shadow */
-.shadow {
-  -webkit-filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.2));
-  filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.2));
-  /* Similar syntax to box-shadow */
-}
-/*************** draggable ******************/
-.moving-card {
-  opacity: 0.7;
-  border: 1px solid #aaa;
-  background: #eee;
-}
-.handle {
-  cursor: move;
-}
-.trash {
-  cursor: pointer;
-}
-/************** misc ***********/
-.page-link-title-draft {
-  color: #f8aa0f;
-}
-a.page-link-title-draft {
-  color: #f8aa0f;
-}
-.page-link-title-published {
-  color: #1ecf3c;
-}
-a.page-link-title-published {
-  color: #1ecf3c;
+@media only screen and (max-width: 600px) {
+  .is-size-6 {
+    font-size: 90% !important;
+  }
+  .is-size-4 {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem;
+    margin: 0 0 0.3rem 0 !important;
+  }
+  .title:not(:last-child) {
+    margin-bottom: 0.4rem;
+  }
+  .title {
+    margin-bottom: 1.8rem !important;
+  }
+  .content {
+    font-size: 90%;
+  }
+  .content:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .card-content {
+    padding: 0.75rem;
+  }
+  input,
+  textarea,
+  select,
+  option {
+    font-size: 90%;
+    padding: 0.3rem;
+  }
+  .form-item {
+    margin: 15px 0 15px 0;
+  }
+  .label {
+    color: #888;
+    font-size: 0.9rem;
+  }
+  .content.is-small {
+    font-size: 0.7rem;
+  }
+  .submit-divider {
+    margin-top: 10px;
+  }
+  .column {
+    padding: 0;
+  }
+  .columns {
+    margin: 0;
+  }
+  .hide-if-mobile {
+    display: none;
+  }
+  .hide-if-full {
+    display: block !important;
+  }
+  .subtitle:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+  .form-item {
+    margin: 15px 0 15px 0;
+  }
+  .submit-top {
+    margin-top: 20px;
+  }
+  button {
+    font-size: 90%;
+    padding: 0 0.7rem 0 0.7rem;
+  }
+  .switch[type="checkbox"] + label {
+    font-size: 90%;
+  }
+  .pb-05 {
+    padding-bottom: 0.2rem;
+  }
+  .images-txt {
+    color: #888;
+  }
 }
 </style>

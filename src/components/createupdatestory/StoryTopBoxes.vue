@@ -1,10 +1,9 @@
 <template>
   <div
-    class="columns is-variable is-2-mobile is-3-tablet is-8-desktop is-8-widescreen is-8-fullhd"
-    style="margin-top:25px;"
+    class="columns is-variable is-2-mobile is-3-tablet is-8-desktop is-8-widescreen is-8-fullhd boxes-mt"
   >
     <!-- LAYOUT BOX -->
-    <div class="column is-two-fifths">
+    <div class="column is-two-fifths hide-if-mobile">
       <article class="message is-small box-has-shadow">
         <div class="message-header">
           <p>LAYOUT</p>
@@ -53,7 +52,7 @@
     <!-- ENDS LAYOUT BOX -->
     <!-- STATUS BOX -->
     <!-- STATUS PUBLISHED -->
-    <div v-if="story.status === 'published'" class="column is-two-fifths">
+    <div v-if="story.status === 'published'" class="column is-two-fifths hide-if-mobile">
       <article class="message is-success is-small box-has-shadow">
         <div class="message-header">
           <p>STATUS</p>
@@ -80,7 +79,7 @@
       </article>
     </div>
     <!-- STATUS DRAFT -->
-    <div v-if="story.status === 'draft'" class="column is-two-fifths">
+    <div v-if="story.status === 'draft'" class="column is-two-fifths statusbox">
       <article class="message is-warning is-small box-has-shadow">
         <div class="message-header">
           <p>STATUS</p>
@@ -108,7 +107,7 @@
     </div>
     <!-- ENDS STATUS BOX -->
     <!-- DELETE BOX -->
-    <div class="column">
+    <div class="column hide-if-mobile">
       <article class="message is-danger is-small box-has-shadow">
         <div class="message-header">
           <p>DELETE</p>
@@ -124,7 +123,7 @@
 </template>
 <script>
 export default {
-  name: "StoryLayoutFull",
+  name: "StoryTopBoxes",
   props: { story: Object },
   methods: {
     selectLayout(layoutType) {
@@ -178,6 +177,20 @@ export default {
 }
 .p8 {
   padding: 8px;
+}
+.boxes-mt {
+  margin-top: 20px;
+}
+@media only screen and (max-width: 600px) {
+  .hide-if-mobile {
+    display: none;
+  }
+  .boxes-mt {
+    margin-top: 0;
+  }
+  .statusbox {
+    margin-bottom: 0.5rem;
+  }
 }
 </style>
                   

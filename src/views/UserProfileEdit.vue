@@ -11,11 +11,7 @@
             <!-- CARD CONTENT -->
             <div class="card-content">
               <form @submit.prevent="onSubmit">
-                <div
-                  v-if="is_api_error"
-                  class="isError"
-                  style="text-align:center;margin-bottom:12px;"
-                >
+                <div v-if="is_api_error" class="isError" style="text-align:center;">
                   <div v-if="apiErrorType == 'UPDATE ERROR'">
                     <p>
                       <b>VALIDATIONS ERRORS</b>
@@ -387,7 +383,7 @@
                     >Save</button>
                   </div>
                   <div class="control">
-                    <button class="button is-dark" @click.prevent="backToProfile">Cancel</button>
+                    <button class="button is-light" @click.prevent="backToProfile">Cancel</button>
                   </div>
                 </div>
                 <!-- SUBMIT -->
@@ -739,31 +735,6 @@ export default {
 </script>
 
 <style scoped>
-/************** layout ***********/
-html,
-body {
-  width: 100%;
-  height: 100%;
-}
-#app {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-main {
-  flex-grow: 1;
-}
-navbar,
-main,
-footer {
-  flex-shrink: 0;
-}
-footer {
-  margin-top: 30px;
-}
-/************** spacing ***********/
-
 /************ File upload box *************/
 .dropbox {
   outline: 2px dashed grey; /* the dash box */
@@ -812,7 +783,12 @@ footer {
 .form-item {
   margin: 30px 0 15px 0;
 }
-
+.card {
+  margin-bottom: 2rem;
+}
+.column {
+  padding: 0;
+}
 @media only screen and (max-width: 600px) {
   .is-size-4 {
     font-size: 1.1rem !important;

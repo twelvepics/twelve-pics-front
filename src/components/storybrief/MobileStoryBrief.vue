@@ -160,7 +160,7 @@ export default {
 }
 .pitch {
   font-size: 90%;
-  margin-top: 0.3rem;
+  margin-top: 0.15rem;
   --lh: 1.4rem;
   line-height: var(--lh);
   --max-lines: 3;
@@ -169,5 +169,8 @@ export default {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+.story-divider {
+  margin: 0.5rem 0 0 0;
 }
 </style>

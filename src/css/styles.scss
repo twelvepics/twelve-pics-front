@@ -8,7 +8,7 @@ $my-darker-grey: #bbb;
 $mywarning: #ffc610;
 
 // Update Bulma's global variables
-$family-sans-serif: "Trebuchet MS", Helvetica, sans-serif;
+$family-sans-serif: 'Trebuchet MS', Helvetica, sans-serif;
 $warning: $mywarning;
 $link: $myprimary;
 $primary: $myprimary;
@@ -25,24 +25,24 @@ $input-placeholder-color: $my-darker-grey;
 // $destop: 1024px;
 
 // import bulma modules
-@import "./node_modules/bulma/sass/utilities/_all.sass";
-@import "./node_modules/bulma/sass/base/_all.sass";
-@import "./node_modules/bulma/sass/elements/_all.sass";
-@import "./node_modules/bulma/sass/form/_all.sass";
-@import "./node_modules/bulma/sass/components/_all.sass";
-@import "./node_modules/bulma/sass/grid/_all.sass";
-@import "./node_modules/bulma/sass/layout/section.sass";
-@import "./node_modules/bulma-extensions/bulma-divider/dist/css/bulma-divider.sass";
+@import './node_modules/bulma/sass/utilities/_all.sass';
+@import './node_modules/bulma/sass/base/_all.sass';
+@import './node_modules/bulma/sass/elements/_all.sass';
+@import './node_modules/bulma/sass/form/_all.sass';
+@import './node_modules/bulma/sass/components/_all.sass';
+@import './node_modules/bulma/sass/grid/_all.sass';
+@import './node_modules/bulma/sass/layout/section.sass';
+@import './node_modules/bulma-extensions/bulma-divider/dist/css/bulma-divider.sass';
 // extensions
-@import "./node_modules/bulma-extensions/bulma-divider/dist/css/bulma-divider.sass";
-@import "./node_modules/bulma-extensions/bulma-switch/src/sass/index.sass";
-@import "./node_modules/bulma-extensions/bulma-tooltip/src/sass/index.sass";
-@import "./node_modules/swiper/swiper.scss";
-@import "./node_modules/swiper/components/navigation/navigation.scss";
+@import './node_modules/bulma-extensions/bulma-divider/dist/css/bulma-divider.sass';
+@import './node_modules/bulma-extensions/bulma-switch/src/sass/index.sass';
+@import './node_modules/bulma-extensions/bulma-tooltip/src/sass/index.sass';
+@import './node_modules/swiper/swiper.scss';
+@import './node_modules/swiper/components/navigation/navigation.scss';
 
 .is-divider-vertical {
-    padding: 0;
+  padding: 0;
 }
 .is-divider {
-    margin: 0.5rem 0;
+  margin: 0.5rem 0;
 }
