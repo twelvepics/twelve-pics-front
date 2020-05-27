@@ -44,7 +44,7 @@
               class="textarea"
               :class="{ 'is-danger': caption_errors.includes(idx) }"
               placeholder="Enter your caption"
-              rows="2"
+              rows="1"
               :value="pic.caption"
               @input="setCaption(idx, $event)"
             ></textarea>

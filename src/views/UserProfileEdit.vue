@@ -1,9 +1,9 @@
 <template>
   <main>
-    <div class="container is-fluid max-container">
+    <div class="container is-fluid narrow-container">
       <div class="columns is-centered" style="margin:0;padding:0;">
         <!-- CENTER COLUMNN -->
-        <div class="column is-three-quarters-desktop">
+        <div class="column">
           <!-- ERRORS AND AUTH -->
           <page-error v-if="is_error" :errorMessage="errorMessage"></page-error>
           <!-- START FORM -->

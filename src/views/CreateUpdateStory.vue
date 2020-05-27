@@ -2,10 +2,10 @@
   <!-- TODO -->
   <!-- LATER - MESSAGE FOR UNSAVED DATA ON LEAVE PAGE -->
   <main>
-    <div class="container is-fluid max-container">
+    <div class="container is-fluid narrow-container">
       <div class="columns is-centered">
         <!-- CENTER COLUMNN -->
-        <div class="column is-three-quarters-desktop">
+        <div class="column">
           <!-- -->
           <!-- TOAST USED FOR form errors and deleted -->
           <toast v-show="showToast" :closeToast="closeToast" :toastType="toastType">
@@ -1123,21 +1123,6 @@ export default {
   width: 170px;
   height: 170px;
 }
-
-/* @media only screen and (max-width: 768px) {
-  .picInfo {
-    margin-top: 0;
-  }
-  .picInfo.column {
-    padding-top: 0;
-    margin-top: 0;
-  }
-  .pic.column {
-    padding-bottom: 0;
-    margin-bottom: 0;
-  }
-} */
-
 /************** misc ***********/
 .page-link-title-draft {
   color: #f8aa0f;

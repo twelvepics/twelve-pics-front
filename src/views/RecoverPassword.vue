@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div class="container is-fluid max-container">
+    <div class="container is-fluid narrow-container">
       <div class="columns is-centered">
         <!-- CENTER COLUMNN -->
         <div class="column is-half-desktop">

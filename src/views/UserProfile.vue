@@ -1,10 +1,10 @@
 <template>
   <main>
-    <div class="container is-fluid max-container">
+    <div class="container is-fluid narrow-container">
       <!-- PROFILE COLUMN -->
       <div class="columns is-centered" style="margin:0;padding:0;">
         <!-- CENTER COLUMNN -->
-        <div class="column is-three-quarters-desktop">
+        <div class="column">
           <!-- EMAIL NOT CONFIRMED WARNINGS -->
           <div class="notification is-warning" v-if="showShouldConfirmMessage && !is_loading">
             <span v-if="!confirmEmailSent">

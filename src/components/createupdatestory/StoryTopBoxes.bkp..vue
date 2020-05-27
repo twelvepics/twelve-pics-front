@@ -1,7 +1,9 @@
 <template>
-  <div class="grid-container boxes-mtb">
+  <div
+    class="columns is-variable is-2-mobile is-3-tablet is-8-desktop is-8-widescreen is-8-fullhd boxes-mt"
+  >
     <!-- LAYOUT BOX -->
-    <div class="hide-if-mobile item-layout">
+    <div class="column is-two-fifths hide-if-mobile">
       <article class="message is-small box-has-shadow">
         <div class="message-header">
           <p>LAYOUT</p>
@@ -50,12 +52,12 @@
     <!-- ENDS LAYOUT BOX -->
     <!-- STATUS BOX -->
     <!-- STATUS PUBLISHED -->
-    <div v-if="story.status === 'published'" class="hide-if-mobile item-status">
+    <div v-if="story.status === 'published'" class="column is-two-fifths hide-if-mobile">
       <article class="message is-success is-small box-has-shadow">
         <div class="message-header">
           <p>STATUS</p>
         </div>
-        <div class="message-body pub-unpub-story-layout-box" style="padding:.75rem 10% 1rem 10%">
+        <div class="message-body pub-unpub-story-layout-box" style="padding:.75rem 1rem 1rem 1rem">
           <p class="icon icon-hover has-text-success is-large" style="padding:0;margin:0;">
             <span class="icon is-left">
               <font-awesome-icon class="fas fa-2x" icon="check-circle"></font-awesome-icon>
@@ -63,7 +65,7 @@
 
             <span
               class="content has-text-success pub-unpub-story-txt"
-              style="padding-left:.3rem; font-size: 123%;"
+              style="padding-left:.3rem; font-size: 140%;"
             >PUBLISHED</span>
           </p>
           <p>
@@ -77,12 +79,12 @@
       </article>
     </div>
     <!-- STATUS DRAFT -->
-    <div v-if="story.status === 'draft'" class="statusbox item-status">
+    <div v-if="story.status === 'draft'" class="column is-two-fifths statusbox">
       <article class="message is-warning is-small box-has-shadow">
         <div class="message-header">
           <p>STATUS</p>
         </div>
-        <div class="message-body pub-unpub-story-layout-box" style="padding:.75rem 10% 1rem 10%">
+        <div class="message-body pub-unpub-story-layout-box" style="padding:.75rem 1rem 1rem 1rem">
           <p class="icon icon-hover has-text-warning is-large" style="padding:0;margin:0;">
             <span class="icon is-left">
               <font-awesome-icon class="fas fa-2x" icon="ban"></font-awesome-icon>
@@ -105,12 +107,12 @@
     </div>
     <!-- ENDS STATUS BOX -->
     <!-- DELETE BOX -->
-    <div class="hide-if-mobile item-delete">
+    <div class="column hide-if-mobile">
       <article class="message is-danger is-small box-has-shadow">
         <div class="message-header">
           <p>DELETE</p>
         </div>
-        <div class="message-body delete-story" style="padding:1rem 0 .88rem 0;">
+        <div class="message-body delete-story">
           <p class="icon icon-hover has-text-danger is-large" @click="deleteStory()">
             <font-awesome-icon class="fas fa-3x" icon="trash-alt"></font-awesome-icon>
           </p>
@@ -174,48 +176,20 @@ export default {
   box-shadow: 2px 2px 8px #aaa;
 }
 .p8 {
-  padding: 8px 6% 8px 6%;
+  padding: 8px;
 }
-.boxes-mtb {
+.boxes-mt {
   margin-top: 20px;
-  margin-bottom: 25px;
 }
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(11, 1fr);
-  grid-gap: calc(5% + 5px);
-}
-.item-layout {
-  grid-column-start: 1;
-  grid-column-end: 6;
-}
-.item-status {
-  grid-column-start: 6;
-  grid-column-end: 10;
-}
-.item-delete {
-  grid-column-start: 10;
-  grid-column-end: 12;
-}
-
 @media only screen and (max-width: 600px) {
   .hide-if-mobile {
     display: none;
   }
-  .boxes-mtb {
-    margin-top: 23px;
-    margin-bottom: 15px;
+  .boxes-mt {
+    margin-top: 0;
   }
   .statusbox {
     margin-bottom: 0.5rem;
-  }
-  .grid-container {
-    display: grid;
-    grid-template-columns: auto;
-  }
-  .item-status {
-    grid-column-start: 1;
-    grid-column-end: 2;
   }
 }
 </style>

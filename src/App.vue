@@ -94,6 +94,9 @@ main {
 .max-container {
   max-width: 1248px !important;
 }
+.narrow-container {
+  max-width: 1024px !important;
+}
 
 @media only screen and (max-width: 600px) {
   main {

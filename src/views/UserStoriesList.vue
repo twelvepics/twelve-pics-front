@@ -1,10 +1,10 @@
 <template>
   <main>
-    <div class="container is-fluid max-container">
+    <div class="container is-fluid narrow-container">
       <!-- STORIES COLUMN -->
       <div class="columns is-centered" style="margin:0;padding:0;">
         <!-- CENTER COLUMNN -->
-        <div class="column is-three-quarters-desktop">
+        <div class="column">
           <!-- START LOADER / SERVER ERRORS-->
           <page-loader v-if="is_loading"></page-loader>
           <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
