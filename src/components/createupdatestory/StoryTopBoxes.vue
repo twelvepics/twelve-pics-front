@@ -50,7 +50,7 @@
     <!-- ENDS LAYOUT BOX -->
     <!-- STATUS BOX -->
     <!-- STATUS PUBLISHED -->
-    <div v-if="story.status === 'published'" class="hide-if-mobile item-status">
+    <div v-if="story.status === 'published'" class="item-status">
       <article class="message is-success is-small box-has-shadow">
         <div class="message-header">
           <p>STATUS</p>

@@ -6,16 +6,32 @@
       handle=".handle"
       :animation="200"
       @change="draggableChange"
+      class="outer-grid-container"
     >
-      <div class="outer-grid-container">
-        <div
-          v-for="(pic, idx) in pics_uploaded"
-          :key="idx"
-          style="border: 1px solid #ccc"
-          class="outer-grid-item"
-          :class="{first: idx === 0}"
-        >
-          <div class="square">
+      <div
+        v-for="(pic, idx) in pics_uploaded"
+        :key="idx"
+        style="border: 1px solid #ccc"
+        class="outer-grid-item"
+        :class="{first: idx === 0}"
+      >
+        <div class="square">
+          <div class="icon-move">
+            <span class="icon icon-hover is-medium handle">
+              <font-awesome-icon class="fas fa-lg" icon="arrows-alt"></font-awesome-icon>
+            </span>
+          </div>
+          <div class="icon-edit" :class="isHorizontal(pic.small) ? 'horiz' : 'vert'">
+            <span class="icon icon-hover is-medium ptr">
+              <font-awesome-icon class="fas fa-lg" icon="edit" @click="openPicInfoModal(idx)"></font-awesome-icon>
+            </span>
+          </div>
+          <div class="icon-trash">
+            <span class="icon icon-hover has-text-danger is-medium ptr">
+              <font-awesome-icon class="fas fa-lg" icon="trash-alt" @click="removePic(idx)"></font-awesome-icon>
+            </span>
+          </div>
+          <div>
             <img :src="pic.medium.web_path" />
           </div>
         </div>
@@ -34,7 +50,13 @@ export default {
     Draggable
   },
   props: { pics_uploaded: Array },
-  mixins: [picsUploadedMixin]
+  mixins: [picsUploadedMixin],
+  methods: {
+    openPicInfoModal(idx) {
+      console.log("SET_PIC_INFO_CALL");
+      this.$emit("openPicInfoModal", idx);
+    }
+  }
 };
 </script>
 <style scoped>
@@ -47,7 +69,7 @@ export default {
 .handle {
   cursor: move;
 }
-.trash {
+.ptr {
   cursor: pointer;
 }
 .pic-horizontal {
@@ -64,11 +86,9 @@ export default {
   filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.2));
   /* Similar syntax to box-shadow */
 }
-
 .pics-uploaded-container {
   margin-top: 10px;
 }
-
 /******** grid ************/
 .outer-grid-container {
   display: grid;
@@ -87,7 +107,7 @@ export default {
   display: block;
   padding-bottom: 100%;
 }
-.square img {
+.square div img {
   position: absolute;
   max-width: 85%;
   max-height: 85%;
@@ -97,17 +117,31 @@ export default {
   bottom: 0;
   right: 0;
 }
-
-/* .image-div img {
-  max-height: 100%;
-  max-width: 100%;
-  width: auto;
-  height: auto;
+.icon-edit {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  z-index: 10;
+  color: #bbb;
+  font-size: 90%;
+}
+.icon-edit.vert {
   left: 0;
+  top: 28px;
+}
+.icon-edit.horiz {
+  left: 33px;
+  top: 0;
+}
+.icon-move {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  color: #bbb;
+  font-size: 90%;
+}
+.icon-trash {
+  position: absolute;
+  z-index: 10;
   right: 0;
-  margin: auto;
-} */
+  font-size: 90%;
+}
 </style>

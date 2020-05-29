@@ -18,9 +18,9 @@ export const picsUploadedMixin = {
       this.pics_uploaded.splice(idx, 1);
     },
     draggableChange() {
-      // console.log("draggable change");
+      console.log('draggable change');
       // console.log(evt);
-      // console.log(this);
+      console.log(this);
       console.log(this.caption_errors);
       this.resetPicsErrors();
     },

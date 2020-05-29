@@ -1,19 +1,62 @@
-import Vue from 'vue'
+import Vue from 'vue';
 
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-    faList, faSearch, faUser, faCog, faSignOutAlt, faEnvelope, faQuestion, faCamera,
-    faBan, faTrashAlt, faAlignLeft, faEye, faUpload, faFileCode, faArrowDown, faStar,
-    faArrowUp, faCheckCircle, faArrowsAlt
-} from '@fortawesome/free-solid-svg-icons'
+  faList,
+  faSearch,
+  faUser,
+  faCog,
+  faSignOutAlt,
+  faEnvelope,
+  faQuestion,
+  faCamera,
+  faBan,
+  faTrashAlt,
+  faAlignLeft,
+  faEye,
+  faUpload,
+  faFileCode,
+  faArrowDown,
+  faStar,
+  faArrowUp,
+  faCheckCircle,
+  faArrowsAlt,
+  faEdit,
+} from '@fortawesome/free-solid-svg-icons';
 import {
-    faFlickr, faFacebookSquare, faTwitterSquare, faInstagram
-} from '@fortawesome/free-brands-svg-icons'
+  faFlickr,
+  faFacebookSquare,
+  faTwitterSquare,
+  faInstagram,
+} from '@fortawesome/free-brands-svg-icons';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add(faList, faSearch, faUser, faCog, faEnvelope, faQuestion, faSignOutAlt, faCamera,
-    faBan, faTrashAlt, faAlignLeft, faEye, faUpload, faArrowDown, faArrowUp, faCheckCircle, faStar,
-    faFileCode, faArrowsAlt, faFlickr, faFacebookSquare, faTwitterSquare, faInstagram)
+library.add(
+  faList,
+  faSearch,
+  faUser,
+  faCog,
+  faEnvelope,
+  faQuestion,
+  faSignOutAlt,
+  faCamera,
+  faBan,
+  faTrashAlt,
+  faAlignLeft,
+  faEye,
+  faUpload,
+  faArrowDown,
+  faArrowUp,
+  faCheckCircle,
+  faStar,
+  faFileCode,
+  faArrowsAlt,
+  faFlickr,
+  faFacebookSquare,
+  faTwitterSquare,
+  faInstagram,
+  faEdit
+);
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-icon', FontAwesomeIcon);

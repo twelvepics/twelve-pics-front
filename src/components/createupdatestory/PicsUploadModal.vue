@@ -164,7 +164,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import axiosUpload from "../services/axiosUpload";
+import axiosUpload from "../../services/axiosUpload";
 import * as Sentry from "@sentry/browser";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;

@@ -88,13 +88,6 @@
 
                 <!-- -->
                 <!-- TOP BOXES -->
-                <!-- <component
-                  :is="topBoxes"
-                  :story="story"
-                  @selectLayout="selectPicsLayout"
-                  @saveStory="saveStory"
-                  @deleteStory="deleteStory"
-                />-->
                 <story-top-boxes
                   :story="story"
                   @selectLayout="selectPicsLayout"
@@ -206,7 +199,11 @@
                   <!-- END PIC UPLOAD BUTTON-->
                   <!-- UPLOADED PICS -->
                   <!-- LOOP PICS-->
-                  <component :is="picsUploadedComponent" :pics_uploaded="pics_uploaded"></component>
+                  <component
+                    :is="picsUploadedComponent"
+                    :pics_uploaded="pics_uploaded"
+                    @openPicInfoModal="openPicInfoMobileModal"
+                  ></component>
                   <!-- END UPLOADED PICS -->
                 </div>
                 <!-- END UPOLAD PICS -->
@@ -400,7 +397,7 @@
       <!-- END DEBUG -->
 
       <!-- -->
-      <!-- Message composer modal -->
+      <!-- Pics upload modal -->
       <pics-upload-modal
         :isActive="uploadModalActive"
         :maxUploads="maxUploads"
@@ -408,6 +405,14 @@
         @uploadModalClosed="closeUploadModal"
         @onPicUpload="picUploaded"
       ></pics-upload-modal>
+      <!-- Message composer modal -->
+      <pic-info-mobile-modal
+        :isActive="picInfoMobileModalActive"
+        :picId="picInfoMobileModalSelected"
+        :pic="pics_uploaded[picInfoMobileModalSelected]"
+        @picInfoMobileModalClosed="closePicInfoMobileModal"
+        @setPicInfo="mobileSetPicInfo"
+      ></pic-info-mobile-modal>
     </div>
   </main>
 </template>
@@ -419,11 +424,12 @@ import Toast from "../components/Toast.vue";
 import StoryTopBoxes from "../components/createupdatestory/StoryTopBoxes.vue";
 import PicsUploadedMobile from "../components/createupdatestory/PicsUploadedMobile.vue";
 import PicsUploadedFull from "../components/createupdatestory/PicsUploadedFull.vue";
+import PicInfoMobileModal from "../components/createupdatestory/PicInfoMobileModal.vue";
 import axiosBase from "../services/axiosBase";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
 import * as Sentry from "@sentry/browser";
 import { mapGetters } from "vuex";
-import PicsUploadModal from "../components/PicsUploadModal.vue";
+import PicsUploadModal from "../components/createupdatestory/PicsUploadModal.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
 import { categoriesList } from "../utils/categories";
 
@@ -451,7 +457,8 @@ export default {
     Toast,
     StoryTopBoxes,
     PicsUploadedMobile,
-    PicsUploadedFull
+    PicsUploadedFull,
+    PicInfoMobileModal
   },
   data() {
     return {
@@ -517,6 +524,10 @@ export default {
       // pics uploaded --------------------
       pics_uploaded: [],
       maxUploads: MAX_PICS,
+
+      // pic info mobile modal ------------
+      picInfoMobileModalActive: false,
+      picInfoMobileModalSelected: null,
 
       // toast -----------------------------
       showToast: false,
@@ -747,7 +758,29 @@ export default {
         large: pic.large
       });
     },
-
+    // pic info mobile ----------------------------------------
+    // closePicInfoMobileModal
+    closePicInfoMobileModal() {
+      console.log("CLOSE_PIC_INFO_MOBILE_MODAL");
+      unlockBgScroll();
+      this.picInfoMobileModalActive = false;
+      // console.log(this.picInfoMobileModalActive);
+      this.$nextTick(() => {
+        this.picInfoMobileModalSelected = null;
+      });
+    },
+    // openUploadModal
+    openPicInfoMobileModal(picId) {
+      console.log("OPEN_PIC_INFO_MOBILE_MODAL");
+      lockBgScroll();
+      this.picInfoMobileModalActive = true;
+      this.picInfoMobileModalSelected = picId;
+      console.log(this.picInfoMobileModalSelected);
+      console.log(typeof this.picInfoMobileModalSelected);
+    },
+    mobileSetPicInfo(idx) {
+      console.log(`mobileSetPicInfo => ${idx}`);
+    },
     // location ------------------------------------------------
     // searchLocation
     async searchLocation(e) {
@@ -846,6 +879,9 @@ export default {
       // pics uploaded
       this.pics_uploaded = [];
       this.submit_pending = false;
+      // pic info mobile modal ------------
+      this.picInfoMobileModalActive = false;
+      this.picInfoMobileModalSelected = null;
     },
 
     // cancel ----------------------------------------------------
