@@ -2,51 +2,41 @@
   <div class="modal" id="pic-info-modal" :class="{ 'is-active': isActive }">
     <div class="modal-background"></div>
     <div class="modal-content">
-      <form class="message" @submit.prevent="onSubmit" novalidate v-if="pic">
+      <form class="message" @submit.prevent="onSubmit" novalidate>
         <div class="message-header">
           <p class="is-1">Image caption</p>
           <button class="delete is-medium" id="pic-info-close" @click.prevent="cancel"></button>
         </div>
         <!-- pic -->
-        <div class="message-body">
+        <div class="message-body" v-if="pic">
           <div class="pic-info-img">
             <img :src="pic.medium.web_path" />
           </div>
-
           <!-- caption -->
           <div class="field">
-            <!-- <label
-            class="label"
-            v-if="caption_errors.includes(idx)"
-            style="color:red"
-          >Caption must be max 256 characters</label>
-            <label class="label" v-else>Caption</label>-->
             <label class="label">Caption</label>
-            <!--- XOXO --->
-            <!--- XOXO --->
-            <!-- <div class="control">
-            <textarea
-              class="textarea"
-              :class="{ 'is-danger': caption_errors.includes(idx) }"
-              placeholder="Enter your caption"
-              rows="1"
-              :value="pic.caption"
-              @input="setCaption(idx, $event)"
-            ></textarea>-->
             <div class="control">
               <textarea
                 class="textarea"
                 placeholder="Enter your caption"
                 rows="2"
                 :value="pic.caption"
+                ref="caption"
               ></textarea>
             </div>
           </div>
           <!-- alt -->
           <div class="field">
-            <label class="label">Description (alt tag)</label>
+            <label class="label">Description (Alt tag)</label>
             <div class="control">
-              <input class="input" type="text" :value="pic.caption" @keydown.enter.prevent />
+              <input
+                class="input"
+                type="text"
+                placeholder="A short description"
+                :value="pic.description"
+                @keydown.enter.prevent
+                ref="description"
+              />
             </div>
           </div>
           <!-- buttons -->
@@ -64,22 +54,33 @@
   </div>
 </template>
 <script>
+import { picsUploadedMixin } from "../../mixins/picsUploadedMixin";
 export default {
-  props: ["isActive", "picId", "pic"],
+  props: ["isActive", "picId", "pic", "pics_uploaded"],
+  mixins: [picsUploadedMixin],
   data() {
-    return {
-      caption: ""
-    };
+    return {};
   },
   methods: {
     save() {
       console.log("__SAVE__");
       // check caption / alt valid?
       // emit save?
+      this.pics_uploaded[this.picId].caption = this.$refs["caption"].value;
+      this.pics_uploaded[this.picId].description = this.$refs[
+        "description"
+      ].value;
+      this.$emit("picInfoMobileModalClosed");
     },
     cancel() {
       this.$emit("picInfoMobileModalClosed");
     }
+  },
+  mounted() {
+    console.log("__MOUNTED__");
+  },
+  created() {
+    console.log("__PICINFO___CREATED__");
   }
 };
 </script>

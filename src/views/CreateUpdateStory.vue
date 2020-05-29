@@ -410,6 +410,7 @@
         :isActive="picInfoMobileModalActive"
         :picId="picInfoMobileModalSelected"
         :pic="pics_uploaded[picInfoMobileModalSelected]"
+        :pics_uploaded="pics_uploaded"
         @picInfoMobileModalClosed="closePicInfoMobileModal"
         @setPicInfo="mobileSetPicInfo"
       ></pic-info-mobile-modal>
@@ -527,7 +528,7 @@ export default {
 
       // pic info mobile modal ------------
       picInfoMobileModalActive: false,
-      picInfoMobileModalSelected: null,
+      picInfoMobileModalSelected: 0,
 
       // toast -----------------------------
       showToast: false,
@@ -766,7 +767,7 @@ export default {
       this.picInfoMobileModalActive = false;
       // console.log(this.picInfoMobileModalActive);
       this.$nextTick(() => {
-        this.picInfoMobileModalSelected = null;
+        this.picInfoMobileModalSelected = 0;
       });
     },
     // openUploadModal
