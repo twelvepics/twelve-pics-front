@@ -409,7 +409,7 @@
       <pic-info-mobile-modal
         :isActive="picInfoMobileModalActive"
         :picId="picInfoMobileModalSelected"
-        :pic="pics_uploaded[picInfoMobileModalSelected]"
+        :pic="pics_uploaded[picInfoMobileModalSelected] ? JSON.parse(JSON.stringify(pics_uploaded[picInfoMobileModalSelected])) : ''"
         :pics_uploaded="pics_uploaded"
         @picInfoMobileModalClosed="closePicInfoMobileModal"
         @setPicInfo="mobileSetPicInfo"

@@ -14,20 +14,32 @@
           </div>
           <!-- caption -->
           <div class="field">
-            <label class="label">Caption</label>
+            <label
+              class="label"
+              v-if="caption_error"
+              style="color:red"
+            >Caption must be max 256 characters</label>
+            <label class="label" v-else>Caption</label>
             <div class="control">
               <textarea
                 class="textarea"
+                :class="{ 'is-danger': caption_error }"
                 placeholder="Enter your caption"
                 rows="2"
                 :value="pic.caption"
+                @input="checkCaption($event)"
                 ref="caption"
               ></textarea>
             </div>
           </div>
           <!-- alt -->
           <div class="field">
-            <label class="label">Description (Alt tag)</label>
+            <label
+              class="label"
+              v-if="description_error"
+              style="color:red"
+            >Description must be max 64 characters</label>
+            <label class="label" v-else>Description (Alt tag)</label>
             <div class="control">
               <input
                 class="input"
@@ -35,6 +47,7 @@
                 placeholder="A short description"
                 :value="pic.description"
                 @keydown.enter.prevent
+                @input="checkDescription($event)"
                 ref="description"
               />
             </div>
@@ -42,7 +55,12 @@
           <!-- buttons -->
           <div class="field is-grouped submit-buttons">
             <div class="control">
-              <button class="button is-primary" type="submit" @click.prevent="save">Save</button>
+              <button
+                class="button is-primary"
+                :disabled="caption_error || description_error"
+                type="submit"
+                @click.prevent="save"
+              >Save</button>
             </div>
             <div class="control">
               <button class="button is-light" @click.prevent="cancel">Cancel</button>
@@ -55,15 +73,23 @@
 </template>
 <script>
 import { picsUploadedMixin } from "../../mixins/picsUploadedMixin";
+const CAPTION_MAXLEN = 256;
+const DESCRIPTION_MAXLEN = 64;
 export default {
   props: ["isActive", "picId", "pic", "pics_uploaded"],
   mixins: [picsUploadedMixin],
   data() {
-    return {};
+    return {
+      caption_error: false,
+      description_error: false
+    };
   },
   methods: {
     save() {
       console.log("__SAVE__");
+      if (this.caption_error || this.description_error) {
+        return;
+      }
       // check caption / alt valid?
       // emit save?
       this.pics_uploaded[this.picId].caption = this.$refs["caption"].value;
@@ -73,7 +99,31 @@ export default {
       this.$emit("picInfoMobileModalClosed");
     },
     cancel() {
+      this.resetErrors();
       this.$emit("picInfoMobileModalClosed");
+    },
+    resetErrors() {
+      this.caption_error = false;
+      this.description_error = false;
+    },
+    checkCaption(event) {
+      console.log("CHECK_CAPTION");
+      console.log(this.CAPTION_MAXLEN);
+      this.pic.caption = event.target.value;
+      if (this.pic.caption.length > CAPTION_MAXLEN) {
+        this.caption_error = true;
+      } else {
+        this.caption_error = false;
+      }
+    },
+    checkDescription() {
+      console.log("CHECK_DESCRIPTION");
+      this.pic.description = event.target.value;
+      if (this.pic.description.length > DESCRIPTION_MAXLEN) {
+        this.description_error = true;
+      } else {
+        this.description_error = false;
+      }
     }
   },
   mounted() {
