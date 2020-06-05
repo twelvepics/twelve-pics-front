@@ -1,0 +1,53 @@
+Links / action available depending of context / current page
+---------------------------------------------------------------
+
+---------------------------------------------------------------
+-> Logged in
+---------------------------------------------------------------
+- home ---
+  All
+
+- search ---
+  EXCLUDE: [Filter cats]
+
+- starred ---
+  EXCLUDE: [Filter cats, search stories]
+
+- post story ---
+  EXCLUDE: [Filter cats, search stories]
+  GREYED/INACTIVE: [post story]
+
+- profile / edit profile / list stories
+  EXCLUDE: [Filter cats, search stories]
+
+- Contact us / About --- 
+  EXCLUDE: [Filter cats, search stories]
+
+  
+---------------------------------------------------------------
+-> Not logged in
+---------------------------------------------------------------
+- home ---
+  all
+    Filter cats, Search box, SignUp SignIn Buttons
+    Menu: [Contact, About]
+
+- search ---
+  EXCLUDE: Filter cats
+
+- Contact us / About --- 
+  EXCLUDE: [Filter cats, search stories]
+
+
+######################################
+# filters
+######################################
+-> in Header.vue, passed as props
+  isAuthenticated,
+  authenticatedUser
+
+-> in headerDisplayMixin
+  showCatsFilter
+  showSearchBox
+  postDisabled
+

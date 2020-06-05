@@ -19,7 +19,11 @@
       <!-- START -->
       <div class="navbar-start" style="flex-grow:1; justify-content: center;">
         <!-- CATEGORIES-->
-        <div class="navbar-item" style="flex-grow: 1;justify-content: flex-end;margin-right:18px;">
+        <div
+          class="navbar-item"
+          v-show="showCatsSelectButton"
+          style="flex-grow: 1;justify-content: flex-end;margin-right:18px;"
+        >
           <div id="filter-categories-lnk" class="nav-lnk">
             <a class="categoriesBtnColor" @click.prevent="selectCategories">
               <span class="fa-icon-pr4">
@@ -31,7 +35,7 @@
         </div>
         <!-- END CATEGROIES -->
         <!-- SEARCH INPUT -->
-        <div class="navbar-item" style="flex-grow:2;">
+        <div class="navbar-item" v-show="showSearchBox" style="flex-grow:2;">
           <div class="field has-addons">
             <div class="control">
               <input
@@ -84,6 +88,7 @@
               id="post-story-btn"
               @click="newStory"
               v-if="isAuthenticated"
+              :disabled="disablePostStoryButton"
             >
               <strong>Post a story</strong>
             </button>
@@ -191,6 +196,7 @@
 
 <script>
 import vClickOutside from "v-click-outside";
+import { headerDisplayMixin } from "../../mixins/headerDisplayMixin";
 
 export default {
   name: "NavbarFull",
@@ -198,6 +204,7 @@ export default {
   directives: {
     clickOutside: vClickOutside.directive
   },
+  mixins: [headerDisplayMixin],
   data: function() {
     return {
       showDropdown: false,
@@ -298,5 +305,8 @@ export default {
 }
 .navbar.is-dark .navbar-end .navbar-link {
   color: #ddd;
+}
+.hide-me {
+  visibility: hidden;
 }
 </style>

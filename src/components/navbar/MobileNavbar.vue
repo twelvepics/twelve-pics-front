@@ -39,9 +39,13 @@
           <a class="button is-dark is-inverted is-outlined" @click.prevent="signin">Sign-in</a>
         </div>
         <div class="navbar-item buttons" v-else>
-          <a class="button is-dark is-inverted is-outlined" @click.prevent="newStory">Post a story</a>
+          <a
+            class="button is-dark is-inverted is-outlined"
+            @click.prevent="newStory"
+            :disabled="disablePostStoryButton"
+          >Post a story</a>
         </div>
-        <div class="navbar-item">
+        <div class="navbar-item" v-show="showSearchBox">
           <div class="field">
             <div class="control">
               <input
@@ -59,7 +63,7 @@
         <!-- navbar items -->
 
         <!-- CATEGORIES -->
-        <a class="navbar-item" @click.prevent="selectCategories">
+        <a class="navbar-item" @click.prevent="selectCategories" v-show="showCatsSelectButton">
           <span class="fa-icon-pr7">
             <font-awesome-icon icon="list"></font-awesome-icon>
           </span>
@@ -159,6 +163,7 @@
 </template>
 <script>
 import vClickOutside from "v-click-outside";
+import { headerDisplayMixin } from "../../mixins/headerDisplayMixin";
 
 export default {
   name: "NavbarMobile",
@@ -166,6 +171,7 @@ export default {
     clickOutside: vClickOutside.directive
   },
   props: { isAuthenticated: Boolean, authenticatedUser: Object },
+  mixins: [headerDisplayMixin],
   data() {
     return {
       showBurgerDropdown: false,
@@ -309,5 +315,9 @@ a.navbar-item.is-active,
 }
 .navbar-burger:hover {
   background-color: #363636;
+}
+.button.is-dark.is-inverted.is-outlined[disabled] {
+  color: #8f8686;
+  border-color: #8f8686;
 }
 </style>
