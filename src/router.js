@@ -237,10 +237,30 @@ export default new Router({
     },
   ],
   // eslint-disable-next-line
+  // scrollBehavior(to, from, savedPosition) {
+  //   console.log('scroll behavior');
+  //   console.log(savedPosition);
+  //   if (['home'].includes(to.name)) {
+  //     return {
+  //       x: 0,
+  //       y: 0,
+  //     };
+  //   } else {
+  //     return {
+  //       x: 0,
+  //       y: savedPosition.y,
+  //     };
+  //   }
+  // },
+
   scrollBehavior(to, from, savedPosition) {
-    return {
-      x: 0,
-      y: 0,
-    };
+    console.log('scroll behavior');
+    console.log(savedPosition);
+    if (!['home', 'starred', 'search'].includes(to.name)) {
+      return {
+        x: 0,
+        y: 0,
+      };
+    }
   },
 });

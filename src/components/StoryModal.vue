@@ -82,8 +82,7 @@ export default {
   methods: {
     ...mapActions([
       "setStoryComponentMounted",
-      "resetStoryComponentHomeLayout",
-      "resetStoryComponentGenericLayout"
+      "resetStoryComponentHomeLayout"
     ]),
     elapsed() {
       return timeSince(this.story.date_created);
@@ -126,7 +125,6 @@ export default {
   },
   beforeDestroy() {
     console.log("StoryModal beforeDestroy");
-    // this.resetStoryComponentGenericLayout();
     this.resetStoryComponentHomeLayout();
   },
   destroy() {

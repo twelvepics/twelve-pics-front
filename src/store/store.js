@@ -3,11 +3,7 @@ import Vuex from 'vuex';
 import axiosBase from '../services/axiosBase';
 ////////////////////////////////////////////////////////////
 
-import {
-  setHomeLayout,
-  resetHomeLayout,
-  resetGenericLayout,
-} from '../utils/utils';
+import { setHomeLayout, resetHomeLayout } from '../utils/utils';
 import { categoriesList } from '../utils/categories';
 
 ////////////////////////////////////////////////////////////
@@ -67,11 +63,6 @@ export default new Vuex.Store({
     resetStoryComponentHomeLayout: (state) => {
       // console.log('Story unmounted, we must reset the layout to its initial state');
       resetHomeLayout();
-      state.storyComponentMounted = false;
-    },
-    resetStoryComponentGenericLayout: (state) => {
-      // console.log('Story unmounted, we must reset the layout to its initial state');
-      resetGenericLayout();
       state.storyComponentMounted = false;
     },
     userToState: (state, userData) => {
@@ -151,9 +142,6 @@ export default new Vuex.Store({
     },
     resetStoryComponentHomeLayout: ({ commit }) => {
       commit('resetStoryComponentHomeLayout');
-    },
-    resetStoryComponentGenericLayout: ({ commit }) => {
-      commit('resetStoryComponentGenericLayout');
     },
     // SIGNUP
     // eslint-disable-next-line

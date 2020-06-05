@@ -9,7 +9,6 @@ const isWebkit = function() {
     return false;
   }
 };
-
 exports.setHomeLayout = function() {
   console.log('#--- START setHomeLayout ---#');
   const scrollY = document.documentElement.style.getPropertyValue('--scroll-y');
@@ -28,9 +27,9 @@ exports.setHomeLayout = function() {
 
 exports.resetHomeLayout = function() {
   console.log('#--- START resetHomeLayout ---#');
-  console.log(`scrollY -> ${scrollY}`);
   const body = document.body;
   const scrollY = body.style.top;
+  console.log(`scrollY -> ${scrollY}`);
   body.style.position = '';
   body.style.top = '';
   window.scrollTo(0, parseInt(scrollY || '0') * -1);
@@ -41,20 +40,6 @@ exports.resetHomeLayout = function() {
     h.classList.remove('frf-hide-sb');
   }
   console.log('#--- END resetHomeLayout ---#');
-};
-
-exports.resetGenericLayout = function() {
-  console.log('resetGenericLayout');
-  const body = document.body;
-  // const scrollY = body.style.top;
-  body.style.position = '';
-  body.style.top = '';
-  if (isWebkit()) {
-    body.classList.remove('no-scrollbar-webkit');
-  } else {
-    const h = document.getElementsByTagName('html')[0];
-    h.classList.remove('frf-hide-sb');
-  }
 };
 
 exports.lockBgScroll = function() {
