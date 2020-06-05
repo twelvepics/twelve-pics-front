@@ -11,10 +11,9 @@
       <div class="columns is-mobile" style="margin:0;padding:0;">
         <div
           v-if="story"
-          class="column"
-          style="padding-left:35px;"
+          class="column summit"
         >{{story.author_info.display_name || story.author_info.username}} - {{ elapsed() }}</div>
-        <div v-if="story" class="column is-narrow has-text-right" style="padding-right:35px;">
+        <div v-if="story" class="column is-narrow has-text-right closer">
           <span style="font-weight:medium;padding-right:3px;">
             <a @click.prevent="closeStory()">CLOSE</a>
           </span>
@@ -137,7 +136,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /***** SCROLL BAR WEBKIT & GECKO *****/
 .story-modal {
   display: none;
@@ -192,12 +191,16 @@ html.frf-hide-sb {
   height: 45px;
   color: white;
 }
-
 .heady a,
 .heady a:hover {
   color: white;
 }
-
+.heady .summit {
+  padding-left: 22px;
+}
+.heady .closer {
+  padding-right: 20px;
+}
 /*** content takes all width if <= 1024 ***/
 @media only screen and (max-width: 1024px) {
   .story-modal {
@@ -208,6 +211,12 @@ html.frf-hide-sb {
 @media only screen and (max-width: 600px) {
   .heady {
     font-size: 90%;
+  }
+  .heady .summit {
+    padding-left: 15px;
+  }
+  .heady .closer {
+    padding-right: 15px;
   }
   .story-modal-content {
     background-color: #eff0eb;

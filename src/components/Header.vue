@@ -210,9 +210,24 @@ export default {
     console.log("#--- updated ---#");
   },
   beforeDestroy: function() {
-    console.log("#--- beforeDestroy ---#");
+    console.log("#--- HEADER beforeDestroy ---#");
     _mql.removeListener(this.handleWindowChange);
     // _mql = null; // ?
+  },
+  watch: {
+    // if back button while a modal is open
+    // TO BE TESTED -> TOMORROW MORNING
+    // IS THIS
+    $route(to, from) {
+      console.log("HEADER ROUTE WATCHER");
+      console.log(to);
+      console.log(from);
+      console.log(this.modal);
+      if (from.name === "home" && this.modal !== null) {
+        console.log("HEADER ROUTE WATCHER - PLEASE CLOSE MODAL");
+        this.closeModal();
+      }
+    }
   }
 };
 </script>

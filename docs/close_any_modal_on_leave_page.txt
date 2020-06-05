@@ -1,0 +1,6 @@
+And reenable scroll if it was disabled
+
+Pages concerned (having moadls):
+------------------
+- home
+- create edit story

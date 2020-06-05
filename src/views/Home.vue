@@ -201,7 +201,7 @@ export default {
     EventBus.$off("categoriesChanged");
     EventBus.$off("searchTriggered");
     EventBus.$off("login");
-    console.log("#--- beforeDestroy ---#");
+    console.log("#--- HOME beforeDestroy ---#");
     _mql.removeListener(this.handleWindowChange);
     // _mql = null; // ?
   },

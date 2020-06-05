@@ -1035,8 +1035,10 @@ export default {
     // will be reused, and this hook will be called when that happens.
     // has access to `this` component instance.
   },
-  // beforeRouteLeave(to, from, next) {
-  // },
+  beforeRouteLeave(to, from, next) {
+    unlockBgScroll();
+    next();
+  },
   created() {
     _mql = window.matchMedia("(max-width: 999px)");
     console.log(_mql.matches);

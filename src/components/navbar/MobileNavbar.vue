@@ -8,7 +8,7 @@
     <!-- NAVBAR-BRAND -->
     <div class="navbar-brand">
       <div class="navbar-item" style="padding-bottom:0">
-        <router-link to="/">
+        <router-link to="/" @click.native="hideBurgerDropdown()">
           <img src="/img/logo_v2.png" alt="12 pics logo" />
         </router-link>
       </div>
