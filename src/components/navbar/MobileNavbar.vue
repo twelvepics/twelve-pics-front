@@ -260,7 +260,7 @@ a.navbar-item.is-active,
 .navbar-link:focus-within,
 // .navbar-link:hover,
 .navbar-link.is-active {
-  background-color: #363636;
+  background-color: #505050;
   color: #ddd;
 }
 .navbar.is-dark .navbar-start > a.navbar-item:hover,
