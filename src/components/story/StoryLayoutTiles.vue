@@ -5,7 +5,7 @@
   >
     <a
       class="delete is-medium"
-      style="position:absolute;right:5px;top:5px;background:#777;"
+      style="position:absolute;right:5px;top:5px;background:#777;z-index:100;"
       @click="closeImage"
       v-show="isImageSelected"
     ></a>

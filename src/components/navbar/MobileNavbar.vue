@@ -213,10 +213,24 @@ export default {
     searchSubmit() {
       this.$emit("searchStories", this.searchTerms);
       this.hideBurgerDropdown();
+    },
+    resetSearch() {
+      this.searchTerms = "";
     }
   },
   created() {
     console.log(`Mobile navbar onCreated => ${this.isAuthenticated}`);
+  },
+  watch: {
+    // if back button while a modal is open
+    // TO BE TESTED -> TOMORROW MORNING
+    // IS THIS
+    $route(to) {
+      if (to.name === "home") {
+        console.log("Reset search");
+        this.resetSearch();
+      }
+    }
   }
 };
 </script>
