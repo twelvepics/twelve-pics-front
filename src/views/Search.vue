@@ -2,8 +2,22 @@
   <!-- START MAIN CONTENT -->
   <main>
     <div class="container is-fluid max-container" ref="stories-container">
+      <!-- YOLO -->
+      <!-- <div class="columns">
+        <div class="column auto">
+          <div class="box">Search terms: GO GO GO YOLO</div>
+        </div>
+      </div>-->
+      <!-- YOLO -->
+
       <div class="columns">
         <div class="column auto">
+          <!-- YOLO -->
+          <div class="box search-terms">
+            <span class="st-label">Search terms:</span>
+            {{searchStr && searchStr.trim()}}
+          </div>
+          <!-- YOLO -->
           <!-- STORIES -->
           <div>
             <component v-for="(story, idx) in stories" :key="idx" :story="story" :is="storyBrief"></component>
@@ -220,4 +234,13 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.search-terms {
+  padding: 0.5rem 1rem;
+}
+.search-terms .st-label {
+  color: #999;
+  font-weight: bold;
+  font-size: 95%;
+}
+</style>

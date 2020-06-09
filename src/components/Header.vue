@@ -128,29 +128,11 @@ export default {
       });
     },
     async searchSubmit(searchTerms) {
-      // console.log(`Search submitted => ${searchTerms}`);
-      // this.$router.push({ name: "search", query: { q: searchTerms } });
+      // sent to either home or search page
       if (searchTerms.trim().length) {
-        EventBus.$emit("searchTriggered", searchTerms);
+        EventBus.$emit("searchTriggered", searchTerms.trim());
       }
     },
-    // async logout() {
-    //   await this.$store.dispatch("logout");
-    //   this.toastIt({
-    //     message: ["You are now signed out"],
-    //     messageType: "toast-bottom is-success"
-    //   });
-    //   this.$router
-    //     .push({
-    //       name: "home"
-    //     })
-    //     .catch(err => {
-    //       if (err.name != "NavigationDuplicated") {
-    //         console.log(err);
-    //         Sentry.captureException(err);
-    //       }
-    //     });
-    // },
     async logout() {
       await this.$store.dispatch("logout");
       this.toastIt({
