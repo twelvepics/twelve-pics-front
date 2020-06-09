@@ -182,12 +182,19 @@ export default {
       const [story_to_update] = this.stories.filter(s => s._key === story._key);
       // console.log(story_to_update);
       story_to_update.comments_count = story.comments_count;
+    },
+    async onCategoriesChanged() {
+      this.changeFilter();
     }
   },
   mounted() {
     console.log("Search mounted");
     EventBus.$on("searchTriggered", searchStr => {
       this.onSearchTriggered(searchStr);
+    });
+    EventBus.$on("categoriesChanged", () => {
+      // console.log("_CATEGORIES_CHANGED_");
+      this.onCategoriesChanged();
     });
   },
   created() {
