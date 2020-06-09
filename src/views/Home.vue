@@ -41,7 +41,7 @@ import InfiniteLoading from "vue-infinite-loading";
 import { EventBus } from "../event-bus.js";
 import { mapActions, mapGetters } from "vuex";
 import store from "@/store/store.js";
-import { categoriesToIds } from "@/utils/categories.js";
+import { categoriesList, categoriesToIds } from "@/utils/categories.js";
 import axiosBase from "../services/axiosBase";
 import FullStoryBrief from "../components/storybrief/FullStoryBrief.vue";
 import MobileStoryBrief from "../components/storybrief/MobileStoryBrief.vue";
@@ -113,13 +113,17 @@ export default {
           await this.$store.dispatch("initUser");
         }
         let params = {};
+        let categoriesStr = "all";
         // not authenticated user, need to send categories as a qs
+        // defaults to all
         const categories = store.getters.getCategories;
-        const categories_by_ids = categories
-          .map(c => categoriesToIds[c])
-          .sort((a, b) => a - b)
-          .join("-");
-        params.categories = categories_by_ids;
+        if (categories.length !== categoriesList.length) {
+          categoriesStr = categories
+            .map(c => categoriesToIds[c])
+            .sort((a, b) => a - b)
+            .join("-");
+        }
+        params.categories = categoriesStr;
         params.page = this.page;
         const response = await axiosBase.get(`/stories`, {
           params

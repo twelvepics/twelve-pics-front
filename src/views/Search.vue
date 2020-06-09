@@ -2,14 +2,6 @@
   <!-- START MAIN CONTENT -->
   <main>
     <div class="container is-fluid max-container" ref="stories-container">
-      <!-- YOLO -->
-      <!-- <div class="columns">
-        <div class="column auto">
-          <div class="box">Search terms: GO GO GO YOLO</div>
-        </div>
-      </div>-->
-      <!-- YOLO -->
-
       <div class="columns">
         <div class="column auto">
           <!-- YOLO -->
@@ -36,7 +28,6 @@
               </div>
             </infinite-loading>
           </div>
-
           <!-- END STORIES -->
         </div>
         <!-- <div class="is-divider-vertical"></div> -->
@@ -52,12 +43,13 @@
 <script>
 // eslint-disable-next-line
 import Vue from "vue";
+import store from "@/store/store.js";
 import * as Sentry from "@sentry/browser";
 import InfiniteLoading from "vue-infinite-loading";
 import { EventBus } from "../event-bus.js";
 import { mapActions, mapGetters } from "vuex";
 import axiosBase from "../services/axiosBase";
-// import StoryModal from "../components/StoryModal.vue";
+import { categoriesList, categoriesToIds } from "@/utils/categories.js";
 import FullStoryBrief from "../components/storybrief/FullStoryBrief.vue";
 import MobileStoryBrief from "../components/storybrief/MobileStoryBrief.vue";
 import PageLoader from "../components/PageLoader.vue";
@@ -127,10 +119,24 @@ export default {
         console.log(`Fetching page ${this.page}`);
         // await new Promise(resolve => setTimeout(resolve, 1000));
         let params = {};
+        // need a page
         if (this.page > 1) {
           params.page = this.page;
         }
+        // and a searchStr
         params.q = this.searchStr;
+        // filter on selected categories too
+        // defaults to all
+        let categoriesStr = "all";
+        const categories = store.getters.getCategories;
+        if (categories.length !== categoriesList.length) {
+          categoriesStr = categories
+            .map(c => categoriesToIds[c])
+            .sort((a, b) => a - b)
+            .join("-");
+        }
+        params.categories = categoriesStr;
+        // go
         const response = await axiosBase.get(`/stories/search`, {
           params
         });
@@ -152,7 +158,13 @@ export default {
     async onSearchTriggered(searchStr) {
       console.log(`Search for "${searchStr}"`);
       this.changeFilter();
-      this.$router.push({ name: "search", query: { q: searchStr } });
+      this.$router
+        .push({ name: "search", query: { q: searchStr } })
+        .catch(e => {
+          if (e.name === "Error") {
+            // silent error on same page request
+          }
+        });
     },
     async infiniteHandler($state) {
       await this.fetchStories($state);
