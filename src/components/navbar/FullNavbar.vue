@@ -258,10 +258,14 @@ export default {
     // if back button while a modal is open
     // TO BE TESTED -> TOMORROW MORNING
     // IS THIS
-    $route(to) {
+    $route(to, from) {
+      console.log(`_FROM_: ${from.name}`);
       if (to.name === "home") {
         console.log("Reset search");
         this.resetSearch();
+      } else if (to.name === "search" && from.name === null) {
+        console.log("YOLO");
+        this.searchTerms = this.$route.query.q;
       }
     }
   }

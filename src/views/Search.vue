@@ -188,7 +188,8 @@ export default {
     }
   },
   mounted() {
-    console.log("Search mounted");
+    console.log("_SEARCH_MOUNTED_");
+    console.log(`=> ${this.searchStr}`);
     EventBus.$on("searchTriggered", searchStr => {
       this.onSearchTriggered(searchStr);
     });
