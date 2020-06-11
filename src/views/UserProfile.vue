@@ -73,14 +73,14 @@
                   <!-- ABOUT ME -->
                   <div class="field user-info ta-html" v-if="user.profile.about_me">
                     <h5 class="has-text-weight-semibold is-2">A few worlds about me</h5>
-                    <p class="is-size-6" v-html="nl2p(user.profile.about_me)"></p>
+                    <p class="is-size-6" v-html="nl2br(user.profile.about_me)"></p>
                   </div>
                   <!-- ABOUT ME -->
 
                   <!-- TECH STUFF -->
                   <div class="field user-info ta-html" v-if="user.profile.inspiration">
                     <h5 class="has-text-weight-semibold is-2">Gear, technique, inspiration</h5>
-                    <p class="is-size-6" v-html="nl2p(user.profile.inspiration)"></p>
+                    <p class="is-size-6" v-html="nl2br(user.profile.inspiration)"></p>
                   </div>
                   <!-- TECH STUFF -->
 
@@ -174,16 +174,7 @@
         <!-- CENTER COLUMNN -->
         <div class="column is-three-quarters-desktop">
           <!-- START PROFILE -->
-          <div class="card" style="padding:20px;">
-            <!-- 
-          <router-link :to="{ name: 'user', params: { username: 'sboobi' } }">Sboobi</router-link>
-          <br />
-          <router-link :to="{ name: 'user', params: { username: 'empty' } }">Empty</router-link>
-          <br />
-          <router-link :to="{ name: 'user', params: { username: 'emptou' } }">Emptou</router-link>
-            <br />-->
-            Email confirmed: {{ userEmailConfirmed }}
-          </div>
+          <div class="card" style="padding:20px;">Email confirmed: {{ userEmailConfirmed }}</div>
         </div>
       </div>
     </div>
@@ -245,8 +236,8 @@ export default {
       );
       this.confirmEmailSent = true;
     },
-    nl2p: function(str) {
-      return str.replace(/(?:\r\n|\r|\n)/g, "<br>");
+    nl2br: function(str) {
+      return str.replace(/(?:\r\n|\r|\n)+/g, "<br>");
     },
     async fetchData() {
       try {
@@ -471,6 +462,7 @@ div.ta-html br {
 .card {
   margin-bottom: 2rem;
 }
+
 @media only screen and (max-width: 600px) {
   .card-content {
     margin: 0;
