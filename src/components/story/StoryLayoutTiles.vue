@@ -37,20 +37,15 @@
         <div
           class="caption"
           style="text-align:left;"
-        >{{ imageSelected !== null && pics[imageSelected].caption }}</div>
+          v-html="imageSelected !== null && nl2br(pics[imageSelected].caption)"
+        ></div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-//  breakpoints: { // default breakpoints - customize this
-//     mobile: 768,
-//     tablet: 1023,
-//     desktop: 1215,
-//     widescreen: 1407,
-//     fullhd: Infinity,
-//   }
+import { nl2br } from "../../utils/typography";
 export default {
   props: ["pics", "tiles"],
   data() {
@@ -141,7 +136,8 @@ export default {
       total = this.resampler(total);
       return `${total}px`;
     },
-    picHeight() {}
+    picHeight() {},
+    nl2br
   },
   mounted() {
     console.log("#--- pics tiles mounted ---#");

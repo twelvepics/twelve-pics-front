@@ -43,8 +43,6 @@ import * as Sentry from "@sentry/browser";
 import InfiniteLoading from "vue-infinite-loading";
 import { mapActions, mapGetters } from "vuex";
 import axiosBase from "../services/axiosBase";
-// import StoryModal from "../components/StoryModal.vue";
-// import StoryBrief from "../components/StoryBrief.vue";
 import FullStoryBrief from "../components/storybrief/FullStoryBrief.vue";
 import MobileStoryBrief from "../components/storybrief/MobileStoryBrief.vue";
 import PageLoader from "../components/PageLoader.vue";

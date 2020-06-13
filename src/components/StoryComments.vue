@@ -61,7 +61,7 @@
           >- Max length 5000 Characters</span>
         </div>
         <div class="content comment" v-if="comment_edit_idx !== idx">
-          <p class="comment max-width-ized">{{ comment.comment }}</p>
+          <p class="comment max-width-ized" v-html="nl2br(comment.comment)"></p>
         </div>
         <!-- -->
         <div class="comment-edit" v-if="comment_edit_idx === idx">
@@ -92,6 +92,7 @@ import axiosBase from "../services/axiosBase";
 import { timeSince } from "../utils/dateutils";
 import { mapGetters } from "vuex";
 import * as Sentry from "@sentry/browser";
+import { nl2br } from "../utils/typography";
 
 export default {
   props: ["story_key"],
@@ -241,7 +242,8 @@ export default {
           Sentry.captureException(error);
         }
       }
-    }
+    },
+    nl2br
   },
   created() {
     this.getComments();

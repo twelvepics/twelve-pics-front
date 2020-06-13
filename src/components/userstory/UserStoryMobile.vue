@@ -5,7 +5,7 @@
       <p class="title">
         <a @click.prevent="storyClicked">[DRAFT] {{ story.title }}</a>
       </p>
-      <p class="pitch">{{ story.pitch }}</p>
+      <p class="pitch" v-html="nl2br(story.pitch)"></p>
       <div class="is-divider story-divider"></div>
       <p class="bottom-line">
         <button
@@ -58,7 +58,7 @@
         {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
         -->
       </p>
-      <p class="pitch">{{ story.pitch }}</p>
+      <p class="pitch" v-html="nl2br(story.pitch)"></p>
     </div>
     <!-- END PIC LANDSCAPE BOX-->
   </div>
@@ -70,6 +70,7 @@ import { timeSince } from "../../utils/dateutils";
 import { mapGetters } from "vuex";
 import axiosBase from "../../services/axiosBase";
 import * as Sentry from "@sentry/browser";
+import { nl2br } from "../../utils/typography";
 
 export default {
   props: ["story", "user_info"],
@@ -150,7 +151,8 @@ export default {
         message: ["This Story has been deleted"],
         messageType: "toast-top-centered is-warning"
       });
-    }
+    },
+    nl2br
   },
   computed: {
     ...mapGetters(["isAuthenticated", "authenticatedUser"]),

@@ -193,6 +193,7 @@ import ViewProfileMobileTop from "../components/profile/ViewProfileMobileTop.vue
 import PageLoader from "../components/PageLoader.vue";
 import PageError from "../components/PageError.vue";
 import { lockBgScroll, unlockBgScroll } from "../utils/utils";
+import { nl2br } from "../utils/typography";
 
 let _mql = null;
 const LAYOUT_FULL = 0;
@@ -235,9 +236,6 @@ export default {
         `/users/${this.authenticatedUser._key}/send-confirm-email`
       );
       this.confirmEmailSent = true;
-    },
-    nl2br: function(str) {
-      return str.replace(/(?:\r\n|\r|\n)+/g, "<br>");
     },
     async fetchData() {
       try {
@@ -283,7 +281,8 @@ export default {
     },
     isLayoutFull() {
       return this.layout === LAYOUT_FULL;
-    }
+    },
+    nl2br
   },
   computed: {
     ...mapGetters(["isAuthenticated", "authenticatedUser"]),

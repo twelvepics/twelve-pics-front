@@ -10,22 +10,11 @@
       >{{ story.title }}</router-link>
     </p>
     <p class="info-line-1">
-      <!-- <span
-        class="icon is-left star"
-        :class="{ upvoted, 'tooltip is-tooltip-warning is-tooltip-right': !isAuthenticated }"
-        data-tooltip="Please authenticate to star a story"
-        @click="starMe"
-      >
-        <font-awesome-icon icon="star"></font-awesome-icon>
-      </span>-->
       <span class="cat">[{{ category_display }}]</span>
       - Author:
       <a
         @click.prevent="gotoUserProfile"
       >{{ story.author_info.display_name || story.author_info.username }}</a>
-      <!-- - {{ elapsed() }} -
-      {{ story.comments_count || "No" }}
-      {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}-->
     </p>
     <p class="pic">
       <router-link
@@ -56,7 +45,7 @@
       {{ story.comments_count || "No" }}
       {{ story.comments_count === 0 || story.comments_count > 1 ? "comments" : "comment" }}
     </p>
-    <p class="pitch">{{ story.pitch }}</p>
+    <p class="pitch" v-html="nl2br(story.pitch)"></p>
   </div>
 
   <!-- END PIC LANDSCAPE BOX-->
@@ -69,6 +58,7 @@ import { timeSince } from "../../utils/dateutils";
 import { starMeMixin } from "../../mixins/starMeMixin";
 import { mapGetters } from "vuex";
 // import * as Sentry from "@sentry/browser";
+import { nl2br } from "../../utils/typography";
 
 export default {
   props: ["story"],
@@ -89,7 +79,8 @@ export default {
         name: "user",
         params: { username: this.story.author_info.username }
       });
-    }
+    },
+    nl2br
   },
   computed: {
     ...mapGetters(["isAuthenticated", "authenticatedUser"]),

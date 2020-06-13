@@ -24,7 +24,7 @@
         />
       </router-link>
     </p>
-    <p class="pitch">{{ story.pitch }}</p>
+    <p class="pitch" v-html="nl2br(story.pitch)"></p>
     <div class="is-divider story-divider"></div>
     <p class="bottom-line">
       <span
@@ -59,7 +59,7 @@
                     }"
         >{{ story.title }}</router-link>
       </p>
-      <p class="pitch">{{ story.pitch }}</p>
+      <p class="pitch" v-html="nl2br(story.pitch)"></p>
     </div>
     <p class="pic">
       <router-link
@@ -106,6 +106,7 @@ import { starMeMixin } from "../../mixins/starMeMixin";
 // import axiosBase from "../../services/axiosBase";
 import { mapGetters } from "vuex";
 // import * as Sentry from "@sentry/browser";
+import { nl2br } from "../../utils/typography";
 
 export default {
   props: ["story"],
@@ -126,7 +127,8 @@ export default {
         name: "user",
         params: { username: this.story.author_info.username }
       });
-    }
+    },
+    nl2br
   },
   computed: {
     ...mapGetters(["isAuthenticated", "authenticatedUser"]),

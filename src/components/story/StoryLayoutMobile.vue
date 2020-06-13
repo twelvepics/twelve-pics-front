@@ -20,13 +20,15 @@
                 }"
       >
         <img :src="pic.large.web_path" :width="pic.large.width" alt @load="onPicLoad($event)" />
-        <div class="caption" style="text-align:left;">{{ pic.caption }}</div>
+        <div class="caption" style="text-align:left;" v-html="nl2br(pic.caption)"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { nl2br } from "../../utils/typography";
+
 export default {
   props: ["pics"],
   data() {
@@ -54,7 +56,8 @@ export default {
         // emit to parent
         this.$emit("pics-loaded");
       }
-    }
+    },
+    nl2br
   },
   computed: {
     num_pics() {

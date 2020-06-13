@@ -23,7 +23,7 @@
         </div>
       </div>
       <!-- XOXO MAXWIDTHIZED -->
-      <p class="content max-width-ized">{{ story.pitch }}</p>
+      <p class="content max-width-ized" v-html="nl2br(story.pitch)"></p>
       <component
         :is="storyLayout"
         :pics="story.pics"
@@ -31,7 +31,7 @@
         @pics-loaded="picsLoaded"
       ></component>
       <!-- XOXO MAXWIDTHIZED -->
-      <p class="content max-width-ized">{{ story.inspiration }}</p>
+      <p class="content max-width-ized" v-html="nl2br(story.inspiration)"></p>
     </div>
     <!-- END CONTENT -->
   </div>
@@ -42,6 +42,7 @@ import StoryLayoutVertical from "../components/story/StoryLayoutVertical.vue";
 import StoryLayoutTiles from "../components/story/StoryLayoutTiles.vue";
 import StoryLayoutCarousel from "../components/story/StoryLayoutCarousel.vue";
 import StoryLayoutMobile from "../components/story/StoryLayoutMobile.vue";
+import { nl2br } from "../utils/typography";
 
 let _mql = null;
 const LAYOUT_FULL = 0;
@@ -80,18 +81,6 @@ export default {
       return null;
     }
   },
-  //   computed: {
-  //     storyLayout() {
-  //       if (this.story.layout === "horizontal") {
-  //         return () => import("../components/StoryLayoutHorizontal.vue");
-  //       } else if (this.story.layout === "vertical") {
-  //         return () => import("../components/StoryLayoutVertical.vue");
-  //       } else if (this.story.layout === "tiles") {
-  //         return () => import("../components/StoryLayoutTiles.vue");
-  //       }
-  //       return () => import("../components/StoryLayoutCarousel.vue");
-  //     }
-  //   },
   methods: {
     gotoUserProfile(username) {
       this.$router.push({
@@ -121,7 +110,8 @@ export default {
     },
     isLayoutFull() {
       return this.layout == LAYOUT_FULL;
-    }
+    },
+    nl2br
   },
   mounted() {
     console.log("#--- story component mounted ---#");

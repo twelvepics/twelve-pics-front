@@ -23,7 +23,7 @@
             :width="pic.large.width"
             @load="onPicLoad($event)"
           />
-          <p class="caption">{{ pic.caption }}</p>
+          <p class="caption" v-html="nl2br(pic.caption)"></p>
         </div>
       </div>
       <!-- END Additional required wrapper -->
@@ -46,6 +46,7 @@
 </template>
 <script>
 import Swiper from "swiper";
+import { nl2br } from "../../utils/typography";
 
 export default {
   props: ["pics"],
@@ -97,7 +98,8 @@ export default {
         // emit to parent
         this.$emit("pics-loaded");
       }
-    }
+    },
+    nl2br
   },
   computed: {
     num_pics() {

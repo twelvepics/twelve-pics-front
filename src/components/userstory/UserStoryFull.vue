@@ -12,7 +12,7 @@
       <p class="title is-5" style="margin-bottom:.6em;padding-right:4rem;">
         <a @click.prevent="storyClicked">[DRAFT] {{ story.title }}</a>
       </p>
-      <p class="pitch">{{ story.pitch }}</p>
+      <p class="pitch" v-html="nl2br(story.pitch)"></p>
       <div class="is-divider story-divider"></div>
       <p class="bottom-line">
         <span class="cat" v-if="category_display">[{{ category_display }}] -</span>
@@ -46,7 +46,7 @@
           />
         </a>
       </p>
-      <p class="pitch">{{ story.pitch }}</p>
+      <p class="pitch" v-html="nl2br(story.pitch)"></p>
       <div class="is-divider story-divider"></div>
       <p class="bottom-line">
         <span
@@ -81,7 +81,7 @@
         <p class="title is-5" style="margin-bottom:.6em;padding-right:4rem;">
           <a @click.prevent="storyClicked">{{ story.title }}</a>
         </p>
-        <p class="pitch">{{ story.pitch }}</p>
+        <p class="pitch" v-html="nl2br(story.pitch)"></p>
       </div>
       <p class="pic" style="padding-top:.3rem;">
         <a @click.prevent="storyClicked">
@@ -119,6 +119,7 @@ import { timeSince } from "../../utils/dateutils";
 import { mapGetters } from "vuex";
 import axiosBase from "../../services/axiosBase";
 import * as Sentry from "@sentry/browser";
+import { nl2br } from "../../utils/typography";
 
 export default {
   props: ["story", "user_info"],
@@ -171,7 +172,8 @@ export default {
         name: "edit-story",
         params: { key }
       });
-    }
+    },
+    nl2br
   },
   computed: {
     ...mapGetters(["isAuthenticated", "authenticatedUser"]),

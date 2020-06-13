@@ -56,7 +56,8 @@
                     }"
           style="text-align:left;"
           ref="top_caption"
-        >{{ pics[0].caption }}</p>
+          v-html="nl2br(pics[0].caption)"
+        ></p>
       </div>
     </div>
     <!-- ends bottom selected image -->
@@ -65,6 +66,7 @@
 
 <script>
 import Swiper from "swiper";
+import { nl2br } from "../../utils/typography";
 
 export default {
   props: ["pics"],
@@ -93,7 +95,7 @@ export default {
       this.selectedPicId = idx;
       this.$refs.top_pic.src = this.pics[idx].large.web_path;
       this.$refs.top_pic.width = this.pics[idx].large.width;
-      this.$refs.top_caption.textContent = this.pics[idx].caption;
+      this.$refs.top_caption.innerHTML = nl2br(this.pics[idx].caption) || "";
       if (this.$refs.top_pic.complete) {
         this.top_pic_visible = true;
       }
@@ -106,7 +108,8 @@ export default {
       divider = _h / maxHeight;
       width = Math.floor(_w / divider);
       return width;
-    }
+    },
+    nl2br
   },
   mounted() {
     // console.log("GO");
