@@ -7,7 +7,7 @@
     v-on:click.stop.self="closeStory"
   >
     <!-- STICKY HEADER -->
-    <div class="heady">
+    <div class="heady" :class="{draft: story.status === 'draft'}">
       <div class="columns is-mobile" style="margin:0;padding:0;">
         <div
           v-if="story"
@@ -188,6 +188,11 @@ html.frf-hide-sb {
   z-index: 1000;
   height: 45px;
   color: white;
+}
+
+.draft {
+  background: #ffc02d;
+  color: #000;
 }
 .heady a,
 .heady a:hover {

@@ -10,7 +10,8 @@
       >Edit</button>
 
       <p class="title is-5" style="margin-bottom:.6em;padding-right:4rem;">
-        <a @click.prevent="storyClicked">[DRAFT] {{ story.title }}</a>
+        <a v-if="story.is_viewable" @click.prevent="storyClicked">[DRAFT] {{ story.title }}</a>
+        <span v-else>[DRAFT] {{ story.title }}</span>
       </p>
       <p class="pitch" v-html="nl2br(story.pitch)"></p>
       <div class="is-divider story-divider"></div>

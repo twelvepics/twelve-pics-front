@@ -3,7 +3,9 @@
     <!-- DRAFT -->
     <div v-if="is_draft && show_drafts" class="box story-item-draft" style="position: relative;">
       <p class="title">
-        <a @click.prevent="storyClicked">[DRAFT] {{ story.title }}</a>
+        <!-- <a @click.prevent="storyClicked">[DRAFT] {{ story.title }}</a> -->
+        <a v-if="story.is_viewable" @click.prevent="storyClicked">[DRAFT] {{ story.title }}</a>
+        <span v-else>[DRAFT] {{ story.title }}</span>
       </p>
       <p class="pitch" v-html="nl2br(story.pitch)"></p>
       <div class="is-divider story-divider"></div>

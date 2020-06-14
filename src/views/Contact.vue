@@ -12,8 +12,7 @@
           <!-- LOADER -->
           <page-loader v-if="is_loading"></page-loader>
           <!-- ERRORS  -->
-          <page-error v-if="is_api_error" :errorMessage="apiErrorMessage"></page-error>
-
+          <page-error v-if="is_api_error" :errorMessage="apiErrorMessage"></page-error>zw
           <!-- START FORM -->
           <div class="card">
             <!-- CARD CONTENT -->
