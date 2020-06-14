@@ -7,7 +7,7 @@
     v-on:click.stop.self="closeStory"
   >
     <!-- STICKY HEADER -->
-    <div class="heady" :class="{draft: story.status === 'draft'}">
+    <div class="heady">
       <div class="columns is-mobile" style="margin:0;padding:0;">
         <div
           v-if="story"
@@ -34,7 +34,7 @@
           <story :story="story"></story>
           <!-- END STORY -->
           <!-- START COMMENTS -->
-          <story-comments :story_key="story._key" v-if="story.allow_comments"></story-comments>
+          <story-comments :story_key="story._key" v-if="story && story.allow_comments"></story-comments>
           <!-- END COMMENTS -->
           <div style="margin-top:50px"></div>
         </div>
@@ -97,7 +97,6 @@ export default {
         this.is_loading = true;
         const slug = this.$route.params.slug;
         // console.log(slug);
-        //     // await new Promise(resolve => setTimeout(resolve, 2000));
         const response = await axiosBase.get(`/stories/${slug}`);
         this.story = response.data.story;
         // GET COMMENTS
@@ -188,11 +187,6 @@ html.frf-hide-sb {
   z-index: 1000;
   height: 45px;
   color: white;
-}
-
-.draft {
-  background: #ffc02d;
-  color: #000;
 }
 .heady a,
 .heady a:hover {
