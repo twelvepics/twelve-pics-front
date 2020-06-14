@@ -22,7 +22,6 @@
         "node-sass": "^4.14.1",
         "register-service-worker": "^1.7.1",
         "swiper": "^5.4.1",
-        "ua-parser-js": "^0.7.21",
         "v-click-outside": "^3.0.1",
         "vue": "^2.6.11",
         "vue-infinite-loading": "^2.4.5",
