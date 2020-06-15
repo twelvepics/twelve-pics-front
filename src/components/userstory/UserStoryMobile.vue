@@ -73,9 +73,11 @@ import { mapGetters } from "vuex";
 import axiosBase from "../../services/axiosBase";
 import * as Sentry from "@sentry/browser";
 import { nl2br } from "../../utils/typography";
+import { starMeMixin } from "../../mixins/starMeMixin";
 
 export default {
   props: ["story", "user_info"],
+  mixins: [starMeMixin],
   data() {
     return {
       num_comments: 0,

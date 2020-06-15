@@ -9,9 +9,11 @@ export const starMeMixin = {
         if (this.isAuthenticated) {
           if (!this.upvoted) {
             await axiosBase.post(`/stories/${this.story._key}/upvote`);
+            // console.log('__UPVOTE__');
             this.upvoted = true;
           } else {
             // :story_key/upvotes/:upvote_key
+            // console.log('__DOWNVOTE__');
             await axiosBase.delete(
               `/stories/${this.story._key}/upvote/${this.authenticatedUser._key}`
             );

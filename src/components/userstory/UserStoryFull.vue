@@ -118,12 +118,12 @@
 import { categoriesDisplay } from "../../utils/categories";
 import { timeSince } from "../../utils/dateutils";
 import { mapGetters } from "vuex";
-import axiosBase from "../../services/axiosBase";
-import * as Sentry from "@sentry/browser";
 import { nl2br } from "../../utils/typography";
+import { starMeMixin } from "../../mixins/starMeMixin";
 
 export default {
   props: ["story", "user_info"],
+  mixins: [starMeMixin],
   data() {
     return {
       num_comments: 0,
@@ -132,32 +132,6 @@ export default {
     };
   },
   methods: {
-    async starMe() {
-      console.log("starMe");
-      try {
-        if (this.isAuthenticated) {
-          if (!this.upvoted) {
-            await axiosBase.post(`/stories/${this.story._key}/upvote`);
-            this.upvoted = true;
-          } else {
-            // :story_key/upvotes/:upvote_key
-            await axiosBase.delete(
-              `/stories/${this.story._key}/upvote/${this.authenticatedUser._key}`
-            );
-            this.upvoted = false;
-          }
-        }
-      } catch (e) {
-        if (e.response) {
-          if (e.response.status) {
-            console.log(e.response);
-          }
-        } else {
-          console.log(e);
-          Sentry.captureException(e);
-        }
-      }
-    },
     storyClicked() {
       this.$router.push({
         name: "view-story",

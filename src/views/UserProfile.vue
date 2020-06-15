@@ -337,7 +337,8 @@ export default {
         !p.intro &&
         !p.about_me &&
         !p.inspiration &&
-        !p.location.place_name
+        !p.location.place_name &&
+        !this.hasLinks
       ) {
         return true;
       }
