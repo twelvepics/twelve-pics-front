@@ -14,10 +14,10 @@
           class="column summit"
         >{{story.author_info.display_name || story.author_info.username}} - {{ elapsed() }}</div>
         <div v-if="story" class="column is-narrow has-text-right closer">
-          <span style="font-weight:medium;padding-right:3px;">
+          <span style="font-weight:medium;padding-right:4px;">
             <a @click.prevent="closeStory()">CLOSE</a>
           </span>
-          <button class="delete" style="margin-top:2px;" @click.prevent="closeStory()"></button>
+          <button class="delete" @click.prevent="closeStory()"></button>
         </div>
       </div>
     </div>
@@ -198,6 +198,9 @@ html.frf-hide-sb {
 .heady .closer {
   padding-right: 20px;
 }
+.delete {
+  margin:2px 0 0 0;
+}
 /*** content takes all width if <= 1024 ***/
 @media only screen and (max-width: 1024px) {
   .story-modal {
@@ -206,6 +209,9 @@ html.frf-hide-sb {
 }
 
 @media only screen and (max-width: 600px) {
+  .delete {
+    margin:0;
+  }
   .heady {
     font-size: 90%;
   }

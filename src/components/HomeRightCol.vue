@@ -16,13 +16,30 @@
       </p>
     </div>
     <div class="notification is-primary" style="padding:1em;">
-      <p class="title is-6" style="padding:0;margin:0;">Where we stand</p>
+      <p class="title is-6" style="padding:0;margin:0;">Legal</p>
       <p class="content" style="padding:0;margin:.5rem 0 0 0;font-size:95%;">
-        We believe that copyright empowers creativity, no further
+        Copyright empowers creativity!
+        <br />
+        <span class="copyright-msg">
+          All photos posted on the site are property of their respective owners.
+          No reproduction allowed.
+        </span> 
+        <br /> No further
         use of the photos you have decided to publish on the site will ever be made by us.
-        Twelvepics is free to use and will remain so.
+        <span class="xrg">Twelvepics is free to use and will remain so.</span>
         <br />
       </p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.copyright-msg {
+  font-weight: bold;
+  color: #6bfbfd;
+}
+.xrg {
+  font-weight: bold;
+  color: #6bfbfd;
+}
+</style>
