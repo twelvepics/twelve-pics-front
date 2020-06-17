@@ -3,7 +3,7 @@
     <!-- START CONTENT -->
     <div class="card-content">
       <!-- XOXO MAXWIDTHIZED -->
-      <p class="title is-size-4 max-width-ized">{{ story.title }}</p>
+      <p class="title is-size-4">{{ story.title }}</p>
       <div class="content">
         <div>
           <b>Author:&nbsp;</b>
@@ -23,7 +23,7 @@
         </div>
       </div>
       <!-- XOXO MAXWIDTHIZED -->
-      <p class="content max-width-ized" v-html="nl2br(story.pitch)"></p>
+      <p class="content long-txt" v-html="nl2br(story.pitch)"></p>
       <component
         :is="storyLayout"
         :pics="story.pics"
@@ -142,8 +142,9 @@ export default {
 .greyish {
   color: #999;
 }
-.max-width-ized {
-  max-width: 900px;
+.long-txt {
+  /* max-width: 1024px; */
+  /* border: 1px solid blue; */
 }
 @media only screen and (max-width: 600px) {
   .is-size-4 {

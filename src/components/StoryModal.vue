@@ -1,42 +1,39 @@
 <template>
   <!-- The Modal -->
-  <div
-    id="story-modal"
-    class="story-modal"
-    style="display: block;"
-    v-on:click.stop.self="closeStory"
-  >
-    <!-- STICKY HEADER -->
-    <div class="heady">
-      <div class="columns is-mobile" style="margin:0;padding:0;">
-        <div
-          v-if="story"
-          class="column summit"
-        >{{story.author_info.display_name || story.author_info.username}} - {{ elapsed() }}</div>
-        <div v-if="story" class="column is-narrow has-text-right closer">
-          <span style="font-weight:medium;padding-right:4px;">
-            <a @click.prevent="closeStory()">CLOSE</a>
-          </span>
-          <button class="delete" @click.prevent="closeStory()"></button>
+  <div id="story-modal" class="story-modal" v-on:click.stop.self="closeStory">
+    <div class="story-container">
+      <!-- STICKY HEADER -->
+      <div class="heady">
+        <div class="columns is-mobile" style="margin:0;padding:0;">
+          <div
+            v-if="story"
+            class="column summit"
+          >{{story.author_info.display_name || story.author_info.username}} - {{ elapsed() }}</div>
+          <div v-if="story" class="column is-narrow has-text-right closer">
+            <span style="font-weight:medium;padding-right:4px;">
+              <a @click.prevent="closeStory()">CLOSE</a>
+            </span>
+            <button class="delete" @click.prevent="closeStory()"></button>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- END STICKY -->
+      <!-- END STICKY -->
 
-    <!-- START LOADER / SERVER ERRORS-->
-    <div class="card">
-      <!-- Modal content -->
-      <div class="story-modal-content">
-        <page-loader v-if="is_loading"></page-loader>
-        <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
-        <div v-else class="content">
-          <!-- START STORY -->
-          <story :story="story"></story>
-          <!-- END STORY -->
-          <!-- START COMMENTS -->
-          <story-comments :story_key="story._key" v-if="story && story.allow_comments"></story-comments>
-          <!-- END COMMENTS -->
-          <div style="margin-top:50px"></div>
+      <!-- START LOADER / SERVER ERRORS-->
+      <div class="card">
+        <!-- Modal content -->
+        <div class="story-modal-content">
+          <page-loader v-if="is_loading"></page-loader>
+          <page-error v-else-if="is_error" :errorMessage="errorMessage"></page-error>
+          <div v-else class="content">
+            <!-- START STORY -->
+            <story :story="story"></story>
+            <!-- END STORY -->
+            <!-- START COMMENTS -->
+            <story-comments :story_key="story._key" v-if="story && story.allow_comments"></story-comments>
+            <!-- END COMMENTS -->
+            <div style="margin-top:50px"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -133,10 +130,24 @@ export default {
 };
 </script>
 
+<style>
+/* Modal / hide scrollbar chrome applekit */
+body.no-scrollbar-webkit::-webkit-scrollbar {
+  display: none;
+}
+
+/* Modal / hide scrollbar firefox */
+html.frf-hide-sb {
+  scrollbar-width: none;
+}
+</style>
+
 <style scoped>
 /***** SCROLL BAR WEBKIT & GECKO *****/
 .story-modal {
-  display: none;
+  display: block; /* XOXO added typo*/
+  justify-content: center; /* XOXO added typo*/
+  display: flex; /* XOXO added typo*/
   /* Hidden by default */
   position: fixed;
   /* Stay in place */
@@ -152,9 +163,13 @@ export default {
   /* Enable scroll if needed */
   background-color: rgb(0, 0, 0);
   /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.9);
   /* Black w/ opacity */
   padding: 0 5rem 0 5rem;
+}
+.story-container {
+  max-width: 1200px;
+  /* border: 1px solid red; */
 }
 
 /* Modal Content/Box */
@@ -162,18 +177,8 @@ export default {
   background-color: #eff0eb;
   /* 15% from the top and centered */
   padding: 35px 20px 20px 20px;
-  /* border: 1px solid #222; */
+  border: 1px solid red;
   width: 100%;
-}
-
-/* Modal / hide scrollbar chrome applekit */
-body.no-scrollbar-webkit::-webkit-scrollbar {
-  display: none;
-}
-
-/* Modal / hide scrollbar firefox */
-html.frf-hide-sb {
-  scrollbar-width: none;
 }
 
 /*** sticky header ***/
@@ -199,8 +204,9 @@ html.frf-hide-sb {
   padding-right: 20px;
 }
 .delete {
-  margin:2px 0 0 0;
+  margin: 2px 0 0 0;
 }
+
 /*** content takes all width if <= 1024 ***/
 @media only screen and (max-width: 1024px) {
   .story-modal {
@@ -210,7 +216,7 @@ html.frf-hide-sb {
 
 @media only screen and (max-width: 600px) {
   .delete {
-    margin:0;
+    margin: 0;
   }
   .heady {
     font-size: 90%;
